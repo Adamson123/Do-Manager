@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -21,7 +22,7 @@ export function ModeToggle() {
         <Button
           variant="outline"
           size="icon"
-          className="h-[36px] w-[36px] outline-none border-darkerBg"
+          className="h-[36px] w-[36px] border-darkerBg"
         >
           <Sun
             className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100
@@ -47,6 +48,7 @@ export function ModeToggle() {
         >
           Dark
         </DropdownMenuItem>
+
         <DropdownMenuItem
           className="text-[13px]"
           onClick={() => setTheme("system")}
