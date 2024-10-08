@@ -33,6 +33,7 @@ const Task = ({ drawerTriggerRef }: TaskProp) => {
       {/* Priority :px-[6px] */}
       <div className="text-right">
         <span
+          suppressHydrationWarning
           style={{
             color: tkColor,
             borderColor: tkColor,
@@ -60,6 +61,7 @@ const Task = ({ drawerTriggerRef }: TaskProp) => {
         {/* Progress */}
         <div className="">
           <Progress
+            suppressHydrationWarning
             value={80}
             className="rounded h-[5px] bg-darkerBg
              border-none"
@@ -102,7 +104,12 @@ const Task = ({ drawerTriggerRef }: TaskProp) => {
                 <MoreHorizontal className="h-5 w-5" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-[90px] p-0">
+            <PopoverContent
+              onClick={(event) => {
+                event.stopPropagation();
+              }}
+              className="w-[90px] p-0 mr-2"
+            >
               <div className="flex flex-col text-[12px] tracking-wider">
                 <Button
                   variant="ghost"
@@ -112,12 +119,12 @@ const Task = ({ drawerTriggerRef }: TaskProp) => {
                   <Edit className="mr-2 h-4 w-4" />
                   <span>Edit</span>
                 </Button>
-                <div className="h-[1px] bg-border" />
+                <div className="h-[1px] bg-darkerBg" />
                 <Button
                   variant="ghost"
                   className="flex items-center justify-start
                    h-10 px-2 hover:bg-accent  
-                   text-red-500 rounded-none"
+                   text-red-500 hover:text-red-500 rounded-none"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   <span>Delete</span>

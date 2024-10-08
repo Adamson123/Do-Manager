@@ -11,6 +11,9 @@ const config: Config = {
     extend: {
       colors: {
         darkerBg: "rgb(var(--darkerBg))",
+        highPriority: "rgb(var(--highPriority))",
+        mediumPriority: "rgb(var(--mediumPriority))",
+        lowPriority: "rgb(var(--lowPriority))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

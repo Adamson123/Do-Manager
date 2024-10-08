@@ -1,20 +1,22 @@
 "use client";
-import SubTasks from "@/components/HomeComps/SubTasks/SubTasks";
+import SubTasks from "@/components/HomeComps/Subtasks/Subtasks";
 import Tasks from "@/components/HomeComps/Tasks/Tasks";
 import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
-  const drawerTriggerRef: RefObject<HTMLButtonElement> =
-    useRef<HTMLButtonElement>(null);
+  // const drawerTriggerRef: RefObject<HTMLButtonElement> =
+  //   useRef<HTMLButtonElement>(null);
+  const drawerTriggerRef = useRef<HTMLButtonElement>(null);
   const [showDraw, setShowDraw] = useState(true);
+  //prevent dialog from closing when window's screen is being resized
+  const [dialogOpened, setDialogOpened] = useState(false);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
-      console.log(window.innerWidth);
       if (window.innerWidth >= 768) {
         setShowDraw(false);
       } else {
@@ -34,26 +36,25 @@ export default function Home() {
         <Tasks drawerTriggerRef={drawerTriggerRef} />
       </div>
       {/* Right section */}
-      <div
-        className=" md:w-[40%] hidden md:flex border-l 
-        border-darkerBg min-h-screen"
-      >
-        <SubTasks />
-      </div>
+      {(!showDraw || dialogOpened) && (
+        <div
+          className="w-[40%] hidden md:flex border-l 
+            border-darkerBg min-h-screen"
+        >
+          <SubTasks setDialogOpened={setDialogOpened} />
+        </div>
+      )}
+
       {/* SubTask drawer :sm devices */}
       {/* <div className="flex md:hidden"> */}
-      {showDraw && (
+      {(showDraw || dialogOpened) && (
         <Drawer>
           <DrawerTrigger asChild ref={drawerTriggerRef}>
-            <Button
-              variant="outline"
-              className="p-0 h-0 w-0 overflow-hidden
-               opacity-0 pointer-events-none"
-            ></Button>
+            <Button variant="outline" className="hidden"></Button>
           </DrawerTrigger>
           <DrawerContent className="h-[calc(100vh-15%)]">
             <DialogTitle />
-            <SubTasks />
+            <SubTasks setDialogOpened={setDialogOpened} />
           </DrawerContent>
         </Drawer>
       )}
