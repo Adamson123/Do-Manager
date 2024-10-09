@@ -27,7 +27,7 @@ const Subtasks = ({ setDialogOpened }: SubtasksProps) => {
         <div className="flex flex-col gap-2">
           {/* Title */}
           <div>
-            <h2 className="text-2xl">Task Title</h2>
+            <h2 className="text-2xl font-bold">Task Title</h2>
           </div>
           {/* Description */}
           <p className="text-[14px] text-muted-foreground">
@@ -72,7 +72,7 @@ const Subtasks = ({ setDialogOpened }: SubtasksProps) => {
           {/* Subtask Amount */}
           <div>
             <span className="text-[13px] text-muted-foreground font-bold">
-              SubtaskRect:12
+              Subtasks:12
             </span>
           </div>
         </div>

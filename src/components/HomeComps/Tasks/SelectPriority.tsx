@@ -15,12 +15,14 @@ interface SelectPriorityProps {
   showSortingIcon?: boolean;
   priority: string;
   setPriority: Dispatch<SetStateAction<string>>;
+  className?: string;
 }
 
 const SelectPriority = ({
   showSortingIcon,
   priority,
   setPriority,
+  className = "border-none h-[20px]",
 }: SelectPriorityProps) => {
   const { theme, systemTheme } = useTheme();
   const [sortingIcon, setSortingIcon] = useState("./sortingW.svg");
@@ -30,19 +32,23 @@ const SelectPriority = ({
 
     const icon =
       theme === "light" || (theme === "system" && systemTheme === "light")
-        ? "./sorting.svg"
-        : "./sortingW.svg";
+        ? "./svgs/sorting.svg"
+        : "./svgs/sortingW.svg";
     setSortingIcon(icon);
   }, [theme, systemTheme]);
 
   return (
     <Select value={priority} onValueChange={setPriority}>
       <SelectTrigger
-        className="w-auto text-[15px] h-[20px]
-        border-none flex gap-2"
+        className={`w-auto text-[15px]
+         flex gap-2 ${className}`}
       >
         {showSortingIcon && (
-          <img src={sortingIcon} className="h-[18px] w-[17px]" />
+          <img
+            src={sortingIcon}
+            alt="sorting icon"
+            className="h-[18px] w-[17px]"
+          />
         )}
         <SelectValue placeholder="Priority" defaultValue="high" />
       </SelectTrigger>

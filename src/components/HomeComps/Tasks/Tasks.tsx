@@ -1,5 +1,5 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Task from "./TaskCard";
+import TaskCard from "./TaskCard";
 import { RefObject, useRef, useState } from "react";
 
 import { Plus } from "lucide-react";
@@ -16,10 +16,13 @@ const Tasks = ({ drawerTriggerRef }: TasksProp) => {
   const dialogTriggerRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="h-[calc(100%-60px)] flex flex-col relative">
+    <div
+      className="h-[calc(100%-97.5px)] flex 
+    flex-col gap-3 relative"
+    >
       {/* Head */}
-      <div className="pl-4 py-3 flex justify-between items-center pr-3">
-        {/* Select priority */}
+      {/* Select priority */}
+      <div className="pl-4 pb-2 pt-4 flex justify-between items-center pr-3">
         <SelectPriority
           showSortingIcon={true}
           priority={priority}
@@ -35,7 +38,7 @@ const Tasks = ({ drawerTriggerRef }: TasksProp) => {
         >
           {/* #3c3133 , #936d6e*/}
           {Array.from({ length: 7 }).map((d, i) => {
-            return <Task drawerTriggerRef={drawerTriggerRef} key={i} />;
+            return <TaskCard drawerTriggerRef={drawerTriggerRef} key={i} />;
           })}
         </div>
       </ScrollArea>

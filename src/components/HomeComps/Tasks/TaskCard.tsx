@@ -11,11 +11,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-interface TaskProp {
+interface TaskCardProp {
   drawerTriggerRef: RefObject<HTMLButtonElement>;
 }
 
-const Task = ({ drawerTriggerRef }: TaskProp) => {
+const TaskCard = ({ drawerTriggerRef }: TaskCardProp) => {
   const randomColor = () => {
     const colors = ["#ef4444", "#22c55e", "#eab308"];
     const randomIndex = Math.floor(Math.random() * colors.length);
@@ -138,4 +138,4 @@ const Task = ({ drawerTriggerRef }: TaskProp) => {
   );
 };
 
-export default Task;
+export default TaskCard;

@@ -14,12 +14,15 @@ interface CreateTaskProps {
   dialogTriggerRef: React.RefObject<HTMLButtonElement>;
 }
 
-const CreateTask: React.FC<CreateTaskProps> = ({ dialogTriggerRef }) => {
+const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
   const [priority, setPriority] = useState("high");
 
   return (
     <Dialog>
-      <DialogTrigger ref={dialogTriggerRef} className="hidden"></DialogTrigger>
+      <DialogTrigger
+        ref={dialogTriggerRef}
+        className="w-0 h-0 p-0 opacity-0 pointer-events-none"
+      ></DialogTrigger>
 
       <DialogContent
         className=" max-w-lg p-0 px-3
@@ -38,40 +41,40 @@ const CreateTask: React.FC<CreateTaskProps> = ({ dialogTriggerRef }) => {
           {/* Inputs */}
           <div className="flex flex-col gap-3">
             {/* Title */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <div className="flex justify-between items-end">
-                <label htmlFor="title" className="font-bold text-[16px]">
-                  Title
-                </label>
-                <span className="text-[13px] text-primary">12 / 70</span>
+                <span className="font-bold text-[16px]">Title</span>
+                <span className="text-[13px] text-primary font-bold">
+                  12 / 70
+                </span>
               </div>
               <input
                 type="text"
-                name="title"
                 className="border border-darkerBg outline-none py-1 px-2 rounded
               focus:border-primary bg-transparent"
               />
             </div>
             {/* Description */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <div className="flex justify-between items-end">
-                <label htmlFor="description" className="font-bold text-[16px]">
-                  Description
-                </label>
-                <span className="text-[13px] text-primary">12 / 500</span>
+                <span className="font-bold text-[16px]">Description</span>
+                <span className="text-[13px] text-primary font-bold">
+                  12 / 400
+                </span>
               </div>
               <textarea
-                name="description"
                 className="border border-darkerBg outline-none py-1 px-2 
                 rounded focus:border-primary min-h-44 max-h-44 bg-transparent"
               />
             </div>
             {/* priority */}
-            <div className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col gap-1 items-start">
               <span className="font-bold text-[16px]">Priority</span>
-              <div className="-translate-x-3 -translate-y-1">
-                <SelectPriority priority={priority} setPriority={setPriority} />
-              </div>
+              <SelectPriority
+                priority={priority}
+                setPriority={setPriority}
+                className="border border-darkerBg py-2 px-4 rounded"
+              />
             </div>
           </div>
           <Button>Create</Button>

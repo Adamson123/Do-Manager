@@ -1,8 +1,9 @@
 import { Search } from "lucide-react";
 import { ModeToggle } from "../ui/toggleMode";
+import UserProfile from "./UserProfile";
 const Navbar = () => {
   return (
-    <div className="absolut top-0 left-0 right-0 py-3 px-3">
+    <div className="pt-3 py-6 px-3">
       <div className="flex items-center justify-between">
         {/* Search bar */}
         <div className="relative">
@@ -19,7 +20,13 @@ const Navbar = () => {
             placeholder="Search"
           />
         </div>
-        <ModeToggle />
+
+        {/*  Right section */}
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+          {/* User profile */}
+          <div className="h-[30px] bg-darkerBg w-[1px]"></div> <UserProfile />
+        </div>
       </div>
     </div>
   );

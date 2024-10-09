@@ -21,7 +21,7 @@ export function ModeToggle() {
         <Button
           variant="outline"
           size="icon"
-          className="h-[36px] w-[36px] border-darkerBg"
+          className="h-[34px] w-[34px] border-darkerBg"
         >
           <Sun
             className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100

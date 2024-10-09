@@ -1,5 +1,6 @@
 "use client";
 import SubTasks from "@/components/HomeComps/Subtasks/Subtasks";
+import TabNav from "@/components/HomeComps/TabNav/TabNav";
 import Tasks from "@/components/HomeComps/Tasks/Tasks";
 import Navbar from "@/components/Navbar/Navbar";
 import { Button } from "@/components/ui/button";
@@ -11,12 +12,17 @@ export default function Home() {
   // const drawerTriggerRef: RefObject<HTMLButtonElement> =
   //   useRef<HTMLButtonElement>(null);
   const drawerTriggerRef = useRef<HTMLButtonElement>(null);
+  const drawerContentRef = useRef<HTMLDivElement>(null);
   const [showDraw, setShowDraw] = useState(true);
   //prevent dialog from closing when window's screen is being resized
   const [dialogOpened, setDialogOpened] = useState(false);
+  const [focusedTab, setFocusedTab] = useState("Tasks");
 
   useEffect(() => {
     window.addEventListener("resize", () => {
+      // const height = "100vh";
+      // if (drawerContentRef.current)
+      //   drawerContentRef.current.style.height = height;
       if (window.innerWidth >= 768) {
         setShowDraw(false);
       } else {
@@ -31,8 +37,9 @@ export default function Home() {
      max-h-screen overflow-hidden min-h-screen"
     >
       {/* Left section */}
-      <div className="w-[100%] md:w-[60%] h-screen">
+      <div className="w-[100%] md:w-[60%] h-screen flex flex-col">
         <Navbar />
+        <TabNav focusedTab={focusedTab} setFocusedTab={setFocusedTab} />
         <Tasks drawerTriggerRef={drawerTriggerRef} />
       </div>
       {/* Right section */}
@@ -50,9 +57,15 @@ export default function Home() {
       {(showDraw || dialogOpened) && (
         <Drawer>
           <DrawerTrigger asChild ref={drawerTriggerRef}>
-            <Button variant="outline" className="hidden"></Button>
+            <Button
+              variant="outline"
+              className="w-0 h-0 p-0 opacity-0 pointer-events-none"
+            ></Button>
           </DrawerTrigger>
-          <DrawerContent className="h-[calc(100vh-15%)]">
+          <DrawerContent
+            ref={drawerContentRef}
+            className="min-h-[calc(100vh-15%)] h-[calc(100vh-15%)]"
+          >
             <DialogTitle />
             <SubTasks setDialogOpened={setDialogOpened} />
           </DrawerContent>
