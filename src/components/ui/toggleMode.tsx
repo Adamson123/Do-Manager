@@ -6,55 +6,58 @@ import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+    const { setTheme } = useTheme();
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-[34px] w-[34px] border-darkerBg"
-        >
-          <Sun
-            className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100
-           transition-all dark:-rotate-90 dark:scale-0"
-          />
-          <Moon
-            className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0
-           transition-all dark:rotate-0 dark:scale-100 -translate-y-1"
-          />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          className="text-[13px]"
-          onClick={() => setTheme("light")}
-        >
-          Light
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-[13px]"
-          onClick={() => setTheme("dark")}
-        >
-          Dark
-        </DropdownMenuItem>
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="outline"
+                    size="icon"
+                    className="max-h-[34px] max-w-[34px] 
+                    min-h-[34px] min-w-[34px] border-darkerBg 
+                    flex items-center justify-center"
+                >
+                    <Sun
+                        className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100
+                        transition-all dark:-rotate-90 dark:scale-0"
+                    />
 
-        <DropdownMenuItem
-          className="text-[13px]"
-          onClick={() => setTheme("system")}
-        >
-          System
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+                    <Moon
+                        className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0
+                       transition-all dark:rotate-0 dark:scale-100"
+                    />
+                    <span className="sr-only">Toggle theme</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                    className="text-[13px]"
+                    onClick={() => setTheme("light")}
+                >
+                    Light
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    className="text-[13px]"
+                    onClick={() => setTheme("dark")}
+                >
+                    Dark
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                    className="text-[13px]"
+                    onClick={() => setTheme("system")}
+                >
+                    System
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 }

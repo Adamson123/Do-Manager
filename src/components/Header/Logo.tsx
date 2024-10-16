@@ -2,7 +2,7 @@ import { AlertTriangle, Flame, Leaf } from "lucide-react";
 
 const Logo = ({ className }: { className: string }) => {
     return (
-        <div className={`flex items-center gap-1 ${className}`}>
+        <div className={`flex items-center  gap-1 ${className}`}>
             <div
                 className="flex flex-wrap items-center justify-center 
             rounded w-[33.5px] h-[33.5px] px-[1px] py-[5px]
@@ -15,7 +15,7 @@ const Logo = ({ className }: { className: string }) => {
                 />
                 <AlertTriangle
                     className="h-[14px] w-[14px] inline 
-            fill-mediumPriority stroke-mediumPriority"
+                    fill-mediumPriority stroke-mediumPriority"
                 />
 
                 <Leaf
@@ -23,11 +23,12 @@ const Logo = ({ className }: { className: string }) => {
                     text-lowPriority"
                 />
             </div>
-            <h1 className="text-[15px] font-logoFont">
-                <span className="italic text-highPriority">
-                    do<span className="text-mediumPriority">-</span>
+            <h1 className="text-[15px] font-logoFont gradient-text">
+                <span className="italic tex-highPriority">
+                    do
+                    <span className="tex-mediumPriority">-</span>
                 </span>
-                <b className="text-lowPriority text-[14px]">manager</b>
+                <b className="tex-lowPriority">manager</b>
             </h1>
         </div>
     );

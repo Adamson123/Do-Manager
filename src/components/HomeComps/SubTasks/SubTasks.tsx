@@ -4,6 +4,8 @@ import SubtaskRect from "./SubtaskRect";
 import { useTheme } from "next-themes";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import CreateSubtask from "./CreateSubtask";
+import debounce from "@/lib/debounce";
+import Priority from "@/components/ui/priority";
 
 interface SubtasksProps {
     setDialogOpened: Dispatch<SetStateAction<boolean>>;
@@ -16,6 +18,12 @@ const Subtasks = ({
     showMore,
     setShowMore,
 }: SubtasksProps) => {
+    const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+    const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+    //State variables
+    const [descriptionHeight, setDescriptionHeight] = useState(0);
+
     const { theme, systemTheme } = useTheme();
     const randomColor = () => {
         const colors = ["#ef4444", "#22c55e", "#eab308"];
@@ -23,14 +31,12 @@ const Subtasks = ({
         return colors[randomIndex];
     };
     const color = randomColor();
-    const dialogTriggerRef = useRef<HTMLButtonElement>(null);
-    const descriptionRef = useRef<HTMLParagraphElement>(null);
-    const [descriptionHeight, setDescriptionHeight] = useState(0);
 
+    //update description height when window is resizing
     useEffect(() => {
-        const updateDescriptionHeight = () => {
+        const updateDescriptionHeight = debounce(() => {
             setDescriptionHeight(Number(descriptionRef.current?.clientHeight));
-        };
+        }, 200);
         updateDescriptionHeight();
 
         window.addEventListener("resize", updateDescriptionHeight);
@@ -40,7 +46,7 @@ const Subtasks = ({
     }, []);
 
     return (
-        <div className="px-3 flex flex-col max-h-full select-text">
+        <section className="px-3 flex flex-col max-h-full select-text">
             {/* HEAD */}
             <div className="flex flex-col gap-2 border-b border-darkerBg py-3">
                 {/* Title and Description */}
@@ -84,20 +90,7 @@ const Subtasks = ({
                     {/* Priority and Date*/}
                     <div className="flex gap-2 items-center">
                         {/* Priority */}
-                        <span
-                            style={{
-                                color,
-                                borderColor: color,
-                            }}
-                            className="text-[14px] py-[7px]
-                            rounded-3xl tracking-wider"
-                        >
-                            High{" "}
-                            <FlameIcon
-                                className="inline h-[15px] w-[15px] fill-current 
-                               -translate-y-[1px] -translate-x-[2px]"
-                            />
-                        </span>
+                        <Priority priority="high" />
                         {/* Date */}
                         <span
                             className="bg-darkerBg
@@ -157,7 +150,7 @@ const Subtasks = ({
                 dialogTriggerRef={dialogTriggerRef}
                 setDialogOpened={setDialogOpened}
             />
-        </div>
+        </section>
     );
 };
 

@@ -7,8 +7,8 @@
     src: url("./fonts/RobotoFlex.ttf");
 }
 @font-face {
-  font-family: montserrat;
-  src: url("./fonts/Montserrat.ttf");
+    font-family: montserrat;
+    src: url("./fonts/Montserrat.ttf");
 }
 
 html {
@@ -23,12 +23,27 @@ body {
     border-style: solid;
 }
 
+.gradient-text {
+    background: linear-gradient(
+        to right,
+        rgb(239, 68, 68) 0%,
+        rgb(239, 68, 68) 33.33%,
+        rgb(234, 179, 8) 33.33%,
+        rgb(234, 179, 8) 66.66%,
+        rgb(34, 197, 94) 66.66%,
+        rgb(34, 197, 94) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
 @layer utilities {
     .text-balance {
         text-wrap: balance;
     }
 }
-
 
 /* --darkerBg: 200 201 199;  --darkerBg: 55 54 56; */
 

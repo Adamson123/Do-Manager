@@ -5,13 +5,13 @@ import { ModeToggle } from "../ui/toggleMode";
 import UserProfile from "./UserProfile";
 import Logo from "./Logo";
 import { useRef, useState } from "react";
-const Navbar = () => {
+const Header = () => {
     const [searchBarFocused, setSearchBarFocused] = useState(false);
     const searchBarRef = useRef<HTMLInputElement>(null);
 
     return (
         //py-6 w-[198.667px]
-        <div className="pt-3 h-[70px] px-3">
+        <header className="pt-3 min-h-[70px] px-3">
             <div className="flex items-center justify-between">
                 {/* Logo and Search bar */}
                 <div className="flex gap-3 items-center">
@@ -68,8 +68,8 @@ const Navbar = () => {
                     <UserProfile />
                 </div>
             </div>
-        </div>
+        </header>
     );
 };
 
-export default Navbar;
+export default Header;
