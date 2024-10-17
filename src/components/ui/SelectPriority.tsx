@@ -28,7 +28,8 @@ const SelectPriority = ({
   const [sortingIcon, setSortingIcon] = useState("./sortingW.svg");
 
   useEffect(() => {
-    if (!theme && systemTheme) return;
+    //if (!theme && systemTheme) return;
+    if (!theme || !systemTheme) return;
 
     const icon =
       theme === "light" || (theme === "system" && systemTheme === "light")
@@ -50,25 +51,25 @@ const SelectPriority = ({
             className="h-[18px] w-[17px]"
           />
         )}
-        <SelectValue placeholder="Priority" defaultValue="high" />
+        <SelectValue placeholder="Priority" defaultValue="HIGH" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="high">
+          <SelectItem value="HIGH">
             <span className="text-highPriority">High</span>{" "}
             <Flame
               className="h-4 w-4 fill-highPriority text-highPriority
               inline -translate-y-[1px] stroke-highPriority"
             />
           </SelectItem>
-          <SelectItem value="medium" className="text-mediumPriority">
+          <SelectItem value="MEDIUM" className="text-mediumPriority">
             <span className="text-mediumPriority">Medium</span>{" "}
             <AlertTriangle
               className="h-[18px] w-[18px] inline fill-mediumPriority
             -translate-y-[1px] stroke-background"
             />
           </SelectItem>
-          <SelectItem value="low" className="text-lowPriority">
+          <SelectItem value="LOW" className="text-lowPriority">
             <span className="text-lowPriority">Low</span>{" "}
             <Leaf
               className="h-[18px] w-[18px] inline fill-lowPriority

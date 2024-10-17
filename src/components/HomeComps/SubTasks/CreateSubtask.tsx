@@ -66,6 +66,7 @@ const CreateSubtask = ({ dialogTriggerRef }: CreateSubtaskProps) => {
                 type="text"
                 className="border border-darkerBg outline-none py-1 px-2 rounded
                 focus:border-primary bg-transparent"
+                placeholder="Enter title"
               />
             </div>
             {/* Description */}
@@ -83,6 +84,7 @@ const CreateSubtask = ({ dialogTriggerRef }: CreateSubtaskProps) => {
                 className="border border-darkerBg outline-none py-1 px-2 
                 rounded focus:border-primary min-h-36 max-h-36
                 bg-transparent"
+                placeholder="Enter description"
               />
             </div>
           </div>

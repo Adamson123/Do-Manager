@@ -38,7 +38,7 @@ const chartConfig = {
 
 const Chart = () => {
   return (
-    <Card className="border-none w-full max-w-[580px] max-h-[400px]">
+    <Card className="border-none w-full bg-secondary rounded flex-grow">
       <CardHeader>
         <CardTitle>Bar Chart</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

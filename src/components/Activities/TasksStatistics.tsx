@@ -1,4 +1,4 @@
-import { BellRing, Check, Folder, TimerOffIcon } from "lucide-react";
+import { Check, Folder, TimerOffIcon } from "lucide-react";
 
 const TasksStatistics = () => {
   return (

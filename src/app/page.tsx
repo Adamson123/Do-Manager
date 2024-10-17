@@ -1,25 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Header from "@/components/Header/Header";
-import TabNav from "@/components/HomeComps/TabNav";
 import Tasks from "@/components/HomeComps/Tasks/Tasks";
-import Favorites from "@/components/HomeComps/Favorites/Favorites";
-import Activities from "@/components/HomeComps/Activities/Activities";
+import { useEffect, useRef, useState } from "react";
 import SubTasks from "@/components/HomeComps/Subtasks/Subtasks";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import debounce from "@/lib/debounce";
+import debounce from "@/utils/debounce";
 
 export default function Home() {
-  const drawerTriggerRef = useRef<HTMLButtonElement>(null);
   const drawerContentRef = useRef<HTMLDivElement>(null);
+  const drawerTriggerRef = useRef<HTMLButtonElement>(null);
 
   // State variables
-  const [showDraw, setShowDraw] = useState(true);
+  const [showDraw, setShowDraw] = useState(false);
   const [dialogOpened, setDialogOpened] = useState(false);
-  const [focusedTab, setFocusedTab] = useState("Tasks");
   const [showMore, setShowMore] = useState(false);
 
   // Handle screen resizing
@@ -27,8 +22,8 @@ export default function Home() {
     const updateShowDraw = debounce(() => {
       setShowDraw(window.innerWidth < 768);
     }, 200);
-
     updateShowDraw();
+
     window.addEventListener("resize", updateShowDraw);
 
     return () => {
@@ -36,48 +31,31 @@ export default function Home() {
     };
   }, []);
 
-  // Render the section content based on the focused tab
-  const section = () => {
-    switch (focusedTab) {
-      case "Tasks":
-        return <Tasks drawerTriggerRef={drawerTriggerRef} />;
-      case "Favorites":
-        return <Favorites />;
-      default:
-        return <Activities />;
-    }
-  };
-
+  //(!showDraw || dialogOpened) &&
   return (
     <main
-      className={`flex flex-col md:flex-row min-w-full
-         max-h-screen overflow-hidden min-h-screen`}
+      className="flex md:flex-row min-w-full
+      max-h-screen min-h-screen h-screen"
     >
-      {/* Left section */}
-      <section
-        className={`w-full ${
-          focusedTab === "Tasks" ? "md:w-[60%]" : "md:w-full"
-        } h-screen flex flex-col`}
-      >
-        <Header />
-        <TabNav focusedTab={focusedTab} setFocusedTab={setFocusedTab} />
-        {section()}
+      <section className="w-full md:min-w-[60%] md:pr-[40%]">
+        <Tasks drawerTriggerRef={drawerTriggerRef} />
       </section>
 
       {/* Right section for larger screens */}
-      {(!showDraw || dialogOpened) && (
+      {
         <section
-          className={`w-[40%] hidden ${
-            focusedTab === "Tasks" && "md:flex"
-          } border-l border-darkerBg min-h-screen`}
+          className="hidden
+          md:flex border-l border-darkerBg min-h-screen
+          fixed right-0 top-0 bottom-0 md:w-[40%]"
         >
           <SubTasks
             setDialogOpened={setDialogOpened}
             showMore={showMore}
             setShowMore={setShowMore}
+            dialogOpened={dialogOpened}
           />
         </section>
-      )}
+      }
 
       {/* Drawer for smaller screens */}
       {(showDraw || dialogOpened) && (
@@ -90,13 +68,15 @@ export default function Home() {
           </DrawerTrigger>
           <DrawerContent
             ref={drawerContentRef}
-            className="min-h-[calc(100vh-15%)] h-[calc(100vh-15%)]"
+            className="h-[calc(100vh-15%)] min-h-[calc(100vh-15%)]
+            max-h-[calc(100vh-15%)]"
           >
             <DialogTitle />
             <SubTasks
               setDialogOpened={setDialogOpened}
               showMore={showMore}
               setShowMore={setShowMore}
+              dialogOpened={dialogOpened}
             />
           </DrawerContent>
         </Drawer>

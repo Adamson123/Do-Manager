@@ -6,16 +6,29 @@ import {
   DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import SelectPriority from "./SelectPriority";
+import SelectPriority from "../../ui/SelectPriority";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Controller, useForm } from "react-hook-form";
 
 interface CreateTaskProps {
   dialogTriggerRef: React.RefObject<HTMLButtonElement>;
 }
 
+interface taskForm {
+  title: string;
+  description: string;
+  priority: string;
+}
+
 const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
-  const [priority, setPriority] = useState("high");
+  const { register, handleSubmit, control } = useForm<taskForm>({
+    defaultValues: {
+      priority: "HIGH",
+    },
+  });
+
+  console.log(register("description"));
 
   return (
     <Dialog>
@@ -28,9 +41,12 @@ const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
         className=" max-w-lg p-0 px-3
         border-none bg-transparent"
       >
-        <div
+        <form
           className="p-6 rounded flex flex-col gap-4
           bg-background border-darkerBg"
+          onSubmit={handleSubmit((data) => {
+            console.log(data);
+          })}
         >
           <DialogHeader>
             <DialogTitle>Create Task</DialogTitle>
@@ -51,7 +67,9 @@ const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
               <input
                 type="text"
                 className="border border-darkerBg outline-none py-1 px-2 rounded
-              focus:border-primary bg-transparent"
+                focus:border-primary bg-transparent"
+                placeholder="Enter title"
+                {...register("title")}
               />
             </div>
             {/* Description */}
@@ -65,20 +83,28 @@ const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
               <textarea
                 className="border border-darkerBg outline-none py-1 px-2 
                 rounded focus:border-primary min-h-44 max-h-44 bg-transparent"
+                placeholder="Enter description"
+                {...register("description")}
               />
             </div>
             {/* priority */}
             <div className="flex flex-col gap-1 items-start">
               <span className="font-bold text-[16px]">Priority</span>
-              <SelectPriority
-                priority={priority}
-                setPriority={setPriority}
-                className="border border-darkerBg py-2 px-4 rounded"
+              <Controller
+                name="priority"
+                control={control}
+                render={({ field }) => (
+                  <SelectPriority
+                    priority={field.value}
+                    setPriority={field.onChange}
+                    className="border border-darkerBg py-2 px-4 rounded"
+                  />
+                )}
               />
             </div>
           </div>
-          <Button>Create</Button>
-        </div>
+          <Button type="submit">Create</Button>
+        </form>
       </DialogContent>
     </Dialog>
   );
