@@ -46,7 +46,7 @@ const Favorites = () => {
           scrollbarColor,
         }}
         className="grid md:grid-cols-2 gap-5
-        min-w-full p-3 pb-6 overflow-y-auto flex-grow"
+        min-w-full p-3 pb-16 md:pb-6 overflow-y-auto flex-grow"
       >
         {Array.from({ length: 7 }).map((d, i) => {
           return <SubtaskRect key={i} />;

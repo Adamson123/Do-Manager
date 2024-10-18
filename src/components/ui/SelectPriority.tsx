@@ -13,7 +13,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface SelectPriorityProps {
   showSortingIcon?: boolean;
-  priority: string;
+  priority?: string;
   setPriority: Dispatch<SetStateAction<string>>;
   className?: string;
 }

@@ -8,17 +8,17 @@ import debounce from "@/utils/debounce";
 import Priority from "@/components/ui/priority";
 
 interface SubtasksProps {
-  setDialogOpened: Dispatch<SetStateAction<boolean>>;
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
   showMore: boolean;
   setShowMore: Dispatch<SetStateAction<boolean>>;
-  dialogOpened: boolean;
+  dialogOpen: boolean;
 }
 
 const Subtasks = ({
-  setDialogOpened,
+  setDialogOpen,
   showMore,
   setShowMore,
-  dialogOpened,
+  dialogOpen,
 }: SubtasksProps) => {
   const dialogTriggerRef = useRef<HTMLButtonElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
@@ -47,7 +47,7 @@ const Subtasks = ({
     return () => {
       window.removeEventListener("resize", updateDescriptionHeight);
     };
-  }, [dialogOpened]);
+  }, [dialogOpen]);
 
   return (
     <section className="px-3 flex flex-col max-h-full select-text">
@@ -130,8 +130,9 @@ const Subtasks = ({
         {/* Add subtask */}
         <div
           onClick={() => {
+            if (!dialogTriggerRef.current) return;
             dialogTriggerRef.current?.click();
-            setDialogOpened(true);
+            setDialogOpen(true);
           }}
           className="px-3 text-primary text-[17px] py-4 border-t
           border-b border-darkerBg cursor-pointer font-bold
@@ -143,7 +144,7 @@ const Subtasks = ({
 
       <CreateSubtask
         dialogTriggerRef={dialogTriggerRef}
-        setDialogOpened={setDialogOpened}
+        setDialogOpen={setDialogOpen}
       />
     </section>
   );

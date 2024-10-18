@@ -37,7 +37,7 @@ const Tasks = ({ drawerTriggerRef }: TasksProp) => {
       <ScrollArea className="w-full flex-grow">
         <div
           className="grid grid-cols-2 lg:grid-cols-3 gap-3
-          min-w-full px-3 pb-6"
+          min-w-full px-3 pb-16 md:pb-6"
         >
           {tasks.map((task, index) => {
             return (

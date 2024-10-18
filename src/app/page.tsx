@@ -14,7 +14,7 @@ export default function Home() {
 
   // State variables
   const [showDraw, setShowDraw] = useState(false);
-  const [dialogOpened, setDialogOpened] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
   // Handle screen resizing
@@ -31,7 +31,7 @@ export default function Home() {
     };
   }, []);
 
-  //(!showDraw || dialogOpened) &&
+  //(!showDraw || dialogOpen) &&
   return (
     <main
       className="flex md:flex-row min-w-full
@@ -49,16 +49,16 @@ export default function Home() {
           fixed right-0 top-0 bottom-0 md:w-[40%]"
         >
           <SubTasks
-            setDialogOpened={setDialogOpened}
+            setDialogOpen={setDialogOpen}
             showMore={showMore}
             setShowMore={setShowMore}
-            dialogOpened={dialogOpened}
+            dialogOpen={dialogOpen}
           />
         </section>
       }
 
       {/* Drawer for smaller screens */}
-      {(showDraw || dialogOpened) && (
+      {(showDraw || dialogOpen) && (
         <Drawer>
           <DrawerTrigger asChild ref={drawerTriggerRef}>
             <Button
@@ -73,10 +73,10 @@ export default function Home() {
           >
             <DialogTitle />
             <SubTasks
-              setDialogOpened={setDialogOpened}
+              setDialogOpen={setDialogOpen}
               showMore={showMore}
               setShowMore={setShowMore}
-              dialogOpened={dialogOpened}
+              dialogOpen={dialogOpen}
             />
           </DrawerContent>
         </Drawer>

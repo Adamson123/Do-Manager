@@ -6,7 +6,7 @@ export const POST = async (request: NextRequest) => {
   const body = await request.json();
   const validation = createTaskSchema.safeParse(body);
   if (!validation.success)
-    return NextResponse.json(validation.error.errors, { status: 400 });
+    return NextResponse.json(validation.error.format(), { status: 400 });
 
   const task = await prisma.task.create({
     data: {
