@@ -1,4 +1,4 @@
-import { createTaskSchema } from "@/app/schemas";
+import { createTaskSchema } from "@/schemas";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 
@@ -12,8 +12,18 @@ export const POST = async (request: NextRequest) => {
     data: {
       title: body.title,
       description: body.description,
+      priority: body.priority,
     },
   });
 
+  return NextResponse.json(task, { status: 201 });
+};
+
+export const GET = async (request: NextRequest) => {
+  const task = await prisma.task.findMany({
+    include: {
+      subtasks: true,
+    },
+  });
   return NextResponse.json(task, { status: 201 });
 };

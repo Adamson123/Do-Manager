@@ -17,10 +17,10 @@ export const createTaskSchema = z.object({
     .max(400, {
       message: "Description must not exceed 400 characters.",
     }),
-  priority: z.string().optional(),
+  priority: z.string(),
 });
 
-export const createSubTaskSchema = z.object({
+export const createSubtaskSchema = z.object({
   title: z
     .string()
     .min(1, {
@@ -37,5 +37,8 @@ export const createSubTaskSchema = z.object({
     .max(400, {
       message: "Description must not exceed 400 characters.",
     }),
-  date: z.date(),
+  dueDate: z.date(),
+  taskId: z.string().min(36, {
+    message: "A valid task id must be provided",
+  }),
 });

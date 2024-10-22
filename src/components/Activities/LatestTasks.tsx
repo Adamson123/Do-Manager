@@ -1,8 +1,8 @@
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import tasks from "@/utils/tasks";
-import TaskCard from "../HomeComps/Tasks/TaskCard";
-import CreateTask from "../HomeComps/Tasks/CreateTask";
+import TaskCard from "../Home/Tasks/TaskCard";
+import CreateTask from "../Home/Tasks/CreateTask";
 import { useRef } from "react";
 
 const LatestTasks = () => {

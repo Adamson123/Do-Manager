@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import SubtaskRect from "@/components/HomeComps/Subtasks/SubtaskRect";
+import SubtaskRect from "@/components/Home/Subtasks/SubtaskRect";
 import { useTheme } from "next-themes";
 import SelectPriority from "@/components/ui/SelectPriority";
 
@@ -49,7 +49,7 @@ const Favorites = () => {
         min-w-full p-3 pb-16 md:pb-6 overflow-y-auto flex-grow"
       >
         {Array.from({ length: 7 }).map((d, i) => {
-          return <SubtaskRect key={i} />;
+          return <SubtaskRect key={i} showPriority={true} />;
         })}
       </div>
     </main>

@@ -6,6 +6,10 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import CreateSubtask from "./CreateSubtask";
 import debounce from "@/utils/debounce";
 import Priority from "@/components/ui/priority";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
+import { format } from "date-fns";
 
 interface SubtasksProps {
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -23,6 +27,11 @@ const Subtasks = ({
   const dialogTriggerRef = useRef<HTMLButtonElement>(null);
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [descriptionHeight, setDescriptionHeight] = useState(0);
+  const subtask = useSelector<RootState, SubtaskInitialStateTypes>(
+    (state) => state.subtask
+  );
+
+  //console.log(subtasks, "subtasks datas");
 
   //update description height when window is resizing
   useEffect(() => {
@@ -39,7 +48,6 @@ const Subtasks = ({
       setDescriptionHeight(parts);
       //  descriptionRef.current?.clientHeight
     }, 200);
-
     updateDescriptionHeight();
 
     window.addEventListener("resize", updateDescriptionHeight);
@@ -50,14 +58,14 @@ const Subtasks = ({
   }, [dialogOpen]);
 
   return (
-    <section className="px-3 flex flex-col max-h-full select-text">
+    <section className="px-3 flex flex-col max-h-full select-text min-w-full">
       {/* HEAD */}
       <div className="flex flex-col gap-2 border-b border-darkerBg py-3">
         {/* Title and Description */}
         <div className="flex flex-col gap-2">
           {/* Title */}
           <div>
-            <h2 className="text-2xl font-bold">Task Title</h2>
+            <h2 className="text-2xl font-bold">{subtask.taskTitle}</h2>
           </div>
           {/* Description */}
           <div className="flex flex-wrap gap-1">
@@ -67,10 +75,7 @@ const Subtasks = ({
                 descriptionHeight > 2 && !showMore && "max-h-[40px]" // Better control with max height
               } overflow-hidden`}
             >
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-              Doloremque, iusto quia reprehenderit nulla molestiaej fffffffttttt
-              hhhhhhhhh hhhhhhhhhhhh lopppppppppo uuuuuuuuui jjjjjjjjjjjjjj
-              uuuuuuuuuuuuuuy klopp
+              {subtask?.taskDescription}
             </p>
 
             {descriptionHeight > 2 ? (
@@ -92,7 +97,7 @@ const Subtasks = ({
           {/* Priority and Date*/}
           <div className="flex gap-2 items-center">
             {/* Priority */}
-            <Priority priority="high" />
+            <Priority priority={subtask?.taskPriority} />
             {/* Date */}
             <span
               className="bg-darkerBg
@@ -103,7 +108,7 @@ const Subtasks = ({
                 className="inline h-[14px] w-[14px] 
               -translate-y-[2px]"
               />{" "}
-              13 June
+              {format(subtask?.taskCreatedAt, "PP")}
             </span>
           </div>
           {/* Subtask Amount */}
@@ -124,8 +129,8 @@ const Subtasks = ({
         min-w-full p-3 pb-6 md:pb-3 overflow-y-auto flex-grow"
       >
         {/* #3c3133 , #936d6e*/}
-        {Array.from({ length: 7 }).map((d, i) => {
-          return <SubtaskRect key={i} />;
+        {subtask?.subtasks?.map((subtaskData, index) => {
+          return <SubtaskRect key={subtaskData.id} subtask={subtaskData} />;
         })}
         {/* Add subtask */}
         <div

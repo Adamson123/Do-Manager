@@ -2,7 +2,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { CalendarDaysIcon, Trash2 } from "lucide-react";
-import { RefObject, useContext } from "react";
+import { RefObject, useEffect } from "react";
 import { MoreHorizontal, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,22 +11,61 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import Priority from "@/components/ui/priority";
+import { RawTaskTypes } from "@/types/taskTypes";
+import { format } from "date-fns";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteTask,
+  deleteTaskSync,
+  TaskInitialStateTypes,
+} from "@/features/taskSlice";
+import { AppDispatch, RootState } from "@/store/store";
+import { ActionType } from "./CreateTask";
+import { activeTask } from "@/features/subtaskSlice";
+import setActiveTask from "@/utils/setActiveTask";
 
-interface TaskCardProp {
-  task: { title: string; priority: string; date: string };
+//{ title: string; priority: string; date: string }
+interface TaskCardProps {
+  task: RawTaskTypes;
   drawerTriggerRef?: RefObject<HTMLButtonElement>;
+  triggerEditTask: (action: ActionType) => void;
 }
 
 const colors: { [key: string]: string } = {
-  high: "rgb(var(--highPriority))",
-  medium: "rgb(var(--mediumPriority))",
-  low: "rgb(var(--lowPriority))",
+  HIGH: "rgb(var(--highPriority))",
+  MEDIUM: "rgb(var(--mediumPriority))",
+  LOW: "rgb(var(--lowPriority))",
 };
 
-const TaskCard = ({ task, drawerTriggerRef }: TaskCardProp) => {
+const TaskCard = ({
+  task,
+  drawerTriggerRef,
+  triggerEditTask,
+}: TaskCardProps) => {
+  const { deleteTaskLoading } = useSelector<RootState, TaskInitialStateTypes>(
+    (state) => state.task
+  );
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleDeleteTask = () => {
+    if (deleteTaskLoading) return;
+    dispatch(deleteTaskSync(task.id));
+    dispatch(deleteTask(task.id));
+  };
+
+  const handleEditTask = () => {
+    const { id, priority, title, description } = task;
+    triggerEditTask({
+      task: { priority, title, description },
+      id,
+      exec: "edit",
+    });
+  };
+
   return (
     <div
       onClick={() => {
+        setActiveTask(task, dispatch);
         drawerTriggerRef?.current?.click();
       }}
       className="bg-secondary border border-darkerBg
@@ -36,7 +75,7 @@ const TaskCard = ({ task, drawerTriggerRef }: TaskCardProp) => {
       {/* Priority :px-[6px] */}
       <div className="text-right">
         <Priority
-          priority={task.priority}
+          priority={task?.priority}
           style={{ fontSize: "11px" }}
           iconStyle={{ width: "11px", height: "11px" }}
         />
@@ -57,8 +96,8 @@ const TaskCard = ({ task, drawerTriggerRef }: TaskCardProp) => {
             suppressHydrationWarning
             value={80}
             className="rounded h-[5px] bg-darkerBg
-                        border-none"
-            indicatorColor={colors[task.priority]}
+            border-none"
+            indicatorColor={colors[task?.priority]}
           />
           <div className="flex justify-between text-[9px] translate-y-[2px]">
             <span>Completed</span>
@@ -79,7 +118,7 @@ const TaskCard = ({ task, drawerTriggerRef }: TaskCardProp) => {
             className="inline h-[14px] w-[14px]
             -translate-y-[2px]"
           />{" "}
-          13 June
+          {task.createdAt && format(task.createdAt, "PP")}
         </span>
 
         {/* More options : */}
@@ -104,6 +143,7 @@ const TaskCard = ({ task, drawerTriggerRef }: TaskCardProp) => {
             >
               <div className="flex flex-col text-[12px] tracking-wider">
                 <Button
+                  onClick={handleEditTask}
                   variant="ghost"
                   className="flex items-center justify-start h-10 px-2
                   hover:bg-accent hover:text-accent-foreground rounded-none"
@@ -117,6 +157,7 @@ const TaskCard = ({ task, drawerTriggerRef }: TaskCardProp) => {
                   className="flex items-center justify-start
                   h-10 px-2 hover:bg-accent  
                 text-red-500 hover:text-red-500 rounded-none"
+                  onClick={handleDeleteTask}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   <span>Delete</span>

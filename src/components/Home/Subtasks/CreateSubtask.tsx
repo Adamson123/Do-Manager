@@ -24,8 +24,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createSubTaskSchema } from "@/app/schemas";
+import { createSubtaskSchema } from "@/schemas";
 import { Textarea } from "@/components/ui/textarea";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
 
 interface CreateSubtaskProps {
   dialogTriggerRef: React.RefObject<HTMLButtonElement>;
@@ -36,20 +38,22 @@ const CreateSubtask = ({
   dialogTriggerRef,
   setDialogOpen,
 }: CreateSubtaskProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
 
-  const form = useForm<z.infer<typeof createSubTaskSchema>>({
-    resolver: zodResolver(createSubTaskSchema),
+  const form = useForm<z.infer<typeof createSubtaskSchema>>({
+    resolver: zodResolver(createSubtaskSchema),
     defaultValues: {
       title: "",
       description: "",
-      date: new Date(),
+      dueDate: new Date(),
     },
   });
 
-  function onSubmit(values: z.infer<typeof createSubTaskSchema>) {
+  function onSubmit(values: z.infer<typeof createSubtaskSchema>) {
     console.log(values);
+
     setDialogOpen(false);
   }
 
@@ -107,7 +111,7 @@ const CreateSubtask = ({
             />
             <FormField
               control={form.control}
-              name="date"
+              name="dueDate"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const Profile = () => {
   return (
@@ -25,12 +26,15 @@ const Profile = () => {
         <span className="text-muted-foreground text-[13px]">Avatar</span>
         {/* Avatar */}
         <div className="flex flex-col gap-2">
-          <img
-            src="./images/spi 2.jpg"
-            alt="Profile image"
-            className="h-[80px] w-[80px] border
-            border-darkerBg object-cover rounded"
-          />
+          <div className="relative h-[80px] w-[80px]">
+            <Image
+              src="/images/spi 2.jpg"
+              alt="Profile image"
+              className="object-cover rounded border border-darkerBg"
+              fill
+              quality={100}
+            />
+          </div>
           <Button
             className="text-[12px] h-7 rounded-[2px]
             bg-transparent border text-foreground

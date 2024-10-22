@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,27 +23,62 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SelectPriority from "@/components/ui/SelectPriority";
-import { createTaskSchema } from "@/app/schemas";
+import { createTaskSchema } from "@/schemas";
+import { useDispatch } from "react-redux";
+import { createTask, editTask, editTaskSync } from "@/features/taskSlice";
+import { AppDispatch } from "@/store/store";
+import { TaskTypes } from "@/types/taskTypes";
+
+export interface ActionType {
+  exec: string;
+  task: TaskTypes;
+  id: string;
+}
 
 interface CreateTaskProps {
   dialogTriggerRef: React.RefObject<HTMLButtonElement>;
+  action?: ActionType;
 }
+const actionDefaultValue = {
+  exec: "create",
+  task: { title: "", description: "", priority: "HIGH" },
+  id: "",
+};
 
-const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
+const CreateTask = ({
+  dialogTriggerRef,
+  action = actionDefaultValue,
+}: CreateTaskProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const form = useForm<z.infer<typeof createTaskSchema>>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      priority: "HIGH",
+      title: action.task.title,
+      description: action.task.description,
+      priority: action.task.priority,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createTaskSchema>) => {
-    console.log(values);
+  useEffect(() => {
+    form.reset({
+      title: action.task.title,
+      description: action.task.description,
+      priority: action.task.priority,
+    });
+  }, [action, form]);
+
+  const handleCreateTask = (task: z.infer<typeof createTaskSchema>) => {
+    dispatch(createTask(task)).finally(() => {
+      setDialogOpen(false);
+    });
+  };
+
+  const handleEditTask = (task: z.infer<typeof createTaskSchema>) => {
+    dispatch(editTaskSync({ task, id: action.id }));
     setDialogOpen(false);
+    dispatch(editTask({ task, id: action.id }));
   };
 
   return (
@@ -54,13 +89,22 @@ const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
       />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Task</DialogTitle>
+          <DialogTitle>
+            {action.exec === "edit" ? "Edit" : "Create"} Task
+          </DialogTitle>
           <DialogDescription>
-            Create a new task to add to your list
+            {action.exec === "edit"
+              ? "Edit your task's details"
+              : "Create a new task to add to your list"}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(
+              action.exec === "edit" ? handleEditTask : handleCreateTask
+            )}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -109,7 +153,9 @@ const CreateTask = ({ dialogTriggerRef }: CreateTaskProps) => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Create</Button>
+            <Button type="submit">
+              {action.exec === "edit" ? "Save task" : "Create"}
+            </Button>
           </form>
         </Form>
       </DialogContent>

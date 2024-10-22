@@ -1,8 +1,8 @@
 "use client";
 
-import Tasks from "@/components/HomeComps/Tasks/Tasks";
+import Tasks from "@/components/Home/Tasks/Tasks";
 import { useEffect, useRef, useState } from "react";
-import SubTasks from "@/components/HomeComps/Subtasks/Subtasks";
+import SubTasks from "@/components/Home/Subtasks/Subtasks";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { DialogTitle } from "@radix-ui/react-dialog";
