@@ -1,37 +1,53 @@
 "use client";
-import { CalendarDaysIcon, Plus } from "lucide-react";
+import { CalendarDaysIcon, File, Plus } from "lucide-react";
 import SubtaskRect from "./SubtaskRect";
-import { useTheme } from "next-themes";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import CreateSubtask from "./CreateSubtask";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import CreateSubtask, { ActionType } from "./CreateSubtask";
 import debounce from "@/utils/debounce";
 import Priority from "@/components/ui/priority";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
 import { format } from "date-fns";
+import useCreateSubtask from "@/hooks/useCreateSubtask";
 
 interface SubtasksProps {
-  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  setCreateDialogOpen: Dispatch<SetStateAction<boolean>>;
   showMore: boolean;
   setShowMore: Dispatch<SetStateAction<boolean>>;
-  dialogOpen: boolean;
+  createDialogOpen: boolean;
+  globalCreateSubtask: ReturnType<typeof useCreateSubtask>;
 }
 
 const Subtasks = ({
-  setDialogOpen,
+  setCreateDialogOpen,
   showMore,
   setShowMore,
-  dialogOpen,
+  createDialogOpen,
+  globalCreateSubtask,
 }: SubtasksProps) => {
-  const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+  const { action, setAction, triggerCreateSubtask } = globalCreateSubtask;
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [descriptionHeight, setDescriptionHeight] = useState(0);
-  const subtask = useSelector<RootState, SubtaskInitialStateTypes>(
-    (state) => state.subtask
-  );
+  const { taskTitle, taskDescription, taskPriority, taskCreatedAt, subtasks } =
+    useSelector<RootState, SubtaskInitialStateTypes>((state) => state.subtask);
 
-  //console.log(subtasks, "subtasks datas");
+  const sortedSubtasks = useMemo(() => {
+    const tasksSortedByDate = subtasks?.length
+      ? [...subtasks].sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        )
+      : [];
+    return tasksSortedByDate;
+  }, [subtasks]);
 
   //update description height when window is resizing
   useEffect(() => {
@@ -48,34 +64,42 @@ const Subtasks = ({
       setDescriptionHeight(parts);
       //  descriptionRef.current?.clientHeight
     }, 200);
+
     updateDescriptionHeight();
-
     window.addEventListener("resize", updateDescriptionHeight);
-
     return () => {
       window.removeEventListener("resize", updateDescriptionHeight);
     };
-  }, [dialogOpen]);
+  }, [createDialogOpen]);
+
+  // To trigger task editing
+  const triggerEditSubtask = (action: ActionType) => {
+    setAction(action);
+    setCreateDialogOpen(true);
+  };
 
   return (
-    <section className="px-3 flex flex-col max-h-full select-text min-w-full">
+    <section
+      className="px-3 flex flex-col max-h-full  select-text
+     min-w-full min-h-full"
+    >
       {/* HEAD */}
       <div className="flex flex-col gap-2 border-b border-darkerBg py-3">
         {/* Title and Description */}
         <div className="flex flex-col gap-2">
           {/* Title */}
           <div>
-            <h2 className="text-2xl font-bold">{subtask.taskTitle}</h2>
+            <h2 className="text-2xl font-bold">{taskTitle}</h2>
           </div>
           {/* Description */}
           <div className="flex flex-wrap gap-1">
             <p
               ref={descriptionRef}
               className={`text-[14px] text-muted-foreground ${
-                descriptionHeight > 2 && !showMore && "max-h-[40px]" // Better control with max height
+                descriptionHeight > 2 && !showMore && "max-h-[45px]"
               } overflow-hidden`}
             >
-              {subtask?.taskDescription}
+              {taskDescription}
             </p>
 
             {descriptionHeight > 2 ? (
@@ -97,7 +121,7 @@ const Subtasks = ({
           {/* Priority and Date*/}
           <div className="flex gap-2 items-center">
             {/* Priority */}
-            <Priority priority={subtask?.taskPriority} />
+            <Priority priority={taskPriority} />
             {/* Date */}
             <span
               className="bg-darkerBg
@@ -108,13 +132,13 @@ const Subtasks = ({
                 className="inline h-[14px] w-[14px] 
               -translate-y-[2px]"
               />{" "}
-              {format(subtask?.taskCreatedAt, "PP")}
+              {format(taskCreatedAt, "PP")}
             </span>
           </div>
           {/* Subtask Amount */}
           <div>
             <span className="text-[13px] text-muted-foreground font-bold">
-              Subtasks:12
+              Subtasks:{sortedSubtasks.length}
             </span>
           </div>
         </div>
@@ -126,20 +150,35 @@ const Subtasks = ({
           scrollbarColor: "rgb(var(--darkerBg)) hsl(var(--background))",
         }}
         className="flex flex-col gap-5
-        min-w-full p-3 pb-6 md:pb-3 overflow-y-auto flex-grow"
+        min-w-full pt-3 pb-6 md:pb-3 overflow-y-auto flex-grow relative"
       >
-        {/* #3c3133 , #936d6e*/}
-        {subtask?.subtasks?.map((subtaskData, index) => {
-          return <SubtaskRect key={subtaskData.id} subtask={subtaskData} />;
-        })}
+        {sortedSubtasks.length ? (
+          sortedSubtasks.map((subtask) => {
+            return (
+              <SubtaskRect
+                key={subtask?.id}
+                subtask={subtask}
+                triggerEditSubtask={triggerEditSubtask}
+              />
+            );
+          })
+        ) : (
+          <div
+            className="top-0 left-0 bottom-0 right-0 flex flex-col
+            justify-center flex-grow items-center text-darkerBg"
+          >
+            <File className="h-[60px] w-[60px]" strokeWidth={"1.5"} />
+            <span className="font-bold text-[13px] -translate-y-[2px]">
+              No subtask was found
+            </span>
+          </div>
+        )}
         {/* Add subtask */}
         <div
           onClick={() => {
-            if (!dialogTriggerRef.current) return;
-            dialogTriggerRef.current?.click();
-            setDialogOpen(true);
+            triggerCreateSubtask(setCreateDialogOpen);
           }}
-          className="px-3 text-primary text-[17px] py-4 border-t
+          className="text-primary text-[17px] py-4 border-t
           border-b border-darkerBg cursor-pointer font-bold
           hover:opacity-[0.8] transition-all"
         >
@@ -148,8 +187,10 @@ const Subtasks = ({
       </div>
 
       <CreateSubtask
-        dialogTriggerRef={dialogTriggerRef}
-        setDialogOpen={setDialogOpen}
+        //dialogTriggerRef={dialogTriggerRef}
+        setDialogOpen={setCreateDialogOpen}
+        dialogOpen={createDialogOpen}
+        action={action}
       />
     </section>
   );

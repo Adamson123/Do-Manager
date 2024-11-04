@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { Input } from "../ui/input";
 
 const Profile = () => {
   return (
@@ -8,18 +9,19 @@ const Profile = () => {
 
       {/* Username */}
       <div className="flex flex-col items-start gap-1">
-        <div className="flex gap-2 items-center w-full justify-between">
-          <span className="text-muted-foreground text-[13px]">Username</span>
-          <span className="text-[13px] text-primary">5 / 40</span>
-        </div>
+        <span className="text-muted-foreground text-[13px]">Username</span>
+
         {/* input */}
-        <input
-          type="text"
-          className="border border-darkerBg
+        <div className="flex flex-col gap-2 items-start w-full">
+          <Input
+            type="text"
+            className="border border-darkerBg
           outline-none py-[5px] px-1 rounded
           focus:border-primary flex-grow bg-transparent 
           text-[14px] w-full"
-        />
+          />
+          <span className="text-sm text-muted-foreground">3/40</span>
+        </div>
       </div>
       {/* Avatar */}
       <div className="flex flex-col items-start gap-1">

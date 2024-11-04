@@ -36,6 +36,9 @@ body {
   background-clip: text;
   color: transparent;
 }
+.timeInput:focus + div {
+  opacity: 0;
+}
 
 @layer utilities {
   .text-balance {

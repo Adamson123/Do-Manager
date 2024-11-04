@@ -1,65 +1,112 @@
-import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 import { createTaskSchema } from "@/schemas";
+import simplifyError from "@/utils/simplifyError";
 
 export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } }
 ) => {
-  const { id } = params;
+  try {
+    const { id } = params;
 
-  const task = await prisma.task.findUnique({
-    where: {
-      id,
-    },
-  });
+    //finding task to check if it's exists
+    const task = await prisma.task.findUnique({
+      where: {
+        id,
+      },
+    });
 
-  if (!task)
-    return NextResponse.json({ error: "task was not found" }, { status: 404 });
+    //Checking if it's exists
+    if (!task)
+      return NextResponse.json(
+        { errMsg: "Task was not found" },
+        { status: 404 }
+      );
 
-  await prisma.task.delete({
-    where: {
-      id,
-    },
-  });
-  const tasks = await prisma.task.findMany();
+    //delete the task's subtasks
+    await prisma.subtask.deleteMany({
+      where: {
+        taskId: id,
+      },
+    });
 
-  return NextResponse.json(tasks, { status: 200 });
+    //delete the task itself
+    await prisma.task.delete({
+      where: {
+        id,
+      },
+    });
+
+    // //fetch all remaining tasks
+    // const tasks = await prisma.task.findMany({
+    //   include: {
+    //     subtasks: true,
+    //   },
+    // });
+
+    return NextResponse.json({ id }, { status: 200 });
+  } catch (err) {
+    const error = err as Error;
+    console.log(error.message, "error delete /api/task");
+    return NextResponse.json(
+      { errMsg: "Error deleting task" },
+      { status: 500 }
+    );
+  }
 };
 
 export const PATCH = async (
   request: NextRequest,
   { params }: { params: { id: string } }
 ) => {
-  const { id } = params;
-  const task = await prisma.task.findUnique({
-    where: {
-      id,
-    },
-  });
-  //checking if task exists
-  if (!task)
-    return NextResponse.json({ error: "task was not found" }, { status: 404 });
+  try {
+    const { id } = params;
 
-  const body = await request.json();
-  const validation = createTaskSchema.safeParse(body);
-  //validating task fields
-  if (!validation.success)
-    return NextResponse.json(validation.error.format(), { status: 400 });
+    //finding task to check if it's exists
+    const task = await prisma.task.findUnique({
+      where: {
+        id,
+      },
+    });
+    //checking if task exists
+    if (!task)
+      return NextResponse.json(
+        { errMsg: "Task was not found" },
+        { status: 404 }
+      );
 
-  await prisma.task.update({
-    where: {
-      id,
-    },
-    data: {
-      title: body.title,
-      description: body.description,
-      priority: body.priority,
-    },
-  });
-  const tasks = await prisma.task.findMany();
-  //console.log(tasks);
+    const body = await request.json();
+    const validation = createTaskSchema.safeParse(body);
+    //validating task fields
+    if (!validation.success) {
+      const errors = validation.error.format();
 
-  return NextResponse.json(tasks, { status: 200 });
+      return NextResponse.json(
+        { errMsg: simplifyError(errors)[0] },
+        { status: 400 }
+      );
+    }
+
+    //update the task
+    const updatedTask = await prisma.task.update({
+      where: {
+        id,
+      },
+      data: {
+        title: body.title,
+        description: body.description,
+        priority: body.priority,
+      },
+      include: {
+        subtasks: true,
+      },
+    });
+
+    return NextResponse.json(updatedTask, { status: 200 });
+  } catch (err) {
+    const error = err as Error;
+    console.log(error.message, "error patch /api/task");
+    return NextResponse.json({ errMsg: "Error editing task" }, { status: 500 });
+  }
 };

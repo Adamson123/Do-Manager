@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Subtask" ADD COLUMN     "dateCompleted" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

@@ -21,7 +21,7 @@ const High = ({
       className={clsx(
         "text-[14px] py-[7px]",
         "tracking-wider text-highPriority",
-        "border-highPriority",
+        "border-highPriority text-nowrap",
         className
       )}
     >
@@ -31,7 +31,7 @@ const High = ({
         className={clsx(
           "inline fill-current",
           "-translate-y-[1px] -translate-x-[2px]",
-          "h-[15px] w-[15px]",
+          "h-[15px] w-[15px] ",
           iconClassName
         )}
       />
@@ -51,7 +51,7 @@ const Medium = ({
       className={clsx(
         "text-[14px] py-[7px]",
         "tracking-wider text-mediumPriority",
-        "border-mediumPriority",
+        "border-mediumPriority text-nowrap",
         className
       )}
     >
@@ -81,7 +81,7 @@ const Low = ({
       className={clsx(
         "text-[14px] py-[7px]",
         "tracking-wider text-lowPriority",
-        "border-lowPriority",
+        "border-lowPriority text-nowrap",
         className
       )}
     >
@@ -100,7 +100,7 @@ const Low = ({
 };
 
 interface PriorityTypes extends PrioritiesTypes {
-  priority: string;
+  priority?: string;
 }
 
 const Priority = ({
@@ -129,6 +129,7 @@ const Priority = ({
           iconStyle={iconStyle}
         />
       );
+
     default:
       return (
         <Low

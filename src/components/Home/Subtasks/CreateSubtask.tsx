@@ -1,11 +1,10 @@
-import { useState, useRef, Dispatch, SetStateAction } from "react";
+import { useState, useRef, Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { AlignLeft, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Dialog,
   DialogContent,
@@ -26,55 +25,158 @@ import {
 import { Input } from "@/components/ui/input";
 import { createSubtaskSchema } from "@/schemas";
 import { Textarea } from "@/components/ui/textarea";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
-
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import {
+  createSubtask,
+  editSubtask,
+  SubtaskInitialStateTypes,
+} from "@/features/subtaskSlice";
+import DueDatePicker from "./DueDatePicker";
+import { SubtaskTypes } from "@/types/subtaskTypes";
+import { updateSubstask } from "@/features/taskSlice";
+export interface ActionType {
+  exec: string;
+  task: SubtaskTypes;
+  id: string;
+}
 interface CreateSubtaskProps {
-  dialogTriggerRef: React.RefObject<HTMLButtonElement>;
+  //  dialogTriggerRef: React.RefObject<HTMLButtonElement>;
+  dialogOpen: boolean;
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  action?: ActionType;
 }
 
+const actionDefaultValue = {
+  exec: "create",
+  task: {
+    title: "",
+    description: "",
+    dueDate: new Date().toISOString(),
+    taskId: "",
+  },
+  id: "",
+};
+
 const CreateSubtask = ({
-  dialogTriggerRef,
   setDialogOpen,
+  dialogOpen,
+  action = actionDefaultValue,
 }: CreateSubtaskProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { createSubtaskLoading, editSubtaskLoading, taskId } = useSelector<
+    RootState,
+    SubtaskInitialStateTypes
+  >((state) => state.subtask);
+
+  //const [dialogOpen, setdialogOpen] = useState(false);
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const datePickerRef = useRef<HTMLDivElement>(null);
+  //closed by user while a request was made
+  const [closeWhileOnReq, setCloseWhileOnReq] = useState(false);
+  const [fulfilled, setFulfilled] = useState(false);
 
   const form = useForm<z.infer<typeof createSubtaskSchema>>({
     resolver: zodResolver(createSubtaskSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      dueDate: new Date(),
+      title: action.task.title,
+      description: action.task.description,
+      dueDate: action.task.dueDate,
+      taskId: action.task.taskId || taskId,
     },
   });
 
-  function onSubmit(values: z.infer<typeof createSubtaskSchema>) {
-    console.log(values);
+  useEffect(() => {
+    form.reset({
+      title: action.task.title,
+      description: action.task.description,
+      dueDate: action.task.dueDate,
+      taskId: action.task.taskId || taskId,
+    });
+  }, [action, form]);
 
-    setDialogOpen(false);
-  }
+  useEffect(() => {
+    form.setValue("taskId", taskId);
+  }, [taskId]);
 
+  useEffect(() => {
+    if (!fulfilled) return;
+
+    if (!closeWhileOnReq) {
+      setDialogOpen(false);
+    } else {
+      setCloseWhileOnReq(false);
+    }
+    setFulfilled(false);
+  }, [fulfilled, closeWhileOnReq]);
+
+  const handleCreateSubtask = (
+    subtask: z.infer<typeof createSubtaskSchema>
+  ) => {
+    if (createSubtaskLoading) return;
+    dispatch(createSubtask(subtask)).finally(() => {
+      setFulfilled(true);
+    });
+  };
+
+  const handleEditSubtask = (subtask: z.infer<typeof createSubtaskSchema>) => {
+    if (editSubtaskLoading) return;
+    dispatch(editSubtask({ subtask, id: action.id })).finally(() => {
+      setFulfilled(true);
+    });
+  };
+
+  const getRightLabel = () => {
+    if (action.exec === "edit") {
+      if (editSubtaskLoading) {
+        return "Updating...";
+      } else {
+        return "Update subtask";
+      }
+    } else {
+      if (createSubtaskLoading) {
+        return "Creating...";
+      } else {
+        return "Create subtask";
+      }
+    }
+  };
+
+  const label = getRightLabel();
   return (
-    <Dialog onOpenChange={setDialogOpen}>
-      <DialogTrigger
-        ref={dialogTriggerRef}
-        className="w-0 h-0 p-0 opacity-0 pointer-events-none"
-      />
+    <Dialog
+      onOpenChange={(state) => {
+        setDialogOpen(state);
+        if (state) return;
+        if (createSubtaskLoading || editSubtaskLoading) {
+          setCloseWhileOnReq(true);
+        }
+      }}
+      open={dialogOpen}
+    >
+      <DialogTrigger className="w-0 h-0 p-0 opacity-0 pointer-events-none" />
       <DialogContent
         className="max-w-lg z-[100]"
         onClick={() => setOpenDatePicker(false)}
       >
         <DialogHeader>
-          <DialogTitle>Create Subtask</DialogTitle>
+          <DialogTitle>
+            {" "}
+            {action.exec === "edit" ? "Edit" : "Create"} Subtask
+          </DialogTitle>
           <DialogDescription>
-            Create a new subtask to add to your list
+            {action.exec === "edit"
+              ? "Edit your subtask's details"
+              : "Create a new subtask to add to your list"}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(
+              action.exec === "edit" ? handleEditSubtask : handleCreateSubtask
+            )}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -115,7 +217,7 @@ const CreateSubtask = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    <Clock className="h-5 w-5 inline" /> Date
+                    <Clock className="h-5 w-5 inline" /> Due date
                   </FormLabel>
                   <FormControl className="relative">
                     <div className="relative">
@@ -129,7 +231,7 @@ const CreateSubtask = ({
                         border-darkerBg bg-transparent hover:bg-darkerBg h-[37px]"
                       >
                         {field.value
-                          ? format(field.value, "PPP")
+                          ? format(field.value, "EEE, MMM d, h aaa")
                           : "Pick a date"}
                       </Button>
                       {openDatePicker && (
@@ -138,27 +240,21 @@ const CreateSubtask = ({
                           onClick={(event) => {
                             event.stopPropagation();
                           }}
+                          // -top-10 left-36
                           className="absolute -top-[310px] bg-secondary
                            rounded-md shadow-lg"
                         >
-                          <Calendar
-                            selected={field.value}
-                            mode="single"
-                            onSelect={(date) => {
-                              field.onChange(date);
-                            }}
-                            initialFocus
-                          />
+                          <DueDatePicker field={field} form={form} />
                         </div>
                       )}
                     </div>
                   </FormControl>
                   <FormMessage className="text-[12px]" />
-                  <FormDescription>Add Date</FormDescription>
+                  <FormDescription>Add due date</FormDescription>
                 </FormItem>
               )}
             />
-            <Button type="submit">Create</Button>
+            <Button type="submit">{label}</Button>
           </form>
         </Form>
       </DialogContent>

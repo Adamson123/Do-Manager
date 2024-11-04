@@ -1,11 +1,21 @@
 "use client";
-import Chart from "@/components/Activities/Chart";
+import CompletedTasksChart from "@/components/Activities/CompletedTasksChart";
 import LatestTasks from "@/components/Activities/LatestTasks";
 import ProgressChart from "@/components/Activities/ProgressChart";
 import RecentSubtasks from "@/components/Activities/RecentSubtasks";
 import TasksStatistics from "@/components/Activities/TasksStatistics";
+import { getMultipleTasks } from "@/features/taskSlice";
+import { AppDispatch } from "@/store/store";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const Activities = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  // Fetch tasks on component mount
+  useEffect(() => {
+    dispatch(getMultipleTasks());
+  }, [dispatch]);
+
   return (
     <main
       className="grid md:grid-cols-2 lg:grid-cols-3
@@ -14,16 +24,14 @@ const Activities = () => {
     >
       {/* Tasks and tasks statistics  */}
       <section className="flex flex-col gap-3">
-        <Chart />
+        <CompletedTasksChart />
         <TasksStatistics />
       </section>
-      <section
-        className="gap-3 flex flex-col"
-      >
+      <section className="gap-3 flex flex-col">
         <ProgressChart />
         <LatestTasks />
       </section>
-      <section className="md:col-span-2 lg:col-span-1 h-full">
+      <section className="md:col-span-2 lg:col-span-1 lg:overflow-y-hidden">
         <RecentSubtasks />
       </section>
     </main>

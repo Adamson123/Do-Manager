@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -24,9 +24,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import SelectPriority from "@/components/ui/SelectPriority";
 import { createTaskSchema } from "@/schemas";
-import { useDispatch } from "react-redux";
-import { createTask, editTask, editTaskSync } from "@/features/taskSlice";
-import { AppDispatch } from "@/store/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createTask,
+  editTask,
+  TaskInitialStateTypes,
+} from "@/features/taskSlice";
+import { AppDispatch, RootState } from "@/store/store";
 import { TaskTypes } from "@/types/taskTypes";
 
 export interface ActionType {
@@ -36,8 +40,10 @@ export interface ActionType {
 }
 
 interface CreateTaskProps {
-  dialogTriggerRef: React.RefObject<HTMLButtonElement>;
+  // dialogTriggerRef: React.RefObject<HTMLButtonElement>;
   action?: ActionType;
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
+  dialogOpen: boolean;
 }
 const actionDefaultValue = {
   exec: "create",
@@ -46,11 +52,20 @@ const actionDefaultValue = {
 };
 
 const CreateTask = ({
-  dialogTriggerRef,
+  // dialogTriggerRef,
   action = actionDefaultValue,
+  setDialogOpen,
+  dialogOpen,
 }: CreateTaskProps) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  //const [dialogOpen, setDialogOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
+  const { createTaskLoading, editTaskLoading } = useSelector<
+    RootState,
+    TaskInitialStateTypes
+  >((state) => state.task);
+  //closed by user while a request was made
+  const [closeWhileOnReq, setCloseWhileOnReq] = useState(false);
+  const [fulfilled, setFulfilled] = useState(false);
 
   const form = useForm<z.infer<typeof createTaskSchema>>({
     resolver: zodResolver(createTaskSchema),
@@ -69,24 +84,62 @@ const CreateTask = ({
     });
   }, [action, form]);
 
-  const handleCreateTask = (task: z.infer<typeof createTaskSchema>) => {
-    dispatch(createTask(task)).finally(() => {
+  useEffect(() => {
+    if (!fulfilled) return;
+
+    if (!closeWhileOnReq) {
       setDialogOpen(false);
+    } else {
+      setCloseWhileOnReq(false);
+    }
+    setFulfilled(false);
+  }, [fulfilled, closeWhileOnReq]);
+
+  const handleCreateTask = (task: z.infer<typeof createTaskSchema>) => {
+    if (createTaskLoading) return;
+    dispatch(createTask(task)).finally(() => {
+      setFulfilled(true);
     });
   };
 
   const handleEditTask = (task: z.infer<typeof createTaskSchema>) => {
-    dispatch(editTaskSync({ task, id: action.id }));
-    setDialogOpen(false);
-    dispatch(editTask({ task, id: action.id }));
+    //  dispatch(editTaskSync({ task, id: action.id }));
+    if (editTaskLoading) return;
+    dispatch(editTask({ task, id: action.id })).finally(() => {
+      setFulfilled(true);
+    });
   };
 
+  const getRightLabel = () => {
+    if (action.exec === "edit") {
+      if (editTaskLoading) {
+        return "Updating...";
+      } else {
+        return "Update task";
+      }
+    } else {
+      if (createTaskLoading) {
+        return "Creating...";
+      } else {
+        return "Create task";
+      }
+    }
+  };
+
+  const label = getRightLabel();
+
   return (
-    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger
-        ref={dialogTriggerRef}
-        className="w-0 h-0 p-0 opacity-0 pointer-events-none"
-      />
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(state) => {
+        setDialogOpen(state);
+        if (state) return;
+        if (createTaskLoading || editTaskLoading) {
+          setCloseWhileOnReq(true);
+        }
+      }}
+    >
+      <DialogTrigger className="w-0 h-0 p-0 opacity-0 pointer-events-none" />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -150,12 +203,11 @@ const CreateTask = ({
                       className="w-full"
                     />
                   </FormControl>
+                  <FormMessage className="text-[12px]" />
                 </FormItem>
               )}
             />
-            <Button type="submit">
-              {action.exec === "edit" ? "Save task" : "Create"}
-            </Button>
+            <Button type="submit">{label}</Button>
           </form>
         </Form>
       </DialogContent>

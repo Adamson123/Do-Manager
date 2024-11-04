@@ -3,33 +3,62 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import subtasks from "@/utils/subtasks";
-
-const colors: { [key: string]: string } = {
-  completed: "rgb(var(--lowPriority))",
-  pending: "rgb(var(--mediumPriority))",
-  overdue: "rgb(var(--highPriority))",
-};
+import { TaskInitialStateTypes } from "@/features/taskSlice";
+import { RootState } from "@/store/store";
+import { RawSubtaskTypes } from "@/types/subtaskTypes";
+import { format } from "date-fns";
+import { useSelector } from "react-redux";
 
 const RecentSubtasks = () => {
+  const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
+    (state) => state.task
+  );
+
+  const subtasks = tasks
+    .flatMap((task) =>
+      task.subtasks.map((subtask) => ({ ...subtask, priority: task.priority }))
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    .slice(0, 10);
+
+  const getSubtaskState = (subtask: RawSubtaskTypes) => {
+    const today = new Date();
+    const dueDate = new Date(subtask.dueDate);
+    const hoursLeft = dueDate.getTime() - today.getTime();
+    const dueDateState = Math.round(hoursLeft / (1000 * 3600));
+
+    if (dueDateState >= 0 && !subtask.completed) {
+      return { state: "Pending", color: "rgb(var(--mediumPriority))" };
+    } else if (dueDateState <= 0 && !subtask.completed) {
+      return { state: "Overdue", color: "rgb(var(--highPriority))" };
+    } else if (subtask.completed) {
+      return { state: "Completed", color: "rgb(var(--lowPriority))" };
+    }
+  };
+
+  const capitalizeFirstLetter = (priority: string) => {
+    return priority[0] + priority.substring(1, priority.length).toLowerCase();
+  };
   return (
     <div
-      className="bg-secondary w-full h-full flex flex-col
-     gap-3 rounded"
+      className="bg-secondary w-full flex flex-col
+     gap-3 rounded h-full"
     >
       <div
-        className="flex justify-between font-bold p-3
+        className="font-bold p-3
        box-border h-[48px]"
       >
         <h3>Recent subtasks</h3>
       </div>
-      {/* min-h-[322px]  */}
-      <Table className="min-h-[100%-48px] max-h-[100%-48px]">
+      {/* min-h-[322px] min-h-[100%-48px] max-h-[100%-48px] */}
+      <Table className="max-h-[100%-48px]">
         <TableCaption></TableCaption>
         <TableHeader>
           <TableRow>
@@ -41,19 +70,19 @@ const RecentSubtasks = () => {
         </TableHeader>
         <TableBody>
           {subtasks.map((subtask) => (
-            <TableRow key={subtask.title}>
+            <TableRow className="border-b border-b-darkerBg" key={subtask.id}>
               <TableCell className="font-bold w-[300px]">
                 {subtask.title}
               </TableCell>
-              <TableCell>{subtask.createdAt}</TableCell>
-              <TableCell>{subtask.priority}</TableCell>
+              <TableCell>{format(subtask.createdAt, "EEE, MMM d")}</TableCell>
+              <TableCell>{capitalizeFirstLetter(subtask.priority)}</TableCell>
               <TableCell
                 style={{
-                  color: colors[subtask.status.toLowerCase()],
+                  color: getSubtaskState(subtask)?.color,
                 }}
                 className="text-right"
               >
-                {subtask.status}
+                {getSubtaskState(subtask)?.state}
               </TableCell>
             </TableRow>
           ))}

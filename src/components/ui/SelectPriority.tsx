@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/select";
 import { AlertTriangle, Flame, Leaf } from "lucide-react";
 import { useTheme } from "next-themes";
-
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface SelectPriorityProps {
@@ -76,6 +75,11 @@ const SelectPriority = ({
                -translate-y-[1px] text-lowPriority stroke-background"
             />
           </SelectItem>
+          {showSortingIcon && (
+            <SelectItem value="'" className="">
+              <span className="">Default</span>{" "}
+            </SelectItem>
+          )}
         </SelectGroup>
       </SelectContent>
     </Select>

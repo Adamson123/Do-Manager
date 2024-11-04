@@ -1,12 +1,45 @@
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
-import tasks from "@/utils/tasks";
 import TaskCard from "../Home/Tasks/TaskCard";
-import CreateTask from "../Home/Tasks/CreateTask";
-import { useRef } from "react";
+import CreateTask, { ActionType } from "../Home/Tasks/CreateTask";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { TaskInitialStateTypes } from "@/features/taskSlice";
+import ConfirmDelete from "../Home/Tasks/ComfirmDelete";
+import useDeleteTask from "@/hooks/useDeleteTask";
+import useCreateTask from "@/hooks/useCreateTask";
 
 const LatestTasks = () => {
   const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+  const {
+    action,
+    createDialogOpen,
+    setAction,
+    setCreateDialogOpen,
+    triggerCreateTask,
+  } = useCreateTask();
+  const { deleteDialogOpen, setDeleteDialogOpen, taskId, triggerDeleteTask } =
+    useDeleteTask();
+  const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
+    (state) => state.task
+  );
+
+  const tasksSortedByDate = tasks?.length
+    ? [...tasks]
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        .slice(0, 5)
+    : [];
+
+  // To trigger task editing
+  const triggerEditTask = (action: ActionType) => {
+    setAction(action);
+    setCreateDialogOpen(true);
+  };
+
   return (
     <div
       className="bg-secondary p-3 rounded flex flex-col
@@ -15,7 +48,7 @@ const LatestTasks = () => {
       {/* HEAD */}
       <div className="flex justify-between font-bold">
         <h3>Latest tasks</h3>
-        <Button onClick={() => dialogTriggerRef.current?.click()}>
+        <Button onClick={triggerCreateTask}>
           Add New&nbsp;
           <Plus strokeWidth={3} className="w-[18px] h-[18px]" />
         </Button>
@@ -27,11 +60,29 @@ const LatestTasks = () => {
           overflow-y-auto overflow-x-hidden smd:grid-cols-2 
           md:grid-cols-1"
       >
-        {tasks.map((task, index) => {
-          return <TaskCard key={index} task={task} />;
+        {tasksSortedByDate.map((task, index) => {
+          return (
+            <TaskCard
+              key={index}
+              task={task}
+              triggerEditTask={triggerEditTask}
+              triggerDeleteTask={triggerDeleteTask}
+            />
+          );
         })}
       </div>
-      <CreateTask dialogTriggerRef={dialogTriggerRef} />
+      <div className="fixed">
+        <CreateTask
+          setDialogOpen={setCreateDialogOpen}
+          dialogOpen={createDialogOpen}
+          action={action}
+        />
+        <ConfirmDelete
+          dialogOpen={deleteDialogOpen}
+          setDialogOpen={setDeleteDialogOpen}
+          taskId={taskId}
+        />
+      </div>
     </div>
   );
 };

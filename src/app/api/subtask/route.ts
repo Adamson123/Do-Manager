@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/client";
 import { createSubtaskSchema } from "@/schemas";
+import simplifyError from "@/utils/simplifyError";
 
 export const POST = async (request: NextRequest) => {
   try {
     const body = await request.json();
     const validation = createSubtaskSchema.safeParse(body);
-    if (!validation.success)
-      return NextResponse.json(validation.error.format(), { status: 400 });
 
+    if (!validation.success) {
+      const errors = validation.error.format();
+
+      return NextResponse.json(
+        { errMsg: simplifyError(errors)[0] },
+        { status: 400 }
+      );
+    }
     const subtask = await prisma.subtask.create({
       data: {
         title: body.title,
@@ -25,6 +32,10 @@ export const POST = async (request: NextRequest) => {
     return NextResponse.json(subtask, { status: 201 });
   } catch (err) {
     const error = err as Error;
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.log(error.message, "error post /api/subtask");
+    return NextResponse.json(
+      { errMsg: "Error creating subtask" },
+      { status: 500 }
+    );
   }
 };

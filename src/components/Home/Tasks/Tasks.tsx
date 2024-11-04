@@ -1,14 +1,14 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import TaskCard from "./TaskCard";
 import {
-  RefObject,
   useEffect,
-  useRef,
   useState,
   useMemo,
-  useCallback,
+  useContext,
+  SetStateAction,
+  Dispatch,
 } from "react";
-import { Plus } from "lucide-react";
+import { FolderOpen, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateTask, { ActionType } from "./CreateTask";
 import SelectPriority from "../../ui/SelectPriority";
@@ -16,27 +16,44 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
 import { getMultipleTasks, TaskInitialStateTypes } from "@/features/taskSlice";
 import BarLoader from "react-spinners/BarLoader";
-import setActiveTask from "@/utils/setActiveTask";
+import useSetActiveTask from "@/hooks/useSetActiveTask";
+import { RawTaskTypes } from "@/types/taskTypes";
+import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
+import { appLayoutContext } from "@/app/appLayout";
+import ConfirmDelete from "./ComfirmDelete";
+import useDeleteTask from "@/hooks/useDeleteTask";
+import useCreateTask from "@/hooks/useCreateTask";
 
 interface TasksProps {
-  drawerTriggerRef: RefObject<HTMLButtonElement>;
+  setOpenDrawer: Dispatch<SetStateAction<boolean>>;
 }
 
-const Tasks = ({ drawerTriggerRef }: TasksProps) => {
+const Tasks = ({ setOpenDrawer }: TasksProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+  // const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+  const setActiveTask = useSetActiveTask();
   const [priority, setPriority] = useState("");
-  const [action, setAction] = useState<ActionType>({
-    exec: "create",
-    task: { title: "", description: "", priority: "HIGH" },
-    id: "",
-  });
-  const populatedSubtask = useRef(false);
+  const {
+    action,
+    createDialogOpen,
+    setAction,
+    setCreateDialogOpen,
+    triggerCreateTask,
+  } = useCreateTask();
+  const { deleteDialogOpen, setDeleteDialogOpen, taskId, triggerDeleteTask } =
+    useDeleteTask();
 
   const { tasks, getMultipleTaskLoading } = useSelector<
     RootState,
     TaskInitialStateTypes
   >((state) => state.task);
+
+  const { taskId: currentTaskId } = useSelector<
+    RootState,
+    SubtaskInitialStateTypes
+  >((state) => state.subtask);
+
+  const { search } = useContext(appLayoutContext);
 
   // Fetch tasks on component mount
   useEffect(() => {
@@ -52,34 +69,30 @@ const Tasks = ({ drawerTriggerRef }: TasksProps) => {
         )
       : [];
 
-    if (tasksSortedByDate.length && !populatedSubtask.current) {
-      setActiveTask(tasksSortedByDate[0], dispatch);
-      populatedSubtask.current = true;
-    }
     const tasksSortedByPriorty = tasksSortedByDate.filter(
       (task) => task.priority === priority
     );
     const otherTasks = tasksSortedByDate.filter(
       (task) => task.priority !== priority
     );
+    const result = [...tasksSortedByPriorty, ...otherTasks].filter((task) =>
+      task.title.toLowerCase().includes(search.toLowerCase())
+    );
+    return result;
+  }, [tasks, priority, search]);
 
-    return [...tasksSortedByPriorty, ...otherTasks];
-  }, [tasks, priority]);
+  useEffect(() => {
+    if (sortedTasks.length) {
+      setActiveTask(
+        sortedTasks.find((task) => task.id === currentTaskId) || sortedTasks[0]
+      );
+    }
+  }, [sortedTasks, taskId, dispatch]);
 
-  // Callback to trigger task editing
+  // To trigger task editing
   const triggerEditTask = (action: ActionType) => {
     setAction(action);
-    dialogTriggerRef.current?.click();
-  };
-
-  // Callback to trigger task creation
-  const triggerCreateTask = () => {
-    setAction({
-      exec: "create",
-      task: { title: "", description: "", priority: "HIGH" },
-      id: "",
-    });
-    dialogTriggerRef.current?.click();
+    setCreateDialogOpen(true);
   };
 
   return (
@@ -89,7 +102,10 @@ const Tasks = ({ drawerTriggerRef }: TasksProps) => {
       overflow-hidden"
     >
       {/* Head */}
-      <div className="pl-4 pb-[3px] pt-[13px] flex justify-between items-center pr-3">
+      <div
+        className="pl-4 pb-[3px] pt-[13px] flex justify-between
+       items-center pr-3 z-20"
+      >
         <SelectPriority
           showSortingIcon={true}
           priority={priority}
@@ -100,35 +116,72 @@ const Tasks = ({ drawerTriggerRef }: TasksProps) => {
       {/* Tasks */}
       {!getMultipleTaskLoading ? (
         <ScrollArea className="w-full flex-grow">
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 min-w-full px-3 pb-16 md:pb-6">
-            {sortedTasks.length > 0 &&
-              sortedTasks.map((task) => (
+          <div
+            className="grid grid-cols-2 ssmd:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 
+          gap-3 min-w-full px-3 pb-16 md:pb-6"
+          >
+            {sortedTasks.length > 0 ? (
+              sortedTasks.map((task: RawTaskTypes) => (
                 <TaskCard
                   key={task.id}
                   task={task}
-                  drawerTriggerRef={drawerTriggerRef}
                   triggerEditTask={triggerEditTask}
+                  triggerDeleteTask={triggerDeleteTask}
+                  setOpenDrawer={setOpenDrawer}
                 />
-              ))}
+              ))
+            ) : (
+              <div
+                className="top-[45%] left-[50%] translate-x-[-50%]
+                translate-y-[-45%] absolute flex flex-col items-center
+                text-darkerBg"
+              >
+                {!search ? (
+                  <FolderOpen
+                    className="h-[73px] w-[73px]"
+                    strokeWidth={"1.5"}
+                  />
+                ) : (
+                  <Search className="h-[80px] w-[80px]" strokeWidth={"1.5"} />
+                )}
+                <span className="font-bold text-[15px] -translate-y-1">
+                  No task was found
+                </span>
+              </div>
+            )}
           </div>
         </ScrollArea>
       ) : (
-        <BarLoader
-          className="top-[45%] left-[50%] translate-x-[-50%]
-          translate-y-[-45%] absolute bg-darkerBg"
-          color="hsl(var(--primary))"
-        />
+        <div
+          className="top-0 left-0 bottom-0 right-0 flex flex-col
+          justify-center flex-grow items-center text-darkerBg h-full absolute"
+        >
+          <BarLoader
+            className="absolute bg-darkerBg"
+            color="hsl(var(--primary))"
+          />
+        </div>
       )}
 
       {/* Create task button */}
       <Button
         onClick={triggerCreateTask}
-        className="h-[55px] w-[55px] rounded-full fixed bottom-5 left-5 shadow-md"
+        className="h-[55px] w-[55px] rounded-full fixed bottom-5
+        left-5 shadow-md"
       >
         <Plus className="min-w-5 min-h-5" strokeWidth="3" />
       </Button>
       <div className="fixed">
-        <CreateTask dialogTriggerRef={dialogTriggerRef} action={action} />
+        <ConfirmDelete
+          dialogOpen={deleteDialogOpen}
+          setDialogOpen={setDeleteDialogOpen}
+          taskId={taskId}
+        />
+        <CreateTask
+          dialogOpen={createDialogOpen}
+          setDialogOpen={setCreateDialogOpen}
+          action={action}
+        />
       </div>
     </section>
   );

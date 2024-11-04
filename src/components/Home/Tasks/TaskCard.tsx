@@ -2,7 +2,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { CalendarDaysIcon, Trash2 } from "lucide-react";
-import { RefObject, useEffect } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { MoreHorizontal, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,21 +14,18 @@ import Priority from "@/components/ui/priority";
 import { RawTaskTypes } from "@/types/taskTypes";
 import { format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  deleteTask,
-  deleteTaskSync,
-  TaskInitialStateTypes,
-} from "@/features/taskSlice";
+import { TaskInitialStateTypes } from "@/features/taskSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { ActionType } from "./CreateTask";
-import { activeTask } from "@/features/subtaskSlice";
-import setActiveTask from "@/utils/setActiveTask";
+import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
+import useSetActiveTask from "@/hooks/useSetActiveTask";
 
 //{ title: string; priority: string; date: string }
 interface TaskCardProps {
   task: RawTaskTypes;
-  drawerTriggerRef?: RefObject<HTMLButtonElement>;
   triggerEditTask: (action: ActionType) => void;
+  triggerDeleteTask: (taskId: string) => void;
+  setOpenDrawer?: Dispatch<SetStateAction<boolean>>;
 }
 
 const colors: { [key: string]: string } = {
@@ -39,25 +36,32 @@ const colors: { [key: string]: string } = {
 
 const TaskCard = ({
   task,
-  drawerTriggerRef,
   triggerEditTask,
+  triggerDeleteTask,
+  setOpenDrawer,
 }: TaskCardProps) => {
-  const { deleteTaskLoading } = useSelector<RootState, TaskInitialStateTypes>(
+  const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
     (state) => state.task
   );
+  const { taskId } = useSelector<RootState, SubtaskInitialStateTypes>(
+    (state) => state.subtask
+  );
   const dispatch = useDispatch<AppDispatch>();
+  const setActiveTask = useSetActiveTask();
 
-  const handleDeleteTask = () => {
-    if (deleteTaskLoading) return;
-    dispatch(deleteTaskSync(task.id));
-    dispatch(deleteTask(task.id));
-  };
+  const getPercentage = useMemo(() => {
+    const completedTasks = task.subtasks?.filter(
+      (subtask) => subtask.completed
+    ).length;
+    const percentage = (completedTasks * 100) / task.subtasks?.length || 0;
+    return Math.round(percentage);
+  }, [dispatch, tasks]);
 
   const handleEditTask = () => {
     const { id, priority, title, description } = task;
     triggerEditTask({
       task: { priority, title, description },
-      id,
+      id, //id for task
       exec: "edit",
     });
   };
@@ -65,17 +69,21 @@ const TaskCard = ({
   return (
     <div
       onClick={() => {
-        setActiveTask(task, dispatch);
-        drawerTriggerRef?.current?.click();
+        setActiveTask(task);
+        setOpenDrawer && setOpenDrawer(true);
       }}
-      className="bg-secondary border border-darkerBg
+      className="bg-secondary border
       text-muted-foreground h-48 rounded-2xl box-border
       p-2 pb-[9px] flex flex-col cursor-pointer"
+      style={{
+        borderColor:
+          taskId === task.id ? colors[task.priority] : "rgb(var(--darkerBg))",
+      }}
     >
       {/* Priority :px-[6px] */}
       <div className="text-right">
         <Priority
-          priority={task?.priority}
+          priority={task.priority}
           style={{ fontSize: "11px" }}
           iconStyle={{ width: "11px", height: "11px" }}
         />
@@ -94,14 +102,14 @@ const TaskCard = ({
         <div className="">
           <Progress
             suppressHydrationWarning
-            value={80}
+            value={getPercentage}
             className="rounded h-[5px] bg-darkerBg
             border-none"
-            indicatorColor={colors[task?.priority]}
+            indicatorColor={colors[task.priority]}
           />
           <div className="flex justify-between text-[9px] translate-y-[2px]">
             <span>Completed</span>
-            <span>80%</span>
+            <span>{getPercentage}%</span>
           </div>
         </div>
       </div>
@@ -139,7 +147,7 @@ const TaskCard = ({
               onClick={(event) => {
                 event.stopPropagation();
               }}
-              className="w-[90px] p-0 mr-2"
+              className="w-[100px] p-0 mr-2"
             >
               <div className="flex flex-col text-[12px] tracking-wider">
                 <Button
@@ -157,7 +165,7 @@ const TaskCard = ({
                   className="flex items-center justify-start
                   h-10 px-2 hover:bg-accent  
                 text-red-500 hover:text-red-500 rounded-none"
-                  onClick={handleDeleteTask}
+                  onClick={() => triggerDeleteTask(task.id)}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   <span>Delete</span>
