@@ -2,7 +2,7 @@
 
 import { Progress } from "@/components/ui/progress";
 import { CalendarDaysIcon, Trash2 } from "lucide-react";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, memo, SetStateAction, useMemo } from "react";
 import { MoreHorizontal, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,6 @@ import Priority from "@/components/ui/priority";
 import { RawTaskTypes } from "@/types/taskTypes";
 import { format } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
-import { TaskInitialStateTypes } from "@/features/taskSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { ActionType } from "./CreateTask";
 import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
@@ -40,13 +39,13 @@ const TaskCard = ({
   triggerDeleteTask,
   setOpenDrawer,
 }: TaskCardProps) => {
-  const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
-    (state) => state.task
-  );
+  // const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
+  //   (state) => state.task
+  // );
   const { taskId } = useSelector<RootState, SubtaskInitialStateTypes>(
     (state) => state.subtask
   );
-  const dispatch = useDispatch<AppDispatch>();
+
   const setActiveTask = useSetActiveTask();
 
   const getPercentage = useMemo(() => {
@@ -55,7 +54,7 @@ const TaskCard = ({
     ).length;
     const percentage = (completedTasks * 100) / task.subtasks?.length || 0;
     return Math.round(percentage);
-  }, [dispatch, tasks]);
+  }, [task.subtasks]);
 
   const handleEditTask = () => {
     const { id, priority, title, description } = task;
@@ -65,6 +64,8 @@ const TaskCard = ({
       exec: "edit",
     });
   };
+
+  console.log("Taskcard rendered");
 
   return (
     <div
@@ -179,4 +180,6 @@ const TaskCard = ({
   );
 };
 
-export default TaskCard;
+export default memo(TaskCard, (prevProps, nextProps) => {
+  return true;
+});

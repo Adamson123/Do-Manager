@@ -1,17 +1,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-interface NavbarProps {}
-
-const Navbar = ({}: NavbarProps) => {
+const Navbar = () => {
   const currentPath = usePathname();
-
   const isActivePath = (path: string) => {
     return (
       (path === "Tasks" && currentPath === "/") ||
       currentPath === "/" + path.toLowerCase()
     );
   };
+
   return (
     <nav className="px-4">
       <div className="border-b border-darkerBg flex gap-3">

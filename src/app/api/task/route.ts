@@ -39,7 +39,7 @@ export const POST = async (request: NextRequest) => {
   }
 };
 
-export const GET = async (request: NextRequest) => {
+export const GET = async () => {
   try {
     const task = await prisma.task.findMany({
       include: {

@@ -2,7 +2,7 @@ import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import TaskCard from "../Home/Tasks/TaskCard";
 import CreateTask, { ActionType } from "../Home/Tasks/CreateTask";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { TaskInitialStateTypes } from "@/features/taskSlice";
@@ -11,7 +11,6 @@ import useDeleteTask from "@/hooks/useDeleteTask";
 import useCreateTask from "@/hooks/useCreateTask";
 
 const LatestTasks = () => {
-  const dialogTriggerRef = useRef<HTMLButtonElement>(null);
   const {
     action,
     createDialogOpen,

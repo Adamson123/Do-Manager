@@ -34,7 +34,7 @@ import {
 } from "@/features/subtaskSlice";
 import DueDatePicker from "./DueDatePicker";
 import { SubtaskTypes } from "@/types/subtaskTypes";
-import { updateSubstask } from "@/features/taskSlice";
+
 export interface ActionType {
   exec: string;
   task: SubtaskTypes;
@@ -93,7 +93,7 @@ const CreateSubtask = ({
       dueDate: action.task.dueDate,
       taskId: action.task.taskId || taskId,
     });
-  }, [action, form]);
+  }, [action, form, taskId]);
 
   useEffect(() => {
     form.setValue("taskId", taskId);

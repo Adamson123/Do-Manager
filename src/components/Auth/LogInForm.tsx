@@ -14,7 +14,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -128,7 +127,7 @@ const LogInForm = () => {
         </Button>
         <div className="text-center text-sm">
           Don't have an account?{" "}
-          <Link href="/signup" className="underline">
+          <Link href={"/signup"} className="underline">
             Sign up
           </Link>
         </div>

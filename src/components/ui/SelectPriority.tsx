@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { AlertTriangle, Flame, Leaf } from "lucide-react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface SelectPriorityProps {
@@ -44,11 +45,14 @@ const SelectPriority = ({
          flex gap-2 ${className}`}
       >
         {showSortingIcon && (
-          <img
-            src={sortingIcon}
-            alt="sorting icon"
-            className="h-[18px] w-[17px]"
-          />
+          <div className="h-[18px] w-[17px] relative">
+            <Image
+              src={sortingIcon}
+              alt="sorting icon"
+              height={100}
+              width={100}
+            />
+          </div>
         )}
         <SelectValue placeholder="Priority" defaultValue="HIGH" />
       </SelectTrigger>

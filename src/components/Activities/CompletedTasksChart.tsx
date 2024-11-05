@@ -41,7 +41,7 @@ const generateDateRanges = () => {
     const end = new Date(signupDate);
 
     // Set start and limit dates for each range based on increment and skip values
-    let limitDays = Math.min(currentStart + increment, totalDays);
+    const limitDays = Math.min(currentStart + increment, totalDays);
     start.setDate(signupDate.getDate() + currentStart);
     end.setDate(signupDate.getDate() + limitDays);
 
@@ -97,7 +97,7 @@ const CompletedTasksChart = () => {
     );
 
     // Count completed subtasks for each date in the range
-    return dateList.map((date, index) => ({
+    return dateList.map((date) => ({
       date,
       Completed: completedSubtasks.filter(
         (subtask) => subtask.dateCompleted.split("T")[0] === date
