@@ -2,12 +2,27 @@
 
 import Tasks from "@/components/Home/Tasks/Tasks";
 import { useEffect, useState } from "react";
-import SubTasks from "@/components/Home/Subtasks/Subtasks";
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import debounce from "@/utils/debounce";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
+import dynamic from "next/dynamic";
+//dynamic import will only reflect well in small devices
+const SubTasks = dynamic(() => import("@/components/Home/Subtasks/Subtasks"), {
+  ssr: false,
+});
+const Drawer = dynamic(
+  () => import("@/components/ui/drawer").then((mod) => mod.Drawer),
+  { ssr: false }
+);
+const DrawerContent = dynamic(
+  () => import("@/components/ui/drawer").then((mod) => mod.DrawerContent),
+  { ssr: false }
+);
+const DrawerTrigger = dynamic(
+  () => import("@/components/ui/drawer").then((mod) => mod.DrawerTrigger),
+  { ssr: false }
+);
 
 export default function Home() {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -42,7 +57,7 @@ export default function Home() {
       </section>
 
       {/* Right section for larger screens */}
-      {
+      {(!showDraw || dialogOpen) && (
         <section
           className="hidden
           md:flex border-l border-darkerBg min-h-screen
@@ -56,7 +71,7 @@ export default function Home() {
             globalCreateSubtask={globalCreateSubtask}
           />
         </section>
-      }
+      )}
 
       {/* Drawer for smaller screens */}
       {(showDraw || dialogOpen) && (

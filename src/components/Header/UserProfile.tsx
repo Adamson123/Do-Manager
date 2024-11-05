@@ -1,11 +1,12 @@
 import { Briefcase, ChevronDown, SettingsIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import Settings from "../Settings/Settings";
-import { useRef } from "react";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+const Settings = dynamic(() => import("../Settings/Settings"), { ssr: false });
 
 const UserProfile = () => {
-  const dialogTriggerRef = useRef<HTMLButtonElement>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   return (
     <Popover>
       <PopoverTrigger>
@@ -43,7 +44,7 @@ const UserProfile = () => {
             </div>
             {/* Settings button */}
             <Button
-              onClick={() => dialogTriggerRef.current?.click()}
+              onClick={() => setSettingsOpen(true)}
               className="h-8 bg-transparent border-darkerBg border 
             text-foreground text-[14px] flex gap-1 hover:bg-darkerBg"
             >
@@ -63,7 +64,9 @@ const UserProfile = () => {
             Log out
           </div>
         </div>
-        <Settings dialogTriggerRef={dialogTriggerRef} />
+        {settingsOpen && (
+          <Settings dialogOpen={settingsOpen} setDialogOpen={setSettingsOpen} />
+        )}
       </PopoverContent>
     </Popover>
   );

@@ -5,14 +5,16 @@
 @font-face {
   font-family: roboto;
   src: url("./fonts/RobotoFlex.ttf");
+  font-display: swap;
 }
 @font-face {
   font-family: montserrat;
   src: url("./fonts/Montserrat.ttf");
+  font-display: swap;
 }
 
 body {
-  font-family: roboto;
+  font-family: roboto, Arial, sans-serif;
   overflow-y: hidden;
 }
 

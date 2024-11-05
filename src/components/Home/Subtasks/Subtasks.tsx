@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import CreateSubtask, { ActionType } from "./CreateSubtask";
+
 import debounce from "@/utils/debounce";
 import Priority from "@/components/ui/priority";
 import { useSelector } from "react-redux";
@@ -17,7 +17,9 @@ import { RootState } from "@/store/store";
 import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
 import { format } from "date-fns";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
-
+import dynamic from "next/dynamic";
+import { ActionType } from "./CreateSubtask";
+const CreateSubtask = dynamic(() => import("./CreateSubtask"), { ssr: false });
 interface SubtasksProps {
   setCreateDialogOpen: Dispatch<SetStateAction<boolean>>;
   showMore: boolean;
@@ -186,12 +188,14 @@ const Subtasks = ({
         </div>
       </div>
 
-      <CreateSubtask
-        //dialogTriggerRef={dialogTriggerRef}
-        setDialogOpen={setCreateDialogOpen}
-        dialogOpen={createDialogOpen}
-        action={action}
-      />
+      {createDialogOpen && (
+        <CreateSubtask
+          //dialogTriggerRef={dialogTriggerRef}
+          setDialogOpen={setCreateDialogOpen}
+          dialogOpen={createDialogOpen}
+          action={action}
+        />
+      )}
     </section>
   );
 };

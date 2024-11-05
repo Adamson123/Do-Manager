@@ -2,7 +2,14 @@
 
 import { Progress } from "@/components/ui/progress";
 import { CalendarDaysIcon, Trash2 } from "lucide-react";
-import { Dispatch, memo, SetStateAction, useMemo } from "react";
+import {
+  Dispatch,
+  memo,
+  SetStateAction,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { MoreHorizontal, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +20,12 @@ import {
 import Priority from "@/components/ui/priority";
 import { RawTaskTypes } from "@/types/taskTypes";
 import { format } from "date-fns";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import { ActionType } from "./CreateTask";
 import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
 import useSetActiveTask from "@/hooks/useSetActiveTask";
 
-//{ title: string; priority: string; date: string }
 interface TaskCardProps {
   task: RawTaskTypes;
   triggerEditTask: (action: ActionType) => void;
@@ -39,9 +45,7 @@ const TaskCard = ({
   triggerDeleteTask,
   setOpenDrawer,
 }: TaskCardProps) => {
-  // const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
-  //   (state) => state.task
-  // );
+  const taskCardRef = useRef<HTMLDivElement>(null);
   const { taskId } = useSelector<RootState, SubtaskInitialStateTypes>(
     (state) => state.subtask
   );
@@ -56,32 +60,31 @@ const TaskCard = ({
     return Math.round(percentage);
   }, [task.subtasks]);
 
-  const handleEditTask = () => {
+  const handleEditTask = useCallback(() => {
     const { id, priority, title, description } = task;
     triggerEditTask({
       task: { priority, title, description },
-      id, //id for task
+      id,
       exec: "edit",
     });
-  };
+  }, [task, triggerEditTask]);
 
-  console.log("Taskcard rendered");
+  const handleClick = useCallback(() => {
+    setActiveTask(task);
+    if (setOpenDrawer) setOpenDrawer(true);
+  }, [task, setOpenDrawer]);
 
   return (
     <div
-      onClick={() => {
-        setActiveTask(task);
-        setOpenDrawer && setOpenDrawer(true);
-      }}
-      className="bg-secondary border
-      text-muted-foreground h-48 rounded-2xl box-border
-      p-2 pb-[9px] flex flex-col cursor-pointer"
+      onClick={handleClick}
+      className="bg-secondary border text-muted-foreground h-48 
+      rounded-2xl box-border p-2 pb-[9px] flex flex-col cursor-pointer"
       style={{
         borderColor:
           taskId === task.id ? colors[task.priority] : "rgb(var(--darkerBg))",
       }}
     >
-      {/* Priority :px-[6px] */}
+      {/* Priority Indicator */}
       <div className="text-right">
         <Priority
           priority={task.priority}
@@ -90,22 +93,19 @@ const TaskCard = ({
         />
       </div>
 
-      {/* Title and progress */}
-      <div className="flex flex-col gap-2 mt-4">
-        {/* Title */}
+      {/* Title and Progress */}
+      <div className="flex flex-col gap-2 mt-4 w-full">
         <div
-          className="text-foreground 
-          text-[15px] tracking-wide font-bold"
+          ref={taskCardRef}
+          className="text-foreground text-[15px] tracking-wide font-bold"
         >
           {task?.title}
         </div>
-        {/* Progress */}
-        <div className="">
+        <div>
           <Progress
             suppressHydrationWarning
             value={getPercentage}
-            className="rounded h-[5px] bg-darkerBg
-            border-none"
+            className="rounded h-[5px] bg-darkerBg border-none"
             indicatorColor={colors[task.priority]}
           />
           <div className="flex justify-between text-[9px] translate-y-[2px]">
@@ -115,22 +115,17 @@ const TaskCard = ({
         </div>
       </div>
 
-      {/* Date and more options  flex-col gap-1 items-start*/}
+      {/* Date and More Options */}
       <div className="mt-auto flex justify-between items-end">
-        {/* Date */}
         <span
-          className="bg-darkerBg
-        text-black dark:text-muted-foreground 
-          text-[13px] p-[6px] rounded-lg"
+          className="bg-darkerBg text-black dark:text-muted-foreground 
+        text-[13px] p-[6px] rounded-lg"
         >
-          <CalendarDaysIcon
-            className="inline h-[14px] w-[14px]
-            -translate-y-[2px]"
-          />{" "}
+          <CalendarDaysIcon className="inline h-[14px] w-[14px] -translate-y-[2px]" />
           {task.createdAt && format(task.createdAt, "PP")}
         </span>
 
-        {/* More options : */}
+        {/* More Options Menu */}
         <div>
           <Popover>
             <PopoverTrigger
@@ -155,7 +150,7 @@ const TaskCard = ({
                   onClick={handleEditTask}
                   variant="ghost"
                   className="flex items-center justify-start h-10 px-2
-                  hover:bg-accent hover:text-accent-foreground rounded-none"
+                   hover:bg-accent hover:text-accent-foreground rounded-none"
                 >
                   <Edit className="mr-2 h-4 w-4" />
                   <span>Edit</span>
@@ -163,9 +158,8 @@ const TaskCard = ({
                 <div className="h-[1px] bg-darkerBg" />
                 <Button
                   variant="ghost"
-                  className="flex items-center justify-start
-                  h-10 px-2 hover:bg-accent  
-                text-red-500 hover:text-red-500 rounded-none"
+                  className="flex items-center justify-start h-10 px-2 hover:bg-accent
+                   text-red-500 hover:text-red-500 rounded-none"
                   onClick={() => triggerDeleteTask(task.id)}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -181,5 +175,10 @@ const TaskCard = ({
 };
 
 export default memo(TaskCard, (prevProps, nextProps) => {
-  return true;
+  return (
+    prevProps.task.id === nextProps.task.id &&
+    prevProps.triggerEditTask === nextProps.triggerEditTask &&
+    prevProps.triggerDeleteTask === nextProps.triggerDeleteTask &&
+    prevProps.setOpenDrawer === nextProps.setOpenDrawer
+  );
 });

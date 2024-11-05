@@ -11,18 +11,17 @@ import { Button } from "@/components/ui/button";
 import Profile from "./Profile";
 import AccountSecurity from "./AccountSecurity/AccountSecurity";
 import DeleteAccount from "./DeleteAccount";
+import { Dispatch, SetStateAction } from "react";
 
 interface SettngsProps {
-  dialogTriggerRef: React.RefObject<HTMLButtonElement>;
+  dialogOpen: boolean;
+  setDialogOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const Settings = ({ dialogTriggerRef }: SettngsProps) => {
+const Settings = ({ setDialogOpen, dialogOpen }: SettngsProps) => {
   return (
-    <Dialog>
-      <DialogTrigger
-        ref={dialogTriggerRef}
-        className="w-0 h-0 p-0 opacity-0 pointer-events-none"
-      ></DialogTrigger>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogTrigger className="w-0 h-0 p-0 opacity-0 pointer-events-none"></DialogTrigger>
 
       <DialogContent
         closeDialogStyle="top-9"
@@ -31,8 +30,8 @@ const Settings = ({ dialogTriggerRef }: SettngsProps) => {
       >
         <div
           className="px-6 rounded flex flex-col gap-4
-                    bg-background border-darkerBg overflow-y-auto 
-                    overflow-x-hidden py-5"
+           bg-background border-darkerBg overflow-y-auto 
+             overflow-x-hidden py-5"
         >
           <DialogHeader>
             <DialogTitle className="text-2xl">Settings</DialogTitle>

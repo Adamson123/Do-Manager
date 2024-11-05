@@ -7,10 +7,11 @@ import {
   useContext,
   SetStateAction,
   Dispatch,
+  useCallback,
 } from "react";
 import { FolderOpen, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CreateTask, { ActionType } from "./CreateTask";
+import dynamic from "next/dynamic";
 import SelectPriority from "../../ui/SelectPriority";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
@@ -23,6 +24,8 @@ import { appLayoutContext } from "@/app/appLayout";
 import ConfirmDelete from "./ComfirmDelete";
 import useDeleteTask from "@/hooks/useDeleteTask";
 import useCreateTask from "@/hooks/useCreateTask";
+import { ActionType } from "./CreateTask";
+const CreateTask = dynamic(() => import("./CreateTask"), { ssr: false });
 
 interface TasksProps {
   setOpenDrawer: Dispatch<SetStateAction<boolean>>;
@@ -30,7 +33,6 @@ interface TasksProps {
 
 const Tasks = ({ setOpenDrawer }: TasksProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  // const dialogTriggerRef = useRef<HTMLButtonElement>(null);
   const setActiveTask = useSetActiveTask();
   const [priority, setPriority] = useState("");
   const {
@@ -69,13 +71,13 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
         )
       : [];
 
-    const tasksSortedByPriorty = tasksSortedByDate.filter(
+    const tasksSortedByPriority = tasksSortedByDate.filter(
       (task) => task.priority === priority
     );
     const otherTasks = tasksSortedByDate.filter(
       (task) => task.priority !== priority
     );
-    const result = [...tasksSortedByPriorty, ...otherTasks].filter((task) =>
+    const result = [...tasksSortedByPriority, ...otherTasks].filter((task) =>
       task.title.toLowerCase().includes(search.toLowerCase())
     );
     return result;
@@ -87,13 +89,16 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
         sortedTasks.find((task) => task.id === currentTaskId) || sortedTasks[0]
       );
     }
-  }, [sortedTasks, taskId, dispatch]);
+  }, [sortedTasks, currentTaskId, setActiveTask]);
 
   // To trigger task editing
-  const triggerEditTask = (action: ActionType) => {
-    setAction(action);
-    setCreateDialogOpen(true);
-  };
+  const triggerEditTask = useCallback(
+    (action: ActionType) => {
+      setAction(action);
+      setCreateDialogOpen(true);
+    },
+    [setAction, setCreateDialogOpen]
+  );
 
   return (
     <section
@@ -177,11 +182,13 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
           setDialogOpen={setDeleteDialogOpen}
           taskId={taskId}
         />
-        <CreateTask
-          dialogOpen={createDialogOpen}
-          setDialogOpen={setCreateDialogOpen}
-          action={action}
-        />
+        {createDialogOpen && (
+          <CreateTask
+            dialogOpen={createDialogOpen}
+            setDialogOpen={setCreateDialogOpen}
+            action={action}
+          />
+        )}
       </div>
     </section>
   );
