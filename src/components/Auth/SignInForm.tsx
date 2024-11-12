@@ -1,5 +1,5 @@
 "use client";
-import { signUpSchema } from "@/schemas";
+import { signInSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -26,38 +26,31 @@ import { AlertTriangle, EyeIcon, EyeOffIcon } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import Link from "next/link";
 import userServices from "@/services/userServices";
-import signUpAction from "@/actions/signUpAction";
-import { useRouter } from "next/navigation";
-import PulseLoader from "react-spinners/PulseLoader";
+import signInAction from "@/actions/signInAction";
 import delayTest from "@/utils/delayTest";
+import PulseLoader from "react-spinners/PulseLoader";
 
-const SignUpForm = () => {
+const SignInForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, startTransition] = useTransition();
     const [error, setError] = useState("");
-    const form = useForm<z.infer<typeof signUpSchema>>({
-        resolver: zodResolver(signUpSchema),
+
+    const form = useForm<z.infer<typeof signInSchema>>({
+        resolver: zodResolver(signInSchema),
         defaultValues: {
             email: "",
-            name: "",
             password: "",
         },
     });
-    const router = useRouter();
 
-    const handleSignUp = async (user: z.infer<typeof signUpSchema>) => {
-        // const res = await userServices.signup(user);
-        // console.log(res);
-
+    const handleSignIn = async (user: z.infer<typeof signInSchema>) => {
+        //const res = await userServices.signin(user);
         if (loading) return;
         setError("");
         startTransition(() => {
-            signUpAction(user).then((responds) => {
-                if (!responds) return;
-                if (responds.errMsg) {
+            signInAction(user).then((responds) => {
+                if (responds) {
                     setError(responds.errMsg);
-                } else {
-                    router.push("/");
                 }
             });
         });
@@ -66,32 +59,17 @@ const SignUpForm = () => {
     return (
         <Card className="w-[350px] border-darkerBg">
             <CardHeader>
-                <CardTitle>Sign Up</CardTitle>
-                <CardDescription>Create a new account</CardDescription>
+                <CardTitle>Sign in</CardTitle>
+                <CardDescription>
+                    Sign in to your acount account
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
                     <form
-                        onSubmit={form.handleSubmit(handleSignUp)}
+                        onSubmit={form.handleSubmit(handleSignIn)}
                         className="space-y-3"
                     >
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="border-darkerBg"
-                                            placeholder="username"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-[12px]" />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="email"
@@ -103,7 +81,6 @@ const SignUpForm = () => {
                                             className="border-darkerBg"
                                             placeholder="email"
                                             {...field}
-                                            type="email"
                                         />
                                     </FormControl>
                                     <FormMessage className="text-[12px]" />
@@ -133,7 +110,7 @@ const SignUpForm = () => {
                                                 variant="ghost"
                                                 size="icon"
                                                 className="absolute right-0 top-0 h-full px-3 py-2 
-                                                hover:bg-transparent"
+                                                 hover:bg-transparent"
                                                 onClick={() =>
                                                     setShowPassword(
                                                         !showPassword
@@ -174,7 +151,7 @@ const SignUpForm = () => {
                                     color="rgb(var(--darkerBg))"
                                 />
                             ) : (
-                                "Sign Up"
+                                "Sign In"
                             )}
                         </Button>
                     </form>
@@ -185,19 +162,19 @@ const SignUpForm = () => {
                     <div className="absolute inset-0 flex items-center">
                         <span className="w-full border-t" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
+                    <div className="relative flex justify-center text-xs">
                         <span className="bg-background px-2 text-muted-foreground">
-                            Or sign up with
+                            OR SIGN IN WITH
                         </span>
                     </div>
                 </div>
                 <Button variant="outline" className="w-full">
-                    Sign up with Google
+                    Sign in with Google
                 </Button>
                 <div className="text-center text-sm">
-                    Already have an account?{" "}
-                    <Link href="/signin" className="underline">
-                        Sign in
+                    Don't have an account?{" "}
+                    <Link href={"/signup"} className="underline">
+                        Sign up
                     </Link>
                 </div>
             </CardFooter>
@@ -205,4 +182,4 @@ const SignUpForm = () => {
     );
 };
 
-export default SignUpForm;
+export default SignInForm;

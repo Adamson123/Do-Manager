@@ -17,16 +17,22 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
-import { TaskInitialStateTypes } from "@/features/taskSlice";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import { getMultipleTasks, TaskInitialStateTypes } from "@/features/taskSlice";
 import DateRangeSelector, { DateRangeTypes } from "./DateRangeSelector";
 
 export const description = "A bar chart showing completed subtasks over time";
 
 // Generate ranges of start and limit dates based on the user's signup date
 const generateDateRanges = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  // Fetch tasks on component mount
+  useEffect(() => {
+    dispatch(getMultipleTasks());
+  }, [dispatch]);
+
   const signupDate = new Date("2024-9-16");
   const today = new Date();
   const totalDays = differenceInDays(today, signupDate) + 1;

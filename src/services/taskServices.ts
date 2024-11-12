@@ -37,11 +37,19 @@ const taskServices = {
   getMultipleTasks: async () => {
     try {
       // await delayTest(5000);
+
       const response = await api.get("/task");
+      if (typeof response.data === "string")
+        throw { errMsg: "Please log in to view tasks" };
       return response.data;
     } catch (err) {
-      const error = err as AxiosError;
-      throw error.response?.data;
+      if (err instanceof AxiosError) {
+        const error = err as AxiosError;
+        throw error.response?.data;
+      } else {
+        const error = err as Error;
+        throw error;
+      }
     }
   },
 };

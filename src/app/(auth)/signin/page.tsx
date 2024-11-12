@@ -1,14 +1,14 @@
-import LogInForm from "@/components/Auth/LogInForm";
+import SignInForm from "@/components/Auth/SignInForm";
 
-const LogIn = () => {
+const SignIn = () => {
   return (
     <main
       className="flex justify-center items-center
       min-h-screen max-h-screen overflow-y-auto py-4 overflow-x-hidden"
     >
-      <LogInForm />
+      <SignInForm />
     </main>
   );
 };
 
-export default LogIn;
+export default SignIn;

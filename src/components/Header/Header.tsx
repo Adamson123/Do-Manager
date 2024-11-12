@@ -5,7 +5,7 @@ import { ModeToggle } from "../ui/toggleMode";
 import UserProfile from "./UserProfile";
 import Logo from "./Logo";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
-import { appLayoutContext } from "@/app/appLayout";
+import { appLayoutContext } from "@/app/(main)/layout";
 import debounce from "@/utils/debounce";
 import { Input } from "../ui/input";
 const Header = () => {

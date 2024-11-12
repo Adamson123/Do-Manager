@@ -7,6 +7,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import debounce from "@/utils/debounce";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
 import dynamic from "next/dynamic";
+
 //dynamic import will only reflect well in small devices
 const SubTasks = dynamic(() => import("@/components/Home/Subtasks/Subtasks"), {
   ssr: false,
@@ -58,7 +59,7 @@ export default function Home() {
 
       {/* Right section for larger screens */}
       {(!showDraw || dialogOpen) && (
-        <section
+        <aside
           className="hidden
           md:flex border-l border-darkerBg min-h-screen
           fixed right-0 top-0 bottom-0 md:w-[40%]"
@@ -70,7 +71,7 @@ export default function Home() {
             setShowMore={setShowMore}
             globalCreateSubtask={globalCreateSubtask}
           />
-        </section>
+        </aside>
       )}
 
       {/* Drawer for smaller screens */}

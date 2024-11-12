@@ -22,7 +22,7 @@ const Navbar = () => {
                   : "text-muted-foreground"
               }`}
               key={index}
-              href={value === "Tasks" ? "/" : "/" + value.toLocaleLowerCase()}
+              href={value === "Tasks" ? "/" : "/" + value.toLowerCase()}
             >
               {value}
             </Link>

@@ -12,7 +12,7 @@ const subtasks = [
     status: "Completed",
   },
   {
-    title: "Fix Bugs in Login System",
+    title: "Fix Bugs in signin System",
     createdAt: "2024-10-10",
     priority: "High",
     status: "Overdue",

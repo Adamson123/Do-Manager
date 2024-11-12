@@ -1,3 +1,4 @@
+"use client"
 import { TaskInitialStateTypes } from "@/features/taskSlice";
 import { RootState } from "@/store/store";
 import { Check, Folder, TimerOffIcon } from "lucide-react";

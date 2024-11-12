@@ -3,6 +3,7 @@ import simplifyError from "@/utils/simplifyError";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import prisma from "../../../../prisma/client";
+import getUserByEmail from "@/data/getUserByEmail";
 
 export const POST = async (request: NextRequest) => {
   try {
@@ -16,13 +17,10 @@ export const POST = async (request: NextRequest) => {
         { status: 400 }
       );
     }
+
     const { name, email, password } = body;
 
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      },
-    });
+    const user = await getUserByEmail(email);
 
     if (user)
       return NextResponse.json(

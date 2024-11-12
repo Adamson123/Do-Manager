@@ -66,7 +66,7 @@ export const signUpSchema = z.object({
     .regex(/[0-9]/, "Password must contain at least one number"),
 });
 
-export const logInSchema = z.object({
+export const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string({ message: "Please enter your password" }),
 });

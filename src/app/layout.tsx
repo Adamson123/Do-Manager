@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Layout from "./appLayout";
 import ReduxProvider from "@/store/provider";
 import { Toaster } from "@/components/ui/toaster";
 import dynamic from "next/dynamic";
@@ -10,17 +9,6 @@ const ThemeProvider = dynamic(
   () => import("next-themes").then((mod) => mod.ThemeProvider),
   { ssr: false }
 );
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: "do-manager",
@@ -34,13 +22,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <ReduxProvider>
-            <Layout>{children}</Layout>
-          </ReduxProvider>
+          <ReduxProvider>{children}</ReduxProvider>
           <Toaster />
         </ThemeProvider>
       </body>

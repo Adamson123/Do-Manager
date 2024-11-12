@@ -1,12 +1,27 @@
 import { Briefcase, ChevronDown, SettingsIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Auth from "@/lib/auth-action";
+import { User } from "next-auth";
 const Settings = dynamic(() => import("../Settings/Settings"), { ssr: false });
 
 const UserProfile = () => {
+  const [userInfo, setUserInfo] = useState<User | undefined>({
+    name: "",
+    email: "",
+  });
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const ss = await Auth();
+      console.log(ss?.user, "sss action");
+      setUserInfo(ss?.user);
+    })();
+  }, []);
+
   return (
     <Popover>
       <PopoverTrigger>
@@ -19,7 +34,7 @@ const UserProfile = () => {
             />
           </span>
           {/* Name */}
-          <span className="text-[13px] text-center">Adam Ajibade</span>
+          <span className="text-[13px] text-center">{userInfo?.name}</span>
           <ChevronDown className="w-4 h-4 translate-y-[1px]" />
         </div>
       </PopoverTrigger>
@@ -37,9 +52,9 @@ const UserProfile = () => {
           <div className="flex flex-col gap-2 items-start px-3">
             {/* Username and Email */}
             <div className="flex flex-col">
-              <span>Adam Ajibade</span>
+              <span>{userInfo?.name}</span>
               <span className="text-[12px] text-muted-foreground">
-                dapoajibade66@gmail.com
+                {userInfo?.email}
               </span>
             </div>
             {/* Settings button */}

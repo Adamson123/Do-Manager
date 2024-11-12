@@ -25,7 +25,7 @@ const AccountSecurity = () => {
 
         <div className="flex w-full justify-between items-center">
           <span className="text-[12px] text-muted-foreground">
-            Set password if you want to be able to login without Google.
+            Set password if you want to be able to sign in without Google.
           </span>
           <Switch
             onCheckedChange={() => {

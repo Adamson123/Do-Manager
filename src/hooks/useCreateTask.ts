@@ -1,3 +1,4 @@
+"use client"
 import { ActionType } from "@/components/Home/Tasks/CreateTask";
 import { useState } from "react";
 
