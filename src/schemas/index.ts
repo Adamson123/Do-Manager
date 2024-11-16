@@ -24,6 +24,9 @@ export const createTaskSchema = z.object({
   priority: z.string({
     message: "A valid priority level must be provided",
   }),
+  userId: z.string({ message: "A valid user id must be provided" }).min(36, {
+    message: "A valid user id must be provided",
+  }),
 });
 
 export const createSubtaskSchema = z.object({
@@ -53,6 +56,9 @@ export const createSubtaskSchema = z.object({
   taskId: z.string({ message: "A valid task id must be provided" }).min(36, {
     message: "A valid task id must be provided",
   }),
+  userId: z.string({ message: "A valid user id must be provided" }).min(36, {
+    message: "A valid user id must be provided",
+  }),
 });
 
 export const signUpSchema = z.object({
@@ -69,4 +75,16 @@ export const signUpSchema = z.object({
 export const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string({ message: "Please enter your password" }),
+});
+
+export const profileSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters long"),
+  image: z.any().optional(),
+  // .refine(
+  //   (file) => file?.[0]?.size <= 5 * 1024 * 1024,
+  //   "Image must be less than 5MB"
+  // ),
+  userId: z.string({ message: "A valid user id must be provided" }).min(36, {
+    message: "A valid user id must be provided",
+  }),
 });

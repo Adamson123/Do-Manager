@@ -25,11 +25,10 @@ import { Button } from "../ui/button";
 import { AlertTriangle, EyeIcon, EyeOffIcon } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import Link from "next/link";
-import userServices from "@/services/userServices";
 import signUpAction from "@/actions/signUpAction";
 import { useRouter } from "next/navigation";
 import PulseLoader from "react-spinners/PulseLoader";
-import delayTest from "@/utils/delayTest";
+
 
 const SignUpForm = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -53,11 +52,8 @@ const SignUpForm = () => {
         setError("");
         startTransition(() => {
             signUpAction(user).then((responds) => {
-                if (!responds) return;
-                if (responds.errMsg) {
+                if (responds) {
                     setError(responds.errMsg);
-                } else {
-                    router.push("/");
                 }
             });
         });

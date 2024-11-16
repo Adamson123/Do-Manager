@@ -14,14 +14,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  image     String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tasks     Task[]
+  id                       String                     @id @default(uuid())
+  name                     String
+  email                    String                     @unique
+  image                    String?
+  password                 String
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  tasks                    Task[]
+  subtaskCompletionHistory SubtaskCompletionHistory[]
 }
 
 model Task {
@@ -43,15 +44,23 @@ enum Priority {
 }
 
 model Subtask {
-  id            String   @id @default(uuid())
-  title         String   @db.VarChar(255)
-  description   String   @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  dueDate       DateTime @default(now())
-  completed     Boolean  @default(false)
-  dateCompleted DateTime @default(now())
-  favorite      Boolean  @default(false)
-  Task          Task     @relation(fields: [taskId], references: [id])
-  taskId        String
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  dueDate     DateTime @default(now())
+  completed   Boolean  @default(false)
+  //dateCompleted DateTime @default(now())
+  favorite    Boolean  @default(false)
+  Task        Task?    @relation(fields: [taskId], references: [id])
+  taskId      String?
+}
+
+model SubtaskCompletionHistory {
+  id                String   @id @default(uuid())
+  day               String
+  subtasksCompleted String[]
+  User              User?    @relation(fields: [userId], references: [id])
+  userId            String?
 }

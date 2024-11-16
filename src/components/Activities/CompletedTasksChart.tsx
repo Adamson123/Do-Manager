@@ -1,7 +1,7 @@
 "use client";
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays, differenceInHours, format } from "date-fns";
 
 import {
   Card,
@@ -17,57 +17,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
 import { getMultipleTasks, TaskInitialStateTypes } from "@/features/taskSlice";
 import DateRangeSelector, { DateRangeTypes } from "./DateRangeSelector";
+import { RawUserTypes } from "@/types/userTypes";
 
 export const description = "A bar chart showing completed subtasks over time";
-
-// Generate ranges of start and limit dates based on the user's signup date
-const generateDateRanges = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  // Fetch tasks on component mount
-  useEffect(() => {
-    dispatch(getMultipleTasks());
-  }, [dispatch]);
-
-  const signupDate = new Date("2024-9-16");
-  const today = new Date();
-  const totalDays = differenceInDays(today, signupDate) + 1;
-  const increment = 5; // Days per range
-  const skip = 5; // Days to skip for next range
-  let currentStart = 0;
-  const ranges: DateRangeTypes[] = [];
-
-  // Loop to generate date ranges
-  while (currentStart < totalDays) {
-    const start = new Date(signupDate);
-    const end = new Date(signupDate);
-
-    // Set start and limit dates for each range based on increment and skip values
-    const limitDays = Math.min(currentStart + increment, totalDays);
-    start.setDate(signupDate.getDate() + currentStart);
-    end.setDate(signupDate.getDate() + limitDays);
-
-    ranges.push({
-      start: start.toISOString().split("T")[0],
-      limit: end.toISOString().split("T")[0],
-    });
-
-    console.log({
-      limitDays,
-      totalDays,
-      currentStart: currentStart + increment,
-    });
-
-    // Update start for the next iteration
-    currentStart += skip;
-  }
-
-  return ranges;
-};
 
 // Define chart configuration, with labels and color schemes for each data type
 const chartConfig = {
@@ -78,14 +35,84 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const CompletedTasksChart = () => {
-  // Initialize selected date range with the first range in the list
-  const [selectedRange, setSelectedRange] = useState(generateDateRanges()[0]);
+  const dispatch = useDispatch<AppDispatch>();
+
   const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
     (state) => state.task
   );
 
+  const {
+    id: userId,
+    createdAt,
+    subtaskCompletionHistory,
+  } = useSelector<RootState, RawUserTypes>((state) => state.user.userInfo);
+
+  useEffect(() => {
+    userId && dispatch(getMultipleTasks(userId));
+  }, [dispatch, userId]);
+
+  // Generate ranges of start and limit dates based on the user's signup date
+  const generateDateRanges = useCallback(() => {
+    if (!createdAt) return [];
+    const signupDate = new Date(createdAt);
+    const today = new Date();
+
+    let totalDays = Math.ceil(differenceInHours(today, signupDate) / 24);
+    
+    const limitDate = new Date(
+      new Date().setDate(signupDate.getDate() + totalDays)
+    );
+    totalDays =
+      today.getDate() < limitDate.getDate() ? totalDays - 1 : totalDays;
+
+    if (!totalDays) {
+      return [
+        {
+          start: today.toISOString().split("T")[0],
+          limit: today.toISOString().split("T")[0],
+        },
+      ];
+    }
+
+    const increment = 5; // Days per range
+    const skip = 5; // Days to skip for next range
+    let currentStart = 0;
+    const ranges: DateRangeTypes[] = [];
+
+    // Loop to generate date ranges
+    while (currentStart < totalDays) {
+      const start = new Date(signupDate);
+      const end = new Date(signupDate);
+
+      // Set start and limit dates for each range based on increment and skip values
+      const limitDays = Math.min(currentStart + increment, totalDays);
+      start.setDate(signupDate.getDate() + currentStart);
+      end.setDate(signupDate.getDate() + limitDays);
+
+      ranges.push({
+        start: start.toISOString().split("T")[0],
+        limit: end.toISOString().split("T")[0],
+      });
+
+      // Update start for the next iteration
+      currentStart += skip;
+    }
+
+    return ranges;
+  }, [createdAt]);
+
+  const dateRanges = generateDateRanges();
+  // Initialize selected date range with the first range in the list
+  const [selectedRange, setSelectedRange] = useState(dateRanges[0]);
+
+  useEffect(() => {
+    if (selectedRange) return;
+    setSelectedRange(dateRanges[dateRanges.length - 1]);
+  }, [dateRanges]);
+
   // Generate data points for completed subtasks within the selected date range
   const completedSubtasksData = useMemo(() => {
+    if (!userId || !selectedRange) return;
     const start = new Date(selectedRange.start);
     const end = new Date(selectedRange.limit);
     const totalDays = differenceInDays(end, start);
@@ -97,30 +124,29 @@ const CompletedTasksChart = () => {
       return date.toISOString().split("T")[0];
     });
 
-    // Retrieve completed subtasks from the task list
-    const completedSubtasks = tasks.flatMap((task) =>
-      task.subtasks.filter((subtask) => subtask.completed)
-    );
-
     // Count completed subtasks for each date in the range
     return dateList.map((date) => ({
       date,
-      Completed: completedSubtasks.filter(
-        (subtask) => subtask.dateCompleted.split("T")[0] === date
-      ).length,
+      Completed:
+        subtaskCompletionHistory.find((subtask) => subtask.day === date)
+          ?.subtasksCompleted.length || 0,
     }));
-  }, [tasks, selectedRange]);
+  }, [tasks, selectedRange, userId]);
 
   return (
     <Card className="border-none w-full bg-secondary rounded flex-grow">
       <CardHeader>
         <CardTitle>Completed Subtasks</CardTitle>
         <CardDescription>
-          <DateRangeSelector
-            selectedRange={selectedRange}
-            options={generateDateRanges()}
-            setSelectedRange={setSelectedRange}
-          />
+          {selectedRange ? (
+            <DateRangeSelector
+              selectedRange={selectedRange}
+              options={dateRanges}
+              setSelectedRange={setSelectedRange}
+            />
+          ) : (
+            <>Loading...</>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent>

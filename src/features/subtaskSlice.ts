@@ -7,42 +7,12 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addSubstask, removeSubtask, updateSubstask } from "./taskSlice";
 import { toast } from "@/components/ui/hooks/use-toast";
-
-export interface SubtaskInitialStateTypes {
-  //[key: string]: boolean | RawSubtaskTypes[] | string | Date;
-  subtasks: RawSubtaskTypes[];
-  error: string;
-  createSubtaskLoading: boolean;
-  deleteSubtaskLoading: boolean;
-  editSubtaskLoading: boolean;
-  taskId: string;
-  taskTitle: string;
-  taskDescription: string;
-  taskPriority: string;
-  taskCreatedAt: Date | string;
-}
-
-// interface ActiveTask {
-//   taskId: string;
-//   taskDescription: string;
-//   taskPriority: string;
-//   taskCreatedAt: Date;
-//   subtasks: RawSubtaskTypes[];
-//   taskTitle: string;
-// }
-
-type ActiveTask = Omit<
-  SubtaskInitialStateTypes,
-  | "error"
-  | "createSubtaskLoading"
-  | "deleteSubtaskLoading"
-  | "editSubtaskLoading"
->;
+import { updateUser } from "./userSlice";
 
 const date = new Date();
 
-const initialState: SubtaskInitialStateTypes = {
-  subtasks: [],
+const initialState = {
+  subtasks: [] as RawSubtaskTypes[],
   error: "",
   createSubtaskLoading: false,
   deleteSubtaskLoading: false,
@@ -51,8 +21,18 @@ const initialState: SubtaskInitialStateTypes = {
   taskDescription: "",
   taskPriority: "",
   taskTitle: "",
-  taskCreatedAt: date.toDateString(),
+  taskCreatedAt: date.toDateString() as Date | string,
 };
+
+export type SubtaskInitialStateTypes = typeof initialState;
+
+type ActiveTaskTypes = Omit<
+  SubtaskInitialStateTypes,
+  | "error"
+  | "createSubtaskLoading"
+  | "deleteSubtaskLoading"
+  | "editSubtaskLoading"
+>;
 
 //create a subtask
 export const createSubtask = createAsyncThunk(
@@ -93,14 +73,29 @@ export const editSubtask = createAsyncThunk(
   ) => {
     try {
       const response = await subtaskServices.editSubtask(subtask, id);
-      dispatch(updateSubstask({ taskId: response.taskId, subtask: response }));
+      console.log(response);
+      dispatch(
+        updateSubstask({
+          taskId: response.subtask.taskId,
+          subtask: response.subtask,
+        })
+      );
+
       //we don't want to display toast when task is updated
-      if (!subtask.hideToast)
+      if (!subtask.sideUpdate)
         toast({
           title: "Subtask Updated",
           description: "Operation completed successfully",
         });
-      return response;
+
+      if (subtask.sideUpdate === "completion")
+        dispatch(
+          updateUser({
+            subtaskCompletionHistory: response.subtaskCompletionHistory,
+          })
+        );
+
+      return response.subtask;
     } catch (err) {
       const error = err as any;
       toast({
@@ -117,9 +112,9 @@ export const editSubtask = createAsyncThunk(
 //delete a subtask
 export const deleteSubtask = createAsyncThunk(
   "task/deleteSubtask",
-  async (id: string, { rejectWithValue, dispatch }) => {
+  async (userId: string, { rejectWithValue, dispatch }) => {
     try {
-      const response = await subtaskServices.deleteSubtask(id);
+      const response = await subtaskServices.deleteSubtask(userId);
       dispatch(removeSubtask(response));
       return response;
     } catch (err) {
@@ -193,7 +188,7 @@ const subtaskSlice = createSlice({
       );
   },
   reducers: {
-    activeTask: (state, action: PayloadAction<ActiveTask>) => {
+    activeTask: (state, action: PayloadAction<ActiveTaskTypes>) => {
       const {
         subtasks,
         taskId,

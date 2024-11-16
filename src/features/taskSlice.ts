@@ -5,25 +5,18 @@ import { RawSubtaskTypes } from "@/types/subtaskTypes";
 import { toast } from "@/components/ui/hooks/use-toast";
 //import delayTest from "@/utils/delayTest";
 
-export interface TaskInitialStateTypes {
-  //  loading: boolean;
-  [key: string]: boolean | RawTaskTypes[] | string;
-  tasks: RawTaskTypes[];
-  error: string;
-  getMultipleTaskLoading: boolean;
-  createTaskLoading: boolean;
-  deleteTaskLoading: boolean;
-  editTaskLoading: boolean;
-}
-
-const initialState: TaskInitialStateTypes = {
-  tasks: [],
+const initialState = {
+  tasks: [] as RawTaskTypes[],
   error: "",
   getMultipleTaskLoading: false,
   createTaskLoading: false,
   deleteTaskLoading: false,
   editTaskLoading: false,
 };
+
+export type TaskInitialStateTypes = {
+  [key: string]: boolean | RawTaskTypes[] | string;
+} & typeof initialState;
 
 //create a task
 export const createTask = createAsyncThunk(
@@ -39,7 +32,7 @@ export const createTask = createAsyncThunk(
     } catch (err) {
       const error = err as any;
       toast({
-        title: error.errMsg,
+        title: error.errMsg || "Something went wrong",
         description: "Operation completed with an error",
         variant: "destructive",
       });
@@ -61,7 +54,7 @@ export const deleteTask = createAsyncThunk(
     } catch (err) {
       const error = err as any;
       toast({
-        title: error.errMsg,
+        title: error.errMsg || "Something went wrong",
         description: "Operation completed with an error",
         variant: "destructive",
       });
@@ -92,7 +85,7 @@ export const editTask = createAsyncThunk(
     } catch (err) {
       const error = err as any;
       toast({
-        title: error.errMsg,
+        title: error.errMsg || "Something went wrong",
         description: "Operation completed with an error",
         variant: "destructive",
       });
@@ -104,15 +97,15 @@ export const editTask = createAsyncThunk(
 //get multiple tasks
 export const getMultipleTasks = createAsyncThunk(
   "task/getMultipleTasks",
-  async (_, { rejectWithValue }) => {
+  async (id: string, { rejectWithValue }) => {
     try {
-      const response = await taskServices.getMultipleTasks();
+      const response = await taskServices.getMultipleTasks(id);
       //toast: ({}) => void
       return response;
     } catch (err) {
       const error = err as any;
       toast({
-        title: error.errMsg,
+        title: error.errMsg || "Something went wrong",
         variant: "destructive",
       });
       return rejectWithValue(error.errMsg);
@@ -128,16 +121,6 @@ const rejectionFunc = (
   state[loadingField] = false;
   state.error = action.payload || "Unknown error occurred";
 };
-
-// const fulfilledFunc = (
-//   state: TaskInitialStateTypes,
-//   action: any,
-//   loadingField: string
-// ) => {
-//   state[loadingField] = false;
-//   state.tasks = action.payload;
-//   state.error = "";
-// };
 
 const taskSlice = createSlice({
   name: "task",
@@ -244,18 +227,6 @@ const taskSlice = createSlice({
         return task.id !== action.payload;
       });
     },
-    // editTaskSync: (
-    //   state,
-    //   action: PayloadAction<{ task: TaskTypes; id: string }>
-    // ) => {
-    //   const { description, priority, title } = action.payload.task;
-    //   state.tasks = state.tasks.map((task) => {
-    //     return task.id === action.payload.id
-    //       ? { ...task, description, priority, title }
-    //       : task;
-    //   });
-    // },
-    //called to update subtask state in a particular task
     addSubstask: (
       state,
       action: PayloadAction<{ subtask: RawSubtaskTypes; id: string }>
@@ -270,7 +241,10 @@ const taskSlice = createSlice({
     },
     updateSubstask: (
       state,
-      action: PayloadAction<{ subtask: RawSubtaskTypes; taskId: string }>
+      action: PayloadAction<{
+        subtask: RawSubtaskTypes;
+        taskId: string;
+      }>
     ) => {
       state.tasks = state.tasks.map((task) => {
         if (task.id === action.payload.taskId) {

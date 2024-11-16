@@ -6,7 +6,7 @@ export interface RawSubtaskTypes {
   updatedAt: Date;
   taskId: string;
   completed: boolean;
-  dateCompleted: string;
+  //dateCompleted: string;
   favorite: boolean;
   dueDate: string;
   priority?: string;
@@ -17,7 +17,11 @@ export interface SubtaskTypes {
   description: string;
   dueDate: string;
   taskId: string;
+  userId: string;
 }
+
+type sideUpdate = "completion" | "favorite";
+
 export interface EditableSubtaskFieldTypes {
   title: string;
   description: string;
@@ -26,5 +30,5 @@ export interface EditableSubtaskFieldTypes {
   completed?: boolean;
   dateCompleted?: string;
   favorite?: boolean;
-  hideToast?: boolean;
+  sideUpdate?: sideUpdate;
 }

@@ -18,7 +18,7 @@ body {
   overflow-y: hidden;
 }
 
-* {
+body div {
   border-style: solid;
   scrollbar-width: thin;
 }

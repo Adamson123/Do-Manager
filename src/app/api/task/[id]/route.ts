@@ -3,8 +3,32 @@ import prisma from "../../../../../prisma/client";
 import { createTaskSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 
+export const GET = async (
+  _: NextRequest,
+  { params }: { params: { id: string } }
+) => {
+  const { id } = params;
+  try {
+    const task = await prisma.task.findMany({
+      where: { userId: id },
+      include: {
+        subtasks: true,
+      },
+    });
+
+    return NextResponse.json(task, { status: 201 });
+  } catch (err) {
+    const error = err as Error;
+    console.log(error.message, "error get /api/task");
+    return NextResponse.json(
+      { errMsg: "Error gettings tasks" },
+      { status: 500 }
+    );
+  }
+};
+
 export const DELETE = async (
-  request: NextRequest,
+  _: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   try {
@@ -37,13 +61,6 @@ export const DELETE = async (
         id,
       },
     });
-
-    // //fetch all remaining tasks
-    // const tasks = await prisma.task.findMany({
-    //   include: {
-    //     subtasks: true,
-    //   },
-    // });
 
     return NextResponse.json({ id }, { status: 200 });
   } catch (err) {

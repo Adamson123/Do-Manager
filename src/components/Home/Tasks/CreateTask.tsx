@@ -1,4 +1,3 @@
-"use client"
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -33,6 +32,7 @@ import {
 } from "@/features/taskSlice";
 import { AppDispatch, RootState } from "@/store/store";
 import { TaskTypes } from "@/types/taskTypes";
+import { RawUserTypes } from "@/types/userTypes";
 
 export interface ActionType {
   exec: string;
@@ -64,6 +64,10 @@ const CreateTask = ({
     RootState,
     TaskInitialStateTypes
   >((state) => state.task);
+  const { id: userId } = useSelector<RootState, RawUserTypes>(
+    (state) => state.user.userInfo
+  );
+
   //closed by user while a request was made
   const [closeWhileOnReq, setCloseWhileOnReq] = useState(false);
   const [fulfilled, setFulfilled] = useState(false);
@@ -74,6 +78,7 @@ const CreateTask = ({
       title: action.task.title,
       description: action.task.description,
       priority: action.task.priority,
+      userId,
     },
   });
 
@@ -82,8 +87,9 @@ const CreateTask = ({
       title: action.task.title,
       description: action.task.description,
       priority: action.task.priority,
+      userId,
     });
-  }, [action, form]);
+  }, [action, form, userId]);
 
   useEffect(() => {
     if (!fulfilled) return;
@@ -106,6 +112,7 @@ const CreateTask = ({
   const handleEditTask = (task: z.infer<typeof createTaskSchema>) => {
     //  dispatch(editTaskSync({ task, id: action.id }));
     if (editTaskLoading) return;
+    //TODO
     dispatch(editTask({ task, id: action.id })).finally(() => {
       setFulfilled(true);
     });

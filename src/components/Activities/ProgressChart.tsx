@@ -23,6 +23,7 @@ const ProgressChart = () => {
     let high = 0;
     let medium = 0;
     let low = 0;
+
     const allSubtasks = tasks.flatMap((task) =>
       task.subtasks.map((subtask) => {
         return { ...subtask, priority: task.priority };
@@ -58,11 +59,19 @@ const ProgressChart = () => {
         fill: "rgb(var(--mediumPriority))",
       },
       { priority: "low", completed: low, fill: "rgb(var(--lowPriority))" },
+      {
+        //morkCompletion will just make the chart to display something
+        //when no subtasks has been completed
+        priority: "morkCompletion",
+        completed: completed ? 0 : 1,
+        fill: "rgb(var(--darkerBg))",
+      },
     ];
 
     const chartConfig = {
       completed: {
-        label: "Completed",
+        label: "MorkCompletion",
+        color: "rgb(var(--darkerBg))",
       },
       high: {
         label: "High",
@@ -77,8 +86,7 @@ const ProgressChart = () => {
         color: "rgb(var(--lowPriority))",
       },
     };
-
-    return { chartData, chartConfig, roundedPercentage };
+    return { chartData, chartConfig, roundedPercentage, completed };
   }, [tasks]);
 
   return (
@@ -92,10 +100,12 @@ const ProgressChart = () => {
           className="mx-auto aspect-square max-h-[200px]"
         >
           <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
+            {progress.completed && (
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+            )}
             <Pie
               data={progress.chartData}
               dataKey="completed"
@@ -112,6 +122,7 @@ const ProgressChart = () => {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
+                        className="-translate-y-2"
                       >
                         <tspan
                           x={viewBox.cx}

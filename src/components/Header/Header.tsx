@@ -8,11 +8,21 @@ import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import { appLayoutContext } from "@/app/(main)/layout";
 import debounce from "@/utils/debounce";
 import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useRouter } from "next/navigation";
+import { UserInitialState } from "@/features/userSlice";
 const Header = () => {
   const [searchBarFocused, setSearchBarFocused] = useState(false);
   const searchBarRef = useRef<HTMLInputElement>(null);
   const { search, setSearch } = useContext(appLayoutContext);
   const [localSearch, setLocalSearch] = useState(search);
+  const {
+    userInfo: { id: userId },
+    getUserLoading,
+  } = useSelector<RootState, UserInitialState>((state) => state.user);
+  const router = useRouter();
 
   const handleSearchInput = (event: ChangeEvent<HTMLInputElement>) => {
     setLocalSearch(event.target.value);
@@ -45,7 +55,7 @@ const Header = () => {
             <Search
               className={clsx(
                 `absolute w-[13px] h-[13px] text-muted-foreground 
-                top-[14px] smd:left-[9px] lg:left-[9px]`,
+                top-[50%] translate-y-[-50%] smd:left-[9px] lg:left-[9px]`,
                 searchBarFocused || search
                   ? "left-[9px]"
                   : "left-[13px] cursor-pointer",
@@ -63,7 +73,7 @@ const Header = () => {
                 "border-solid outline-none bg-muted text-[13px] border border-darkerBg",
                 "rounded-md pl-7 pr-[10px] py-[6px]",
                 "placeholder:text-muted-foreground text-muted-foreground",
-                "overflow-hidden smd:w-auto lg:w-auto",
+                "overflow-hidden smd:w-auto lg:w-auto h-[34px]",
                 searchBarFocused || search ? "w-auto" : "w-10 cursor-pointer",
                 searchBarFocused || search
                   ? "md:w-auto"
@@ -83,7 +93,20 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <ModeToggle />
           {/* User profile */}
-          <UserProfile />
+          {!getUserLoading ? (
+            userId ? (
+              <UserProfile />
+            ) : (
+              <Button
+                onClick={() => router.push("/signin")}
+                className="h-[34px] px-7"
+              >
+                Sign In
+              </Button>
+            )
+          ) : (
+            <>Loading...</>
+          )}
         </div>
       </div>
     </header>

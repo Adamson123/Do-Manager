@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../../prisma/client";
 import { createSubtaskSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
+import dateISOString from "@/utils/dateISOString";
 
 export const DELETE = async (
-  request: NextRequest,
+  _: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   try {
@@ -80,19 +81,72 @@ export const PATCH = async (
         title: body.title,
         description: body.description,
         completed: body.completed,
-        dateCompleted: body.dateCompleted,
+        // dateCompleted: body.dateCompleted,
         favorite: body.favorite,
         dueDate: body.dueDate,
       },
     });
 
-    // const tasks = await prisma.task.findMany({
-    //   include: {
-    //     subtasks: true,
-    //   },
-    // });
+    let subtaskCompletionHistory: any = [];
+    if (body.sideUpdate === "completion") {
+      const day = dateISOString(new Date());
+      const { completed, userId } = body;
+      const completionHistoryExist =
+        await prisma.subtaskCompletionHistory.findFirst({
+          where: {
+            day,
+            userId,
+            //TODO
+          },
+        });
 
-    return NextResponse.json(updatedSubtask, { status: 200 });
+      if (completionHistoryExist) {
+        let subtasksCompleted = [];
+        if (completed) {
+          subtasksCompleted = [...completionHistoryExist.subtasksCompleted, id];
+        } else {
+          subtasksCompleted = completionHistoryExist.subtasksCompleted.filter(
+            (subtaskId) => subtaskId !== id
+          );
+        }
+        subtaskCompletionHistory = await prisma.subtaskCompletionHistory.update(
+          {
+            where: {
+              day,
+              userId,
+              id: completionHistoryExist.id,
+              //TODO
+            },
+            data: {
+              subtasksCompleted: {
+                set: subtasksCompleted,
+              },
+            },
+          }
+        );
+      } else {
+        subtaskCompletionHistory = await prisma.subtaskCompletionHistory.create(
+          {
+            data: {
+              day,
+              subtasksCompleted: {
+                set: completed ? [id] : [],
+              },
+              User: {
+                connect: {
+                  id: userId,
+                },
+              },
+            },
+          }
+        );
+      }
+    }
+
+    return NextResponse.json(
+      { subtask: updatedSubtask, subtaskCompletionHistory },
+      { status: 200 }
+    );
   } catch (err) {
     const error = err as Error;
     console.log(error.message, "error patch /api/subtask");

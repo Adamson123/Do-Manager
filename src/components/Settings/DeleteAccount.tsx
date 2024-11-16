@@ -7,7 +7,7 @@ const DeleteAccount = () => {
 
       <div className="flex flex-col gap-2">
         <p className="text-[12px] text-muted-foreground">
-          Deleting your account will remove all of your information from our
+          Deleting your account will remove all of your information from the
           database. This cannot be undone.
         </p>
         {/* Confirm Delete */}
@@ -34,4 +34,4 @@ const DeleteAccount = () => {
   );
 };
 
-export default DeleteAccount
+export default DeleteAccount;

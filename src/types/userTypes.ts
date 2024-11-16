@@ -4,11 +4,20 @@ export interface UserTypes {
   password: string;
 }
 
+export interface SubtaskCompletionHistoryTypes {
+  id: string;
+  userId: string | null;
+  day: string;
+  subtasksCompleted: string[];
+}
+
 export interface RawUserTypes {
-  createdAt: string;
+  createdAt: string | Date;
   email: string;
   id: string;
   image: string | null;
   name: string;
-  updatedAt: string;
+  updatedAt: string | Date;
+  password: string | null;
+  subtaskCompletionHistory: SubtaskCompletionHistoryTypes[];
 }
