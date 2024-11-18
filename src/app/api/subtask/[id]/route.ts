@@ -8,8 +8,8 @@ export const DELETE = async (
   _: NextRequest,
   { params }: { params: { id: string } }
 ) => {
+  const { id } = params;
   try {
-    const { id } = params;
     //finding subtask to check if it's exists
     const subtask = await prisma.subtask.findUnique({
       where: {
@@ -46,8 +46,8 @@ export const PATCH = async (
   request: NextRequest,
   { params }: { params: { id: string } }
 ) => {
+  const { id } = params;
   try {
-    const { id } = params;
     const subtask = await prisma.subtask.findUnique({
       where: {
         id,
@@ -88,6 +88,7 @@ export const PATCH = async (
     });
 
     let subtaskCompletionHistory: any = [];
+
     if (body.sideUpdate === "completion") {
       const day = dateISOString(new Date());
       const { completed, userId } = body;
@@ -102,7 +103,10 @@ export const PATCH = async (
 
       if (completionHistoryExist) {
         let subtasksCompleted = [];
-        if (completed) {
+        if (
+          completed ||
+          !completionHistoryExist.subtasksCompleted.includes(id)
+        ) {
           subtasksCompleted = [...completionHistoryExist.subtasksCompleted, id];
         } else {
           subtasksCompleted = completionHistoryExist.subtasksCompleted.filter(

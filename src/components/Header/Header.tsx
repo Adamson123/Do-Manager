@@ -1,4 +1,3 @@
-"use client";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import { ModeToggle } from "../ui/toggleMode";
@@ -13,6 +12,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
 import { UserInitialState } from "@/features/userSlice";
+
 const Header = () => {
   const [searchBarFocused, setSearchBarFocused] = useState(false);
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -35,6 +35,8 @@ const Header = () => {
 
     updateSearch();
   }, [localSearch]);
+
+  console.log({ getUserLoading });
 
   return (
     //py-6 w-[198.667px]
@@ -105,7 +107,9 @@ const Header = () => {
               </Button>
             )
           ) : (
-            <>Loading...</>
+            <span className="text-muted-foreground text-[14px]">
+              Loading...
+            </span>
           )}
         </div>
       </div>

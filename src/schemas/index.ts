@@ -10,7 +10,8 @@ export const createTaskSchema = z.object({
     })
     .max(70, {
       message: "Title must not exceed 70 characters.",
-    }),
+    })
+    .trim(),
   description: z
     .string({
       message: "Description must be at least 1 character",
@@ -39,7 +40,8 @@ export const createSubtaskSchema = z.object({
     })
     .max(70, {
       message: "Title must not exceed 70 characters.",
-    }),
+    })
+    .trim(),
   description: z
     .string({
       message: "Description must be at least 1 character.",
@@ -62,8 +64,8 @@ export const createSubtaskSchema = z.object({
 });
 
 export const signUpSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters long"),
-  email: z.string().email("Please enter a valid email address"),
+  name: z.string().min(2, "Name must be at least 2 characters long").trim(),
+  email: z.string().email("Please enter a valid email address").trim(),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
@@ -73,18 +75,75 @@ export const signUpSchema = z.object({
 });
 
 export const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().email("Please enter a valid email address").trim(),
   password: z.string({ message: "Please enter your password" }),
 });
 
 export const profileSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters long"),
-  image: z.any().optional(),
-  // .refine(
-  //   (file) => file?.[0]?.size <= 5 * 1024 * 1024,
-  //   "Image must be less than 5MB"
-  // ),
+  name: z.string().min(2, "Name must be at least 2 characters long").trim(),
+  image: z
+    .union([z.instanceof(File), z.string(), z.instanceof(Blob)])
+    .optional()
+    .refine((file) => {
+      if (!file) {
+        return true;
+      } else {
+        if (typeof file !== "string") return file.type.startsWith("image/");
+      }
+    })
+    .refine(
+      (file) => {
+        if (!file) {
+          return true;
+        } else {
+          if (typeof file !== "string") return file.size <= 5 * 1024 * 1024;
+        }
+      },
+      {
+        message: "File must be an image (e.g., PNG,JPG,JPEG, etc.)",
+      }
+    ),
   userId: z.string({ message: "A valid user id must be provided" }).min(36, {
     message: "A valid user id must be provided",
   }),
 });
+
+export const passwordSchema = z
+  .object({
+    hasPassword: z.boolean(), // Indicates if the user has an existing password
+    currentPassword: z.string().optional(), // Conditionally required
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string(),
+    userId: z.string({ message: "A valid user id must be provided" }).min(36, {
+      message: "A valid user id must be provided",
+    }),
+  })
+  .superRefine((data, ctx) => {
+    // If the user has a password, currentPassword is required
+    if (data.hasPassword && !data.currentPassword) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["currentPassword"],
+        message: "Current password is required",
+      });
+    }
+
+    // Ensure newPassword and confirmPassword match
+    if (data.newPassword !== data.confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["confirmPassword"],
+        message: "Passwords do not match",
+      });
+      ctx.addIssue({
+        code: "custom",
+        path: ["newPassword"],
+        message: "Passwords do not match",
+      });
+    }
+  });

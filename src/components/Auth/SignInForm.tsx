@@ -22,14 +22,11 @@ import {
 import { Input } from "../ui/input";
 import { useState, useTransition } from "react";
 import { Button } from "../ui/button";
-import { AlertTriangle, EyeIcon, EyeOffIcon } from "lucide-react";
-import { Alert, AlertDescription } from "../ui/alert";
+import {  EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
-import userServices from "@/services/userServices";
 import signInAction from "@/actions/signInAction";
-import delayTest from "@/utils/delayTest";
 import PulseLoader from "react-spinners/PulseLoader";
-import Revalidate from "@/lib/revalidatePath-action";
+import InlineErrorAlert from "../ui/InlineErrorAlert";
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,9 +46,9 @@ const SignInForm = () => {
     if (loading) return;
     setError("");
     startTransition(() => {
-      signInAction(user).then((responds) => {
-        if (responds) {
-          setError(responds.errMsg);
+      signInAction(user).then((response) => {
+        if (response) {
+          setError(response.errMsg);
         }
       });
     });
@@ -124,12 +121,7 @@ const SignInForm = () => {
               )}
             />
             {error && (
-              <Alert className="bg-destructive/15 text-destructive  border-none">
-                <AlertDescription>
-                  <AlertTriangle className="inline w-4 h-4 -translate-y-[1px]" />{" "}
-                  {error}
-                </AlertDescription>
-              </Alert>
+              <InlineErrorAlert error={error}/>
             )}
             <Button type="submit" className="w-full relative">
               {loading ? (

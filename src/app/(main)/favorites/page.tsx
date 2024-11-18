@@ -24,15 +24,6 @@ const Favorites = () => {
     TaskInitialStateTypes
   >((state) => state.task);
   const { search } = useContext(appLayoutContext);
-  const { id: userId } = useSelector<RootState, RawUserTypes>(
-    (state) => state.user.userInfo
-  );
-
-  // Fetch tasks on component mount
-  useEffect(() => {
-    userId && dispatch(getMultipleTasks(userId));
-  }, [dispatch, userId]);
-
   // Memoize sorted tasks
   const sortedSubtasks = useMemo(() => {
     const favoritesInTasks = tasks

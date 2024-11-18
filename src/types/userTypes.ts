@@ -19,5 +19,6 @@ export interface RawUserTypes {
   name: string;
   updatedAt: string | Date;
   password: string | null;
+  hasPassword: boolean;
   subtaskCompletionHistory: SubtaskCompletionHistoryTypes[];
 }

@@ -1,11 +1,14 @@
-"use client";
 import { useState } from "react";
 import { Switch } from "../../ui/switch";
 import PasswordInput from "./PasswordInputs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const AccountSecurity = () => {
-  const [switchOn, setSwitchOn] = useState(false);
-  console.log(switchOn);
+  const hasPassword = useSelector<RootState, boolean>(
+    (state) => state.user.userInfo.hasPassword
+  ) as boolean;
+  const [switchOn, setSwitchOn] = useState(hasPassword);
 
   return (
     <div className="flex flex-col gap-3">
@@ -28,6 +31,8 @@ const AccountSecurity = () => {
             Set password if you want to be able to sign in without Google.
           </span>
           <Switch
+            disabled={hasPassword}
+            checked={hasPassword}
             onCheckedChange={() => {
               setSwitchOn(!switchOn);
             }}
@@ -36,7 +41,7 @@ const AccountSecurity = () => {
         <br />
         {/* Set a password */}
 
-        {switchOn && <PasswordInput />}
+        {switchOn && <PasswordInput/>}
       </div>
     </div>
   );

@@ -1,7 +1,5 @@
-import { toast } from "@/components/ui/hooks/use-toast";
-import userServices from "@/services/userServices";
 import { RawUserTypes, SubtaskCompletionHistoryTypes } from "@/types/userTypes";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialUserInfoState: RawUserTypes = {
   createdAt: "",
@@ -16,7 +14,7 @@ const initialUserInfoState: RawUserTypes = {
 
 const initialState = {
   userInfo: initialUserInfoState,
-  getUserLoading: false,
+  getUserLoading: true,
   editUserLoading: false,
   deleteUserLoading: false,
   error: "",
@@ -24,48 +22,9 @@ const initialState = {
 
 export type UserInitialState = typeof initialState;
 
-export const getUser = createAsyncThunk(
-  "user/getUser",
-  async (id: string, { rejectWithValue }) => {
-    try {
-      const response = await userServices.getUser(id);
-      return response;
-    } catch (err) {
-      const error = err as any;
-      toast({
-        title: error.errMsg || "Something went wrong",
-        variant: "destructive",
-      });
-      return rejectWithValue(error.errMsg);
-    }
-  }
-);
-
 const userSlice = createSlice({
   name: "user",
   initialState,
-  extraReducers: (builder) => {
-    //loading
-    builder.addCase(getUser.pending, (state) => {
-      state.getUserLoading = true;
-    }),
-      //fulfilled
-      builder.addCase(
-        getUser.fulfilled,
-        (state, action: PayloadAction<RawUserTypes>) => {
-          if (action.payload) state.userInfo = action.payload;
-          state.getUserLoading = false;
-        }
-      ),
-      //rejected
-      builder.addCase(
-        getUser.rejected,
-        (state, action: ReturnType<typeof getUser.rejected>) => {
-          state.error = (action.payload as string) || "Unknown error occurred";
-          state.getUserLoading = false;
-        }
-      );
-  },
   reducers: {
     updateUser: (
       state,
@@ -107,5 +66,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { updateUser } = userSlice.actions;
+export const { updateUser, updateGetUserLoading } = userSlice.actions;
 export default userSlice.reducer;

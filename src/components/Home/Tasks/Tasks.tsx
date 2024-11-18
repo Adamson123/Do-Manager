@@ -65,11 +65,6 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
   const { search } = useContext(appLayoutContext);
   const router = useRouter();
 
-  // Fetch tasks on component mount
-  useEffect(() => {
-    userId && dispatch(getMultipleTasks(userId));
-  }, [dispatch, userId]);
-
   // Memoize sorted tasks
   const sortedTasks = useMemo(() => {
     const tasksSortedByDate = tasks?.length

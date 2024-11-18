@@ -17,12 +17,16 @@ const UserProfile = () => {
   );
 
   const userImg = image ? `/images/${image}.webp` : "/images/defaultImg.webp";
+
   return (
     <Popover>
       <PopoverTrigger>
         <div className="flex gap-1 items-center cursor-pointer">
           {/* Avatar */}
-          <span className="relative w-[25px] h-[25px]">
+          <span
+            className="relative min-w-[25px] 
+          rounded-full bg-darkerBg min-h-[25px]"
+          >
             <Image
               src={userImg}
               alt="Profile image"
@@ -41,7 +45,7 @@ const UserProfile = () => {
       >
         <div
           className="relative min-w-[60px]
-           min-h-[60px]"
+           min-h-[60px] max-h-[60px] max-w-[60px] rounded-full bg-darkerBg"
         >
           <Image
             src={userImg}

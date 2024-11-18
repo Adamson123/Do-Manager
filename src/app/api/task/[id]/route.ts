@@ -31,9 +31,9 @@ export const DELETE = async (
   _: NextRequest,
   { params }: { params: { id: string } }
 ) => {
-  try {
+ 
     const { id } = params;
-
+    try {
     //finding task to check if it's exists
     const task = await prisma.task.findUnique({
       where: {

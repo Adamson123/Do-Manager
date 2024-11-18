@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Table,
   TableBody,
@@ -32,12 +32,13 @@ const RecentSubtasks = () => {
   const getSubtaskState = (subtask: RawSubtaskTypes) => {
     const today = new Date();
     const dueDate = new Date(subtask.dueDate);
-    const hoursLeft = dueDate.getTime() - today.getTime();
-    const dueDateState = Math.round(hoursLeft / (1000 * 3600));
+    //const hoursLeft = dueDate.getTime() - today.getTime();
+    //const dueDateState = Math.round(hoursLeft / (1000 * 3600));
+    const now = new Date();
 
-    if (dueDateState >= 0 && !subtask.completed) {
+    if (dueDate >= now && !subtask.completed) {
       return { state: "Pending", color: "rgb(var(--mediumPriority))" };
-    } else if (dueDateState <= 0 && !subtask.completed) {
+    } else if (dueDate <= now && !subtask.completed) {
       return { state: "Overdue", color: "rgb(var(--highPriority))" };
     } else if (subtask.completed) {
       return { state: "Completed", color: "rgb(var(--lowPriority))" };

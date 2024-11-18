@@ -121,9 +121,9 @@ const TaskCard = ({
       <div className="mt-auto flex justify-between items-end">
         <span
           className="bg-darkerBg text-black dark:text-muted-foreground 
-                    text-[13px] p-[6px] rounded-lg"
+          text-[13px] p-[6px] rounded-lg"
         >
-          <CalendarDaysIcon className="inline h-[14px] w-[14px] -translate-y-[2px]" />
+          <CalendarDaysIcon className="inline h-[14px] w-[14px] -translate-y-[2px]" />{" "}
           {task.createdAt && format(task.createdAt, "PP")}
         </span>
 

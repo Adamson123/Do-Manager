@@ -4,7 +4,7 @@ import prisma from "../../../../prisma/client";
 import simplifyError from "@/utils/simplifyError";
 
 export const POST = async (request: NextRequest) => {
-    try {
+  
         const body = await request.json();
         //validate the request body with zod
         const validation = createTaskSchema.safeParse(body);
@@ -18,7 +18,7 @@ export const POST = async (request: NextRequest) => {
                 { status: 400 }
             );
         }
-
+        try {
         //create thee task
         const task = await prisma.task.create({
             data: {

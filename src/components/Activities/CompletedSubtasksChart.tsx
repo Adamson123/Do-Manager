@@ -34,7 +34,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-const CompletedTasksChart = () => {
+const CompletedSubtasksChart = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
@@ -47,9 +47,6 @@ const CompletedTasksChart = () => {
     subtaskCompletionHistory,
   } = useSelector<RootState, RawUserTypes>((state) => state.user.userInfo);
 
-  useEffect(() => {
-    userId && dispatch(getMultipleTasks(userId));
-  }, [dispatch, userId]);
 
   // Generate ranges of start and limit dates based on the user's signup date
   const generateDateRanges = useCallback(() => {
@@ -58,7 +55,7 @@ const CompletedTasksChart = () => {
     const today = new Date();
 
     let totalDays = Math.ceil(differenceInHours(today, signupDate) / 24);
-    
+
     const limitDate = new Date(
       new Date().setDate(signupDate.getDate() + totalDays)
     );
@@ -93,7 +90,6 @@ const CompletedTasksChart = () => {
         start: start.toISOString().split("T")[0],
         limit: end.toISOString().split("T")[0],
       });
-
       // Update start for the next iteration
       currentStart += skip;
     }
@@ -186,4 +182,4 @@ const CompletedTasksChart = () => {
   );
 };
 
-export default CompletedTasksChart;
+export default CompletedSubtasksChart;

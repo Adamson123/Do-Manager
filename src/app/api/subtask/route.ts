@@ -4,18 +4,18 @@ import { createSubtaskSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 
 export const POST = async (request: NextRequest) => {
+  const body = await request.json();
+  const validation = createSubtaskSchema.safeParse(body);
+
+  if (!validation.success) {
+    const errors = validation.error.format();
+
+    return NextResponse.json(
+      { errMsg: simplifyError(errors)[0] },
+      { status: 400 }
+    );
+  }
   try {
-    const body = await request.json();
-    const validation = createSubtaskSchema.safeParse(body);
-
-    if (!validation.success) {
-      const errors = validation.error.format();
-
-      return NextResponse.json(
-        { errMsg: simplifyError(errors)[0] },
-        { status: 400 }
-      );
-    }
     const subtask = await prisma.subtask.create({
       data: {
         title: body.title,

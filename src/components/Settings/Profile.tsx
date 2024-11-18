@@ -14,18 +14,21 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema } from "@/schemas";
-import { useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import updateProfileAction from "@/actions/updateProfileAction";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RawUserTypes } from "@/types/userTypes";
 import { RootState } from "@/store/store";
+import { toast } from "../ui/hooks/use-toast";
+import { updateUser } from "@/features/userSlice";
 
 const Profile = () => {
   const {
     id: userId,
     name,
-    image,
+    image: imageId,
   } = useSelector<RootState, RawUserTypes>((state) => state.user.userInfo);
+
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -34,22 +37,50 @@ const Profile = () => {
       userId,
     },
   });
+  const [loading, startTransition] = useTransition();
   const [pickedImage, setPickedImage] = useState<MediaSource | File | string>(
     ""
   );
+  const imageRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch();
 
   const handleProfileUpdate = async (
     profile: z.infer<typeof profileSchema>
   ) => {
+    if (loading) return;
+    const { image, name, userId } = profile;
+
     const formData = new FormData();
-    formData.append("image", profile.image);
-    formData.append(
-      "info",
-      JSON.stringify({ name: profile.name, userId: profile.userId })
-    );
-    updateProfileAction(formData);
+    formData.append("image", image as Blob);
+    formData.append("name", name);
+    formData.append("userId", userId);
+    formData.append("imageId", imageId as string);
+
+    startTransition(() => {
+      updateProfileAction(formData).then((response) => {
+        const responseErr = response as { errMsg: string };
+        if (responseErr.errMsg) {
+          toast({
+            title: responseErr.errMsg,
+            description: "Operation completed with an error",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Profile update",
+            description: "Operation completed successfully",
+          });
+          dispatch(updateUser(response as RawUserTypes));
+        }
+      });
+    });
   };
-  const userImg = image ? `/images/${image}.webp` : "/images/defaultImg.webp";
+
+  const userImg = imageId
+    ? `/images/${imageId}.webp`
+    : "/images/defaultImg.webp";
+
+  const cancel = pickedImage || name !== form.getValues().name;
   return (
     <Form {...form}>
       <form
@@ -107,11 +138,15 @@ const Profile = () => {
                 <FormControl>
                   <Input
                     type="file"
+                    ref={imageRef}
                     onChange={(event) => {
                       const image = event.target.files
                         ? event.target.files[0]
                         : "";
-                      setPickedImage(image);
+                      if (image) {
+                        image.type.startsWith("image/") &&
+                          setPickedImage(image);
+                      }
                       field.onChange(image);
                     }}
                     placeholder="Choose image"
@@ -122,9 +157,24 @@ const Profile = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="rounded">
-          Update profile
-        </Button>
+        <div className="flex gap-2">
+          <Button type="submit" className="rounded">
+            {loading ? "Updating..." : "Update profile"}
+          </Button>
+          {cancel && (
+            <Button
+              onClick={() => {
+                form.resetField("name", { defaultValue: name });
+                if (imageRef.current) imageRef.current.value = "";
+                setPickedImage("");
+              }}
+              variant="destructive"
+              className="rounded"
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
     </Form>
   );

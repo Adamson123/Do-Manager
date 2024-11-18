@@ -7,17 +7,18 @@ import bcrypt from "bcryptjs";
 import simplifyError from "@/utils/simplifyError";
 import { DEFAULT_SIGNIN_REDIRECT } from "../../route";
 import { signIn } from "../../auth";
+import { AuthError } from "next-auth";
 
 const signUpAction = async (user: UserTypes) => {
-  try {
-    const validation = signUpSchema.safeParse(user);
-    //check if validation is successful
-    if (!validation.success) {
-      const errors = validation.error.format();
-      return { errMsg: simplifyError(errors)[0] };
-    }
+  const validation = signUpSchema.safeParse(user);
+  //check if validation is successful
+  if (!validation.success) {
+    const errors = validation.error.format();
+    return { errMsg: simplifyError(errors)[0] };
+  }
 
-    const { name, email, password } = validation.data;
+  const { name, email, password } = validation.data;
+  try {
     const userExist = await getUserByEmail(email);
     if (userExist) return { errMsg: "Email already in use" };
 
@@ -31,7 +32,7 @@ const signUpAction = async (user: UserTypes) => {
         password: hashedPassword,
       },
     });
-    //return { successMsg: "User created successfully" };
+
     await signIn("credentials", {
       email,
       password,
@@ -40,9 +41,13 @@ const signUpAction = async (user: UserTypes) => {
   } catch (err) {
     const error = err as Error;
     console.log(error.message, "error post -action /signup");
-    //return { errMsg: "Something went wrong" };
-    throw err;
+    if(err instanceof AuthError){
+      return { errMsg: "Something went wrong" };
+    }
+    throw err
   }
 };
 
 export default signUpAction;
+
+

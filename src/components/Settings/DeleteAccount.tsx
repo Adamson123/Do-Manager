@@ -1,4 +1,5 @@
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 const DeleteAccount = () => {
   return (
@@ -11,21 +12,20 @@ const DeleteAccount = () => {
           database. This cannot be undone.
         </p>
         {/* Confirm Delete */}
-        <div className="flex gap-2 items-end">
-          <div className="flex-2">
+        <div className="grid grid-cols-3 gap-2 items-end">
+          <div className="col-span-2">
             <span className="text-[12px] text-muted-foreground">
               To confirm this, type <b>"DELETE"</b>
             </span>
-            <input
+            <Input
               type="text"
-              className="border border-darkerBg
-            outline-none py-[5px] px-1 rounded
-            focus:border-primary flex-grow bg-transparent
-            text-[14px] items-center w-full"
+              className="border border-darkerBg outline-none py-[5px] px-1 rounded
+              focus:border-primary flex-grow bg-transparent
+              text-[14px] items-center w-full"
             />
           </div>
 
-          <Button variant="destructive" className="h-[33px] rounded flex-1">
+          <Button variant="destructive" className="rounded">
             Delete account
           </Button>
         </div>

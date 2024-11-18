@@ -1,6 +1,5 @@
 "use client";
 
-import Tasks from "@/components/Home/Tasks/Tasks";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from "@radix-ui/react-dialog";
@@ -8,6 +7,9 @@ import debounce from "@/utils/debounce";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
 import dynamic from "next/dynamic";
 
+const Tasks = dynamic(() => import("@/components/Home/Tasks/Tasks"), {
+  ssr: false,
+});
 //dynamic import will only reflect well in small devices
 const SubTasks = dynamic(() => import("@/components/Home/Subtasks/Subtasks"), {
   ssr: false,

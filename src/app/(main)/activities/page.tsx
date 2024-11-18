@@ -1,4 +1,4 @@
-import CompletedTasksChart from "@/components/Activities/CompletedTasksChart";
+import CompletedSubtasksChart from "@/components/Activities/CompletedSubtasksChart";
 import LatestTasks from "@/components/Activities/LatestTasks";
 import ProgressChart from "@/components/Activities/ProgressChart";
 import RecentSubtasks from "@/components/Activities/RecentSubtasks";
@@ -13,7 +13,7 @@ const Activities = () => {
     >
       {/* Tasks and tasks statistics  */}
       <section className="flex flex-col gap-3">
-        <CompletedTasksChart />
+        <CompletedSubtasksChart />
         <TasksStatistics />
       </section>
       <section className="gap-3 flex flex-col">

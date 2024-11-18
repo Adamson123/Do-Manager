@@ -7,17 +7,18 @@ import {
   useEffect,
   useState,
 } from "react";
-import Header from "@/components/Header/Header";
 import Navbar from "@/components/Navbar/Navbar";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import clientAuth from "@/lib/auth-action";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
-import { getUser, updateUser } from "@/features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import { updateGetUserLoading, updateUser } from "@/features/userSlice";
 import getUserAction from "@/actions/getUserAction";
 import { RawUserTypes } from "@/types/userTypes";
-
+import { toast } from "@/components/ui/hooks/use-toast";
+import Header from "@/components/Header/Header";
+import { getMultipleTasks } from "@/features/taskSlice";
 interface appLayoutContextTypes {
   setSearch: Dispatch<SetStateAction<string>>;
   search: string;
@@ -36,18 +37,35 @@ export default function Layout({ children }: { children: ReactNode }) {
     search,
     setSearch,
   };
+
+  const userId = useSelector<RootState, string>(
+    (state) => state.user.userInfo.id
+  );
+
+  useEffect(() => {
+    userId && dispatch(getMultipleTasks(userId));
+  }, [userId]);
+
   useEffect(() => {
     (async () => {
       const session = await clientAuth();
       if (session?.user?.id) {
-        try {
-          const user = await getUserAction(session.user.id || "");
-          const parsedUser = JSON.parse(user as string) as RawUserTypes;
-          dispatch(updateUser(parsedUser));
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+        dispatch(updateGetUserLoading(true));
+        const response = await getUserAction(session?.user?.id || "");
+        dispatch(updateGetUserLoading(false));
+
+        const responseErr = response as { errMsg: string };
+        if (responseErr?.errMsg) {
+          return toast({
+            title: responseErr.errMsg,
+            description: "Operation completed with an error",
+            variant: "destructive",
+          });
         }
+        const parsedUser = JSON.parse(response as string);
+        dispatch(updateUser(parsedUser as RawUserTypes));
       }
+      dispatch(updateGetUserLoading(false));
     })();
   }, []);
 
