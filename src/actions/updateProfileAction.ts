@@ -4,8 +4,9 @@ import prisma from "../../prisma/client";
 import { profileSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 import { v4 as uuidv4 } from "uuid";
+import * as z from "zod";
 
-const deleteExistImage = async (imageId: FormDataEntryValue) => {
+const deleteExistImage = async (imageId: string) => {
   const existingImage = (
     await fs.readdir(`${process.cwd()}/public/images`)
   ).find((path) => path.split(".")[0] === imageId);
@@ -16,7 +17,9 @@ const deleteExistImage = async (imageId: FormDataEntryValue) => {
 };
 
 const updateProfileAction = async (formData: FormData) => {
-  const profile = Object.fromEntries(formData.entries());
+  const profile = Object.fromEntries(formData.entries()) as z.infer<
+    typeof profileSchema
+  > & { imageId: string };
 
   const validation = profileSchema.safeParse(profile);
   //check if validation is successful
@@ -43,7 +46,7 @@ const updateProfileAction = async (formData: FormData) => {
 
       //delete previous image
       const { imageId: oldImageId } = profile;
-      if (oldImageId) {
+      if (oldImageId && !oldImageId?.startsWith("https://")) {
         console.log(oldImageId, "@image id");
         await deleteExistImage(oldImageId);
       }

@@ -70,8 +70,9 @@ const Profile = () => {
             title: "Profile update",
             description: "Operation completed successfully",
           });
-
           dispatch(updateUser(response as Partial<RawUserTypes>));
+          if (imageRef.current) imageRef.current.value = "";
+          setPickedImage("");
         }
       });
     });
@@ -82,8 +83,6 @@ const Profile = () => {
     : `/images/${imageId}.webp`;
 
   const userImg = imageId ? userImgPath : "/images/defaultImg.webp";
-
-  console.log({ userImgPath, userImg });
 
   const cancel = pickedImage || name !== form.getValues().name;
 

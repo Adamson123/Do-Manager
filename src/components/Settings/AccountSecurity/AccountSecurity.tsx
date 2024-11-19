@@ -32,7 +32,7 @@ const AccountSecurity = () => {
           </span>
           <Switch
             disabled={hasPassword}
-            checked={hasPassword}
+            checked={switchOn}
             onCheckedChange={() => {
               setSwitchOn(!switchOn);
             }}
@@ -41,7 +41,7 @@ const AccountSecurity = () => {
         <br />
         {/* Set a password */}
 
-        {switchOn && <PasswordInput/>}
+        {switchOn && <PasswordInput />}
       </div>
     </div>
   );
