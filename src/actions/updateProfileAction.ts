@@ -9,7 +9,10 @@ import * as z from "zod";
 import path from "path";
 
 //path.resolve(__dirname, "../../../../public/images")
-const imageDir = path.join(process.cwd(), "/public/images");
+const imageDir = path.join(
+  process.cwd(),
+  process.env.NEXT_IMAGE_PATH || "/images"
+);
 
 const createDir = async () => {
   try {
