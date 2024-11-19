@@ -14,7 +14,7 @@ const imageDir = `${process.cwd()}/public/images`;
 const createDir = async () => {
   try {
     if (!fsSync.existsSync(imageDir)) {
-      await fs.mkdir(imageDir);
+      await fs.mkdir(imageDir, { recursive: true });
       console.log("Image directory created");
     }
   } catch (err) {
