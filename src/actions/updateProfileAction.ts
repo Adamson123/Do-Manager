@@ -6,10 +6,10 @@ import { profileSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
-//import path from "path";
+import path from "path";
 
 //path.resolve(__dirname, "../../../../public/images")
-const imageDir = `${process.cwd()}/public/images`;
+const imageDir = path.join(process.cwd(), "/public/images");
 
 const createDir = async () => {
   try {
