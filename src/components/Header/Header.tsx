@@ -36,8 +36,6 @@ const Header = () => {
     updateSearch();
   }, [localSearch]);
 
-  console.log({ getUserLoading });
-
   return (
     //py-6 w-[198.667px]
     <header className="pt-3 min-h-[70px] px-3">

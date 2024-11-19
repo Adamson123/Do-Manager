@@ -1,20 +1,34 @@
 "use server";
 import fs from "fs/promises";
+import fsSync from "fs";
 import prisma from "../../prisma/client";
 import { profileSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
-import path from "path";
+//import path from "path";
 
-const imageDir = path.resolve(__dirname, "../../../../public/images");
+//path.resolve(__dirname, "../../../../public/images")
+const imageDir = `${process.cwd()}/public/images`;
+
+const createDir = async () => {
+  try {
+    if (!fsSync.existsSync(imageDir)) {
+      await fs.mkdir(imageDir);
+      console.log("Image directory created");
+    }
+  } catch (err) {
+    const error = err as Error;
+    console.log("Error creating image directory: " + error.message);
+  }
+};
 
 const deleteExistImage = async (imageId: string) => {
   const existingImage = (await fs.readdir(imageDir)).find(
     (path) => path.split(".")[0] === imageId
   );
 
-  existingImage && (await fs.unlink(`${imageDir}/${existingImage}`));
+  if (existingImage) await fs.unlink(`${imageDir}/${existingImage}`);
 };
 
 const updateProfileAction = async (formData: FormData) => {
@@ -34,6 +48,8 @@ const updateProfileAction = async (formData: FormData) => {
   let user;
   try {
     if (image) {
+      await createDir();
+
       const imageId = uuidv4();
       user = await prisma.user.update({
         where: {
