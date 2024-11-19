@@ -11,7 +11,7 @@ import path from "path";
 //path.resolve(__dirname, "../../../../public/images")
 const imageDir = path.join(
   process.cwd(),
-  process.env.NEXT_IMAGE_PATH || "/images"
+  "/public/images"
 );
 
 const createDir = async () => {
