@@ -6,17 +6,22 @@ import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { RawUserTypes } from "@/types/userTypes";
-import clientSignOut from "@/lib/signOut-action";
+//import clientSignOut from "@/lib/signOut-action";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 const Settings = dynamic(() => import("../Settings/Settings"), { ssr: false });
 
 const UserProfile = () => {
+  const router = useRouter();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { email, name, image } = useSelector<RootState, RawUserTypes>(
     (state) => state.user.userInfo
   );
-
-  const userImg = image ? `/images/${image}.webp` : "/images/defaultImg.webp";
+  const userImgPath = image?.startsWith("https://")
+    ? image
+    : `/images/${image}.webp`;
+  const userImg = image ? userImgPath : "/images/defaultImg.webp";
 
   return (
     <Popover>
@@ -68,6 +73,7 @@ const UserProfile = () => {
               onClick={() => setSettingsOpen(true)}
               className="h-8 bg-transparent border-darkerBg border 
               text-foreground text-[14px] flex gap-1 hover:bg-darkerBg"
+              arial-label="open settings button"
             >
               <SettingsIcon className="w-4 h-4" />
               Settings
@@ -78,8 +84,7 @@ const UserProfile = () => {
 
           <div
             onClick={async () => {
-              await clientSignOut();
-              window.location.href = "/signin";
+              await signOut({ callbackUrl: "/signin" });
             }}
             className="border-t 
             text-muted-foreground border-darkerBg 

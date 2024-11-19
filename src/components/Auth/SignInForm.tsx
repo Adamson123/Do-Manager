@@ -22,11 +22,12 @@ import {
 import { Input } from "../ui/input";
 import { useState, useTransition } from "react";
 import { Button } from "../ui/button";
-import {  EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
 import signInAction from "@/actions/signInAction";
 import PulseLoader from "react-spinners/PulseLoader";
 import InlineErrorAlert from "../ui/InlineErrorAlert";
+import GoogleSignIn from "../ui/GoogleSignIn";
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -120,9 +121,7 @@ const SignInForm = () => {
                 </FormItem>
               )}
             />
-            {error && (
-              <InlineErrorAlert error={error}/>
-            )}
+            {error && <InlineErrorAlert error={error} />}
             <Button type="submit" className="w-full relative">
               {loading ? (
                 <PulseLoader
@@ -144,14 +143,10 @@ const SignInForm = () => {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-background px-2 text-muted-foreground">
-              OR SIGN IN WITH
-            </span>
+            <span className="bg-background px-2 text-muted-foreground">OR</span>
           </div>
         </div>
-        <Button variant="outline" className="w-full">
-          Sign in with Google
-        </Button>
+        <GoogleSignIn />
         <div className="text-center text-sm">
           Don't have an account?{" "}
           <Link href={"/signup"} className="underline">

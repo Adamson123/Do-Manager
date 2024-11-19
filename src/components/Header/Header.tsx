@@ -101,7 +101,7 @@ const Header = () => {
             ) : (
               <Button
                 onClick={() => router.push("/signin")}
-                className="h-[34px] px-7"
+                className="h-[34px] px-7 font-bold"
               >
                 Sign In
               </Button>

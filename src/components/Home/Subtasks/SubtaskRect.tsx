@@ -150,12 +150,14 @@ const SubtaskRect = ({
         flex flex-col gap-2"
         >
           {/* Description */}
-          <div className="flex gap-2">
-            <AlignLeft className="min-h-5 min-w-5" />
-            <span className="text-[12px] text-muted-foreground">
-              {subtask.description}
-            </span>
-          </div>
+          {subtask.description && (
+            <div className="flex gap-2">
+              <AlignLeft className="min-h-5 min-w-5" />
+              <span className="text-[12px] text-muted-foreground">
+                {subtask.description}
+              </span>
+            </div>
+          )}
           {/* Date */}
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">

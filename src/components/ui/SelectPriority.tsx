@@ -43,6 +43,7 @@ const SelectPriority = ({
       <SelectTrigger
         className={`w-auto text-[15px]
          flex gap-2 ${className}`}
+        arial-label="Open priority menu"
       >
         {showSortingIcon && (
           <div className="h-[18px] w-[17px] relative">

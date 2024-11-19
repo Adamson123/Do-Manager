@@ -70,17 +70,23 @@ const Profile = () => {
             title: "Profile update",
             description: "Operation completed successfully",
           });
-          dispatch(updateUser(response as RawUserTypes));
+
+          dispatch(updateUser(response as Partial<RawUserTypes>));
         }
       });
     });
   };
 
-  const userImg = imageId
-    ? `/images/${imageId}.webp`
-    : "/images/defaultImg.webp";
+  const userImgPath = imageId?.startsWith("https://")
+    ? imageId
+    : `/images/${imageId}.webp`;
+
+  const userImg = imageId ? userImgPath : "/images/defaultImg.webp";
+
+  console.log({ userImgPath, userImg });
 
   const cancel = pickedImage || name !== form.getValues().name;
+
   return (
     <Form {...form}>
       <form

@@ -176,6 +176,7 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
         onClick={() => (userId ? triggerCreateTask() : router.push("/signin"))}
         className="h-[55px] w-[55px] rounded-full fixed bottom-5
         left-5 shadow-md"
+        arial-label="Create a task"
       >
         <Plus className="min-w-5 min-h-5" strokeWidth="3" />
       </Button>

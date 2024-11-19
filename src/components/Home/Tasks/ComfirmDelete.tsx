@@ -49,7 +49,10 @@ const ConfirmDelete = ({
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger className="w-0 h-0 p-0 opacity-0 pointer-events-none" />
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent
+        className="sm:max-w-[425px] text-center z-[100]"
+        overlayZindex="z-[100]"
+      >
         <DialogHeader>
           <DialogTitle>Are you sure you want to delete this task</DialogTitle>
           <DialogDescription>

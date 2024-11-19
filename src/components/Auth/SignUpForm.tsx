@@ -27,6 +27,7 @@ import Link from "next/link";
 import signUpAction from "@/actions/signUpAction";
 import PulseLoader from "react-spinners/PulseLoader";
 import InlineErrorAlert from "../ui/InlineErrorAlert";
+import GoogleSignIn from "../ui/GoogleSignIn";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -162,14 +163,10 @@ const SignUpForm = () => {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Or sign up with
-            </span>
+            <span className="bg-background px-2 text-muted-foreground">Or</span>
           </div>
         </div>
-        <Button variant="outline" className="w-full">
-          Sign up with Google
-        </Button>
+        <GoogleSignIn />
         <div className="text-center text-sm">
           Already have an account?{" "}
           <Link href="/signin" className="underline">

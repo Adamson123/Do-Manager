@@ -54,6 +54,7 @@ const Subtasks = ({
 
   //update description height when window is resizing
   useEffect(() => {
+    if (!taskDescription) return;
     const updateDescriptionHeight = debounce(() => {
       setDescriptionHeight(Number(0));
       if (!descriptionRef.current) return;
@@ -98,29 +99,31 @@ const Subtasks = ({
             <h2 className="text-2xl font-bold">{taskTitle}</h2>
           </div>
           {/* Description */}
-          <div className="flex flex-wrap gap-1">
-            <p
-              ref={descriptionRef}
-              className={`text-[14px] text-muted-foreground ${
-                descriptionHeight > 2 && !showMore && "max-h-[45px]"
-              } overflow-hidden`}
-            >
-              {taskDescription}
-            </p>
-
-            {descriptionHeight > 2 ? (
-              <span
-                onClick={() => setShowMore(!showMore)}
-                className={`${
-                  !showMore ? "text-red-500" : "text-green-500"
-                } text-[14px] cursor-pointer`}
+          {taskDescription && (
+            <div className="flex flex-wrap gap-1">
+              <p
+                ref={descriptionRef}
+                className={`text-[14px] text-muted-foreground ${
+                  descriptionHeight > 2 && !showMore && "max-h-[45px]"
+                } overflow-hidden`}
               >
-                {!showMore ? "...show more" : "...show less"}
-              </span>
-            ) : (
-              ""
-            )}
-          </div>
+                {taskDescription}
+              </p>
+
+              {descriptionHeight > 2 ? (
+                <span
+                  onClick={() => setShowMore(!showMore)}
+                  className={`${
+                    !showMore ? "text-red-500" : "text-green-500"
+                  } text-[14px] cursor-pointer`}
+                >
+                  {!showMore ? "...show more" : "...show less"}
+                </span>
+              ) : (
+                ""
+              )}
+            </div>
+          )}
         </div>
         {/* Priority, Date and Subtask Amount */}
         <div className="flex justify-between items-end">
@@ -186,8 +189,8 @@ const Subtasks = ({
               triggerCreateSubtask(setCreateDialogOpen);
             }}
             className="text-primary text-[17px] py-4 border-t
-                    border-b border-darkerBg cursor-pointer font-bold
-                    hover:opacity-[0.8] transition-all"
+            border-b border-darkerBg cursor-pointer font-bold
+            hover:opacity-[0.8] transition-all"
           >
             Add subtask <Plus className="h-5 w-5 inline -translate-y-[2px]" />
           </div>
@@ -197,6 +200,7 @@ const Subtasks = ({
       {createDialogOpen && (
         <CreateSubtask
           //dialogTriggerRef={dialogTriggerRef}
+
           setDialogOpen={setCreateDialogOpen}
           dialogOpen={createDialogOpen}
           action={action}

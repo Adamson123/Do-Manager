@@ -3,13 +3,17 @@ import type { NextAuthConfig } from "next-auth";
 import { signInSchema } from "@/schemas";
 import { getUserByEmail } from "@/data";
 import bcrypt from "bcryptjs";
-import { RawUserTypes } from "@/types/userTypes";
+import Google from "next-auth/providers/google";
 
 /**
  * coming from AUTH CONFIG!!!
  */
 export default {
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     Credentials({
       async authorize(credentials) {
         const validation = signInSchema.safeParse(credentials);
@@ -21,8 +25,8 @@ export default {
           if (!user || !user.password) return null;
 
           const passwordMatch = await bcrypt.compare(password, user.password);
-          user.password = "";
-          console.log({ passwordMatch, user });
+          //user.password = "";
+
           if (passwordMatch) return user;
         }
         return null;

@@ -7,11 +7,11 @@
   src: url("./fonts/RobotoFlex.ttf");
   font-display: swap;
 }
-@font-face {
+/* @font-face {
   font-family: montserrat;
   src: url("./fonts/Montserrat.ttf");
   font-display: swap;
-}
+} */
 
 body {
   font-family: roboto, Arial, sans-serif;
@@ -81,7 +81,7 @@ body div {
     --highPriority: 239, 68, 68;
     --mediumPriority: 234, 179, 8;
     --lowPriority: 34, 197, 94;
-    --logoFont: montserrat;
+    /* --logoFont: montserrat; */
   }
 
   .dark {

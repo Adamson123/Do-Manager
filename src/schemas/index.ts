@@ -16,18 +16,15 @@ export const createTaskSchema = z.object({
     .string({
       message: "Description must be at least 1 character",
     })
-    .min(2, {
-      message: "Description must be at least 1 character.",
-    })
     .max(400, {
       message: "Description must not exceed 400 characters.",
-    }),
+    })
+    .trim()
+    .optional(),
   priority: z.string({
     message: "A valid priority level must be provided",
   }),
-  userId: z.string({ message: "A valid user id must be provided" }).min(36, {
-    message: "A valid user id must be provided",
-  }),
+  userId: z.string({ message: "A valid user id must be provided" }),
 });
 
 export const createSubtaskSchema = z.object({
@@ -46,21 +43,19 @@ export const createSubtaskSchema = z.object({
     .string({
       message: "Description must be at least 1 character.",
     })
-    .min(1, {
-      message: "Description must be at least 1 character.",
-    })
+    // .min(1, {
+    //   message: "Description must be at least 1 character.",
+    // })
     .max(400, {
       message: "Description must not exceed 400 characters.",
-    }),
+    })
+    .trim()
+    .optional(),
   dueDate: z.string({
     message: "A valid due date must be provided",
   }),
-  taskId: z.string({ message: "A valid task id must be provided" }).min(36, {
-    message: "A valid task id must be provided",
-  }),
-  userId: z.string({ message: "A valid user id must be provided" }).min(36, {
-    message: "A valid user id must be provided",
-  }),
+  taskId: z.string({ message: "A valid task id must be provided" }),
+  userId: z.string({ message: "A valid user id must be provided" }),
 });
 
 export const signUpSchema = z.object({
@@ -103,9 +98,7 @@ export const profileSchema = z.object({
         message: "File must be an image (e.g., PNG,JPG,JPEG, etc.)",
       }
     ),
-  userId: z.string({ message: "A valid user id must be provided" }).min(36, {
-    message: "A valid user id must be provided",
-  }),
+  userId: z.string({ message: "A valid user id must be provided" }),
 });
 
 export const passwordSchema = z

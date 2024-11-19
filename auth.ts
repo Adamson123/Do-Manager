@@ -6,7 +6,6 @@ import prisma from "./prisma/client";
 /**
  * Now this is coming from AUTH.TS!!!
  */
-
 export const {
   handlers: { GET, POST },
   auth,
