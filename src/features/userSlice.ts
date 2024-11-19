@@ -9,6 +9,7 @@ const initialUserInfoState: RawUserTypes = {
   name: "",
   updatedAt: "",
   password: "",
+  hasPassword: false,
   subtaskCompletionHistory: [],
 };
 
@@ -45,13 +46,27 @@ const userSlice = createSlice({
           action.payload
             .subtaskCompletionHistory as SubtaskCompletionHistoryTypes;
 
-        subtaskCompletionHistory = subtaskCompletionHistory.map(
+        const alreadyExist = subtaskCompletionHistory.find(
           (subtaskHistory) =>
             subtaskHistory.id === subtaskCompletionHistoryUpdate.id ||
             subtaskHistory.day === subtaskCompletionHistoryUpdate.day
-              ? subtaskCompletionHistoryUpdate
-              : subtaskHistory
         );
+
+        if (!alreadyExist) {
+          subtaskCompletionHistory = [
+            ...subtaskCompletionHistory,
+            subtaskCompletionHistoryUpdate,
+          ];
+        } else {
+          subtaskCompletionHistory = subtaskCompletionHistory.map(
+            (subtaskHistory) =>
+              subtaskHistory.id === subtaskCompletionHistoryUpdate.id ||
+              subtaskHistory.day === subtaskCompletionHistoryUpdate.day
+                ? subtaskCompletionHistoryUpdate
+                : subtaskHistory
+          );
+        }
+
         state.userInfo = { ...state.userInfo, subtaskCompletionHistory };
       } else {
         state.userInfo = {

@@ -97,7 +97,6 @@ export const PATCH = async (
           where: {
             day,
             userId,
-            //TODO
           },
         });
 

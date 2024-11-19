@@ -5,15 +5,16 @@ import { profileSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
+import path from "path";
+
+const imageDir = path.resolve(__dirname, "../../../../public/images");
 
 const deleteExistImage = async (imageId: string) => {
-  const existingImage = (
-    await fs.readdir(`${process.cwd()}/public/images`)
-  ).find((path) => path.split(".")[0] === imageId);
+  const existingImage = (await fs.readdir(imageDir)).find(
+    (path) => path.split(".")[0] === imageId
+  );
 
-  console.log(existingImage, imageId);
-  existingImage &&
-    (await fs.unlink(`${process.cwd()}/public/images/${existingImage}`));
+  existingImage && (await fs.unlink(`${imageDir}/${existingImage}`));
 };
 
 const updateProfileAction = async (formData: FormData) => {
@@ -46,6 +47,8 @@ const updateProfileAction = async (formData: FormData) => {
 
       //delete previous image
       const { imageId: oldImageId } = profile;
+      //if there's alreading an image and the image is not starting from "https://"
+      //(coming from google)
       if (oldImageId && !oldImageId?.startsWith("https://")) {
         console.log(oldImageId, "@image id");
         await deleteExistImage(oldImageId);
@@ -53,10 +56,8 @@ const updateProfileAction = async (formData: FormData) => {
       //add new image
       if (typeof image !== "string") {
         const data = await image.arrayBuffer();
-        await fs.writeFile(
-          `${process.cwd()}/public/images/${imageId}.webp`,
-          Buffer.from(data)
-        );
+        const dirPath = `${imageDir}/${imageId}.webp`;
+        await fs.writeFile(dirPath, Buffer.from(data));
       }
     } else {
       user = await prisma.user.update({
