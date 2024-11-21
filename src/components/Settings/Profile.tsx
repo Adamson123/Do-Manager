@@ -73,6 +73,7 @@ const Profile = () => {
           });
           dispatch(updateUser(response as Partial<RawUserTypes>));
           if (imageRef.current) imageRef.current.value = "";
+          form.resetField("image", { defaultValue: "" });
           setPickedImage("");
 
           // Revalidate("/");
