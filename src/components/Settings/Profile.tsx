@@ -39,13 +39,13 @@ const Profile = () => {
   });
   const [loading, startTransition] = useTransition();
   const [pickedImage, setPickedImage] = useState<MediaSource | File | string>(
-    ""
+    "",
   );
   const imageRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
   const handleProfileUpdate = async (
-    profile: z.infer<typeof profileSchema>
+    profile: z.infer<typeof profileSchema>,
   ) => {
     if (loading) return;
     const { image, name, userId } = profile;
@@ -62,7 +62,8 @@ const Profile = () => {
         if (responseErr.errMsg) {
           toast({
             title: responseErr.errMsg,
-            description: "Operation completed with an error",
+            description:
+              "Operation completed with an error, Please check your internet connection",
             variant: "destructive",
           });
         } else {

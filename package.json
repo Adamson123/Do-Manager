@@ -27,6 +27,7 @@
     "@reduxjs/toolkit": "^2.3.0",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
+    "@vercel/blob": "^0.26.0",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
