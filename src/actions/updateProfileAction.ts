@@ -10,7 +10,7 @@ import * as z from "zod";
 import path from "path";
 
 //path.resolve(__dirname, "../../../../public/images")
-const imageDir = path.join(process.cwd(), "/public/images");
+const imageDir = path.resolve(path.join(process.cwd(), "/public/images"));
 
 const createDir = async () => {
   try {
@@ -50,8 +50,8 @@ const updateProfileAction = async (formData: FormData) => {
   let user;
   try {
     if (image) {
+      console.log(fsSync.readdirSync(process.cwd()));
       await createDir();
-
       const imageId = uuidv4();
       user = await prisma.user.update({
         where: {
