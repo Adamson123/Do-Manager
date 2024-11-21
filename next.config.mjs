@@ -21,7 +21,10 @@ const nextConfig = {
         pathname: "**",
       },
     ],
-  }
+  },
+  experimental: {
+    nftTracing: true,
+  },
 };
 
 export default nextConfig;
