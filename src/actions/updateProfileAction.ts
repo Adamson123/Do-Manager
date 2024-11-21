@@ -14,10 +14,9 @@ const imageDir = path.join(process.cwd(), "/public/images");
 
 const createDir = async () => {
   try {
-    if (!fsSync.existsSync(imageDir)) {
-      await fs.mkdir(imageDir, { recursive: true });
-      console.log("Image directory created");
-    }
+    if (fsSync.existsSync(imageDir)) return;
+    await fs.mkdir(imageDir, { recursive: true });
+    console.log("Image directory created");
   } catch (err) {
     const error = err as Error;
     console.log("Error creating image directory: " + error.message);
@@ -26,10 +25,12 @@ const createDir = async () => {
 
 const deleteExistImage = async (imageId: string) => {
   const existingImage = (await fs.readdir(imageDir)).find(
-    (path) => path.split(".")[0] === imageId
+    (path) => path.split(".")[0] === imageId,
   );
 
-  if (existingImage) await fs.unlink(`${imageDir}/${existingImage}`);
+  if (!existingImage) return;
+  const dirPath = path.join(imageDir, existingImage);
+  await fs.unlink(dirPath);
 };
 
 const updateProfileAction = async (formData: FormData) => {
@@ -73,7 +74,7 @@ const updateProfileAction = async (formData: FormData) => {
       //add new image
       if (typeof image !== "string") {
         const data = await image.arrayBuffer();
-        const dirPath = `${imageDir}/${imageId}.webp`;
+        const dirPath = path.join(imageDir, `${imageId}.webp`);
         await fs.writeFile(dirPath, Buffer.from(data));
       }
     } else {
