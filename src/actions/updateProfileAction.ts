@@ -18,14 +18,22 @@ const updateProfileAction = async (formData: FormData) => {
   const { name, userId, image, imageId } = validation.data;
   let user;
   try {
-    let blobUrl;
+    let blobUrl: string | undefined;
 
     if (image && typeof image !== "string") {
       const data = await image.arrayBuffer();
       const fileName = `profiles/${userId}.webp`;
 
-      // Extract the userId from the imageId URL
-      const imageFileName = new URL(imageId).pathname.split("/").pop();
+      // Ensure imageId is a valid URL or parse its pathname
+      let imageFileName: string | undefined;
+      try {
+        const url = new URL(imageId);
+        imageFileName = url.pathname.split("/").pop(); // Get the filename from a valid URL
+      } catch {
+        // If imageId is not a valid URL, treat it as a path
+        imageFileName = imageId.split("/").pop();
+      }
+
       const imageUserId = imageFileName?.split("-")[0]; // Extract userId from the filename
 
       if (imageUserId === userId) {
