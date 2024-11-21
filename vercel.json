@@ -1,0 +1,7 @@
+{
+	"functions": {
+		"src/app/actions/index.js": {
+			"includeFiles": "public/images/**"
+		}
+	}
+}
