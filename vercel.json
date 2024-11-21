@@ -1,6 +1,6 @@
 {
 	"functions": {
-		"src/app/actions": {
+		"src/app/actions/updateProfileAction.ts": {
 			"includeFiles": "public/images/**"
 		}
 	}
