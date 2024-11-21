@@ -62,8 +62,7 @@ const Profile = () => {
         if (responseErr.errMsg) {
           toast({
             title: responseErr.errMsg,
-            description:
-              "Operation completed with an error, Please check your internet connection",
+            description: "Operation completed with an error",
             variant: "destructive",
           });
         } else {

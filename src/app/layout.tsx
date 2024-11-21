@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Head from "next/head";
 import "./globals.css";
 import ReduxProvider from "@/store/provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -6,12 +7,17 @@ import dynamic from "next/dynamic";
 
 const ThemeProvider = dynamic(
   () => import("next-themes").then((mod) => mod.ThemeProvider),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const metadata: Metadata = {
   title: "do-manager",
   description: "Straight to the point task manager",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
