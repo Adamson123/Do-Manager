@@ -21,15 +21,6 @@ import Header from "@/components/Header/Header";
 import { getMultipleTasks } from "@/features/taskSlice";
 import appLayoutContext from "@/context/appLayoutContext";
 
-// interface appLayoutContextTypes {
-//   setSearch: Dispatch<SetStateAction<string>>;
-//   search: string;
-// }
-// export const appLayoutContext = createContext<appLayoutContextTypes>({
-//   setSearch: () => {},
-//   search: "",
-// });
-
 export default function Layout({ children }: { children: ReactNode }) {
   const currentPath = usePathname();
   const dispatch = useDispatch<AppDispatch>();

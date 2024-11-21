@@ -2,6 +2,16 @@
   "functions": {
     "api/updateProfileAction.js": {
       "includeFiles": "public/images/**/*"
+    },
+    "src/actions/*.ts": {
+      "runtime": "edge",
+      "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/src/actions/:path*"
+    }
+  ]
 }
