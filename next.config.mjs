@@ -22,9 +22,7 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    nftTracing: true,
-  },
+  output: "standalone",
 };
 
 export default nextConfig;
