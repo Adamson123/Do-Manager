@@ -22,6 +22,10 @@ const nextConfig = {
       },
     ],
   },
+  output: "standalone",
+  experimental: {
+    turbotrace: {}, // This.
+  },
 };
 
 export default nextConfig;
