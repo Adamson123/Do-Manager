@@ -38,7 +38,7 @@ const CompletedSubtasksChart = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
-    (state) => state.task
+    (state) => state.task,
   );
 
   const {
@@ -46,7 +46,6 @@ const CompletedSubtasksChart = () => {
     createdAt,
     subtaskCompletionHistory,
   } = useSelector<RootState, RawUserTypes>((state) => state.user.userInfo);
-
 
   // Generate ranges of start and limit dates based on the user's signup date
   const generateDateRanges = useCallback(() => {
@@ -57,7 +56,7 @@ const CompletedSubtasksChart = () => {
     let totalDays = Math.ceil(differenceInHours(today, signupDate) / 24);
 
     const limitDate = new Date(
-      new Date().setDate(signupDate.getDate() + totalDays)
+      new Date().setDate(signupDate.getDate() + totalDays),
     );
     totalDays =
       today.getDate() < limitDate.getDate() ? totalDays - 1 : totalDays;

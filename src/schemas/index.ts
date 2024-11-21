@@ -96,7 +96,7 @@ export const profileSchema = z.object({
       },
       {
         message: "File must be an image (e.g., PNG,JPG,JPEG, etc.)",
-      }
+      },
     ),
   userId: z.string({ message: "A valid user id must be provided" }),
 });
@@ -112,9 +112,7 @@ export const passwordSchema = z
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[0-9]/, "Password must contain at least one number"),
     confirmPassword: z.string(),
-    userId: z.string({ message: "A valid user id must be provided" }).min(36, {
-      message: "A valid user id must be provided",
-    }),
+    userId: z.string({ message: "A valid user id must be provided" }),
   })
   .superRefine((data, ctx) => {
     // If the user has a password, currentPassword is required

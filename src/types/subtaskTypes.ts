@@ -1,7 +1,7 @@
 export interface RawSubtaskTypes {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   createdAt: Date;
   updatedAt: Date;
   taskId: string;
@@ -14,7 +14,7 @@ export interface RawSubtaskTypes {
 
 export interface SubtaskTypes {
   title: string;
-  description: string;
+  description?: string;
   dueDate: string;
   taskId: string;
   userId: string;
@@ -24,7 +24,7 @@ type sideUpdate = "completion" | "favorite";
 
 export interface EditableSubtaskFieldTypes {
   title: string;
-  description: string;
+  description?: string;
   dueDate: string;
   taskId: string;
   completed?: boolean;

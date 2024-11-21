@@ -65,7 +65,7 @@ const CreateTask = ({
     TaskInitialStateTypes
   >((state) => state.task);
   const { id: userId } = useSelector<RootState, RawUserTypes>(
-    (state) => state.user.userInfo
+    (state) => state.user.userInfo,
   );
 
   //closed by user while a request was made
@@ -162,7 +162,7 @@ const CreateTask = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(
-              action.exec === "edit" ? handleEditTask : handleCreateTask
+              action.exec === "edit" ? handleEditTask : handleCreateTask,
             )}
             className="space-y-4"
           >
@@ -194,7 +194,7 @@ const CreateTask = ({
                     />
                   </FormControl>
                   <FormMessage className="text-[12px]" />
-                  <FormDescription>{field.value.length} / 400</FormDescription>
+                  <FormDescription>{field.value?.length} / 400</FormDescription>
                 </FormItem>
               )}
             />

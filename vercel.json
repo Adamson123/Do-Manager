@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/updateProfileAction.js": {
+      "includeFiles": "public/images/**/*"
+    }
+  }
+}

@@ -19,15 +19,16 @@ import { RawUserTypes } from "@/types/userTypes";
 import { toast } from "@/components/ui/hooks/use-toast";
 import Header from "@/components/Header/Header";
 import { getMultipleTasks } from "@/features/taskSlice";
-interface appLayoutContextTypes {
-  setSearch: Dispatch<SetStateAction<string>>;
-  search: string;
-}
+import appLayoutContext from "@/context/appLayoutContext";
 
-export const appLayoutContext = createContext<appLayoutContextTypes>({
-  setSearch: () => {},
-  search: "",
-});
+// interface appLayoutContextTypes {
+//   setSearch: Dispatch<SetStateAction<string>>;
+//   search: string;
+// }
+// export const appLayoutContext = createContext<appLayoutContextTypes>({
+//   setSearch: () => {},
+//   search: "",
+// });
 
 export default function Layout({ children }: { children: ReactNode }) {
   const currentPath = usePathname();

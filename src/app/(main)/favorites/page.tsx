@@ -4,7 +4,7 @@ import SubtaskRect from "@/components/Home/Subtasks/SubtaskRect";
 import SelectPriority from "@/components/ui/SelectPriority";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { appLayoutContext } from "../layout";
+import appLayoutContext from "@/context/appLayoutContext";
 import { getMultipleTasks, TaskInitialStateTypes } from "@/features/taskSlice";
 import CreateSubtask, {
   ActionType,
@@ -35,7 +35,7 @@ const Favorites = () => {
           //mapping subtasks with task priority
           .map((subtask) => {
             return { ...subtask, priority: task.priority };
-          })
+          }),
       );
     //flattened all the returned array
     // .flat();
@@ -44,16 +44,16 @@ const Favorites = () => {
 
     const subtasksSortedByDate = favoritesInTasks.sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
     const tasksSortedByPriorty = subtasksSortedByDate.filter(
-      (task) => task.priority === priority
+      (task) => task.priority === priority,
     );
     const otherTasks = subtasksSortedByDate.filter(
-      (task) => task.priority !== priority
+      (task) => task.priority !== priority,
     );
     const result = [...tasksSortedByPriorty, ...otherTasks].filter((task) =>
-      task.title.toLowerCase().includes(search.toLowerCase())
+      task.title.toLowerCase().includes(search.toLowerCase()),
     );
     return result;
   }, [tasks, priority, search]);
@@ -64,7 +64,7 @@ const Favorites = () => {
       setAction(action);
       setCreateDialogOpen(true);
     },
-    [setAction, setCreateDialogOpen]
+    [setAction, setCreateDialogOpen],
   );
   return (
     //h-[calc(100%-97.5px)]

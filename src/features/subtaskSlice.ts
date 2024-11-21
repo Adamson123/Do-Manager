@@ -18,13 +18,18 @@ const initialState = {
   deleteSubtaskLoading: false,
   editSubtaskLoading: false,
   taskId: "",
-  taskDescription: "",
+  taskDescription: "" as string | undefined,
   taskPriority: "",
   taskTitle: "",
   taskCreatedAt: date.toDateString() as Date | string,
 };
 
-export type SubtaskInitialStateTypes = typeof initialState;
+export type SubtaskInitialStateTypes = Omit<
+  typeof initialState,
+  "taskDescription"
+> & {
+  taskDescription: string | undefined;
+};
 
 type ActiveTaskTypes = Omit<
   SubtaskInitialStateTypes,
@@ -55,7 +60,7 @@ export const createSubtask = createAsyncThunk(
       });
       return rejectWithValue(error.errMsg);
     }
-  }
+  },
 );
 
 //edit a subtask
@@ -69,7 +74,7 @@ export const editSubtask = createAsyncThunk(
       subtask: EditableSubtaskFieldTypes;
       id: string;
     },
-    { rejectWithValue, dispatch }
+    { rejectWithValue, dispatch },
   ) => {
     try {
       const response = await subtaskServices.editSubtask(subtask, id);
@@ -78,7 +83,7 @@ export const editSubtask = createAsyncThunk(
         updateSubstask({
           taskId: response.subtask.taskId,
           subtask: response.subtask,
-        })
+        }),
       );
 
       //we don't want to display toast when task is updated
@@ -92,7 +97,7 @@ export const editSubtask = createAsyncThunk(
         dispatch(
           updateUser({
             subtaskCompletionHistory: response.subtaskCompletionHistory,
-          })
+          }),
         );
 
       return response.subtask;
@@ -106,7 +111,7 @@ export const editSubtask = createAsyncThunk(
 
       return rejectWithValue(error.errMsg);
     }
-  }
+  },
 );
 
 //delete a subtask
@@ -126,7 +131,7 @@ export const deleteSubtask = createAsyncThunk(
       });
       return rejectWithValue(error.errMsg);
     }
-  }
+  },
 );
 
 const subtaskSlice = createSlice({
@@ -169,7 +174,7 @@ const subtaskSlice = createSlice({
         (state, action: ReturnType<typeof createSubtask.rejected>) => {
           state.createSubtaskLoading = false;
           state.error = action.error.message || "Unknown error occurred";
-        }
+        },
       )
       //error for edit subtask
       .addCase(
@@ -177,14 +182,14 @@ const subtaskSlice = createSlice({
         (state, action: ReturnType<typeof editSubtask.rejected>) => {
           state.editSubtaskLoading = false;
           state.error = action.error.message || "Unknown error occurred";
-        }
+        },
       ) //error for delete subtask
       .addCase(
         deleteSubtask.rejected,
         (state, action: ReturnType<typeof deleteSubtask.rejected>) => {
           state.deleteSubtaskLoading = false;
           state.error = action.error.message || "Unknown error occurred";
-        }
+        },
       );
   },
   reducers: {

@@ -71,7 +71,7 @@ const CreateSubtask = ({
         SubtaskInitialStateTypes
     >((state) => state.subtask);
     const { id: userId } = useSelector<RootState, RawUserTypes>(
-        (state) => state.user.userInfo
+        (state) => state.user.userInfo,
     );
 
     //const [dialogOpen, setdialogOpen] = useState(false);
@@ -118,7 +118,7 @@ const CreateSubtask = ({
     }, [fulfilled, closeWhileOnReq]);
 
     const handleCreateSubtask = (
-        subtask: z.infer<typeof createSubtaskSchema>
+        subtask: z.infer<typeof createSubtaskSchema>,
     ) => {
         if (createSubtaskLoading) return;
         console.log(subtask);
@@ -128,7 +128,7 @@ const CreateSubtask = ({
     };
 
     const handleEditSubtask = (
-        subtask: z.infer<typeof createSubtaskSchema>
+        subtask: z.infer<typeof createSubtaskSchema>,
     ) => {
         if (editSubtaskLoading) return;
         dispatch(editSubtask({ subtask, id: action.id })).finally(() => {
@@ -185,7 +185,7 @@ const CreateSubtask = ({
                         onSubmit={form.handleSubmit(
                             action.exec === "edit"
                                 ? handleEditSubtask
-                                : handleCreateSubtask
+                                : handleCreateSubtask,
                         )}
                         className="space-y-4"
                     >
@@ -226,7 +226,7 @@ const CreateSubtask = ({
                                     </FormControl>
                                     <FormMessage className="text-[12px]" />
                                     <FormDescription>
-                                        {field.value.length} / 200
+                                        {field.value?.length} / 200
                                     </FormDescription>
                                 </FormItem>
                             )}
@@ -247,7 +247,7 @@ const CreateSubtask = ({
                                                 onClick={(event) => {
                                                     event.stopPropagation();
                                                     setOpenDatePicker(
-                                                        !openDatePicker
+                                                        !openDatePicker,
                                                     );
                                                 }}
                                                 className="text-secondary-foreground border 
@@ -256,7 +256,7 @@ const CreateSubtask = ({
                                                 {field.value
                                                     ? format(
                                                           field.value,
-                                                          "EEE, MMM d, h aaa"
+                                                          "EEE, MMM d, h aaa",
                                                       )
                                                     : "Pick a date"}
                                             </Button>

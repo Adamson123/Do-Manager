@@ -4,7 +4,7 @@ import { ModeToggle } from "../ui/toggleMode";
 import UserProfile from "./UserProfile";
 import Logo from "./Logo";
 import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
-import { appLayoutContext } from "@/app/(main)/layout";
+import appLayoutContext from "@/context/appLayoutContext";
 import debounce from "@/utils/debounce";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -47,7 +47,7 @@ const Header = () => {
             className={clsx(
               "smd:flex lg:flex",
               searchBarFocused || search ? "hidden" : "flex",
-              searchBarFocused || search ? "md:hidden" : "md:flex"
+              searchBarFocused || search ? "md:hidden" : "md:flex",
             )}
           />
           {/* Search bar */}
@@ -61,7 +61,7 @@ const Header = () => {
                   : "left-[13px] cursor-pointer",
                 searchBarFocused || search
                   ? "md:left-[9px]"
-                  : "md:left-[13px] cursor-pointer"
+                  : "md:left-[13px] cursor-pointer",
               )}
               onClick={() => searchBarRef.current?.focus()}
             />
@@ -78,7 +78,7 @@ const Header = () => {
                 searchBarFocused || search
                   ? "md:w-auto"
                   : "md:w-10 cursor-pointer",
-                "lg:cursor-text"
+                "lg:cursor-text",
               )}
               placeholder="Search"
               onClick={() => searchBarRef.current?.focus()}

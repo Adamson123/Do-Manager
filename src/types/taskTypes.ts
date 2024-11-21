@@ -2,7 +2,7 @@ import { RawSubtaskTypes } from "./subtaskTypes";
 
 export interface TaskTypes {
     title: string;
-    description: string;
+    description?: string;
     priority: string;
     userId?: string;
 }
@@ -11,7 +11,7 @@ export interface RawTaskTypes {
     id: string;
     userId: string;
     title: string;
-    description: string;
+    description?: string;
     priority: string;
     createdAt: Date;
     updatedAt: Date;

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "mkdir -p public/images && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "postinstall": "npx prisma generate && npx prisma migrate dev"
@@ -31,6 +31,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
+    "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "lucide-react": "^0.447.0",

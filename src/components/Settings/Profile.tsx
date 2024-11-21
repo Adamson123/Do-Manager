@@ -73,6 +73,8 @@ const Profile = () => {
           dispatch(updateUser(response as Partial<RawUserTypes>));
           if (imageRef.current) imageRef.current.value = "";
           setPickedImage("");
+
+          // Revalidate("/");
         }
       });
     });
