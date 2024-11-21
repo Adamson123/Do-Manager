@@ -4,7 +4,7 @@
       "includeFiles": "public/images/**/*"
     },
     "src/actions/*.ts": {
-      "runtime": "edge",
+      "runtime": "nodejs18.x",
       "maxDuration": 10
     }
   },
