@@ -170,7 +170,7 @@ const Profile = () => {
           <Button type="submit" className="rounded">
             {loading ? "Updating..." : "Update profile"}
           </Button>
-          {cancel && (
+          {cancel && !loading && (
             <Button
               onClick={() => {
                 form.resetField("name", { defaultValue: name });

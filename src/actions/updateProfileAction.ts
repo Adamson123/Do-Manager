@@ -7,7 +7,9 @@ import { put } from "@vercel/blob";
 import * as z from "zod";
 
 const updateProfileAction = async (formData: FormData) => {
-  const profile = Object.fromEntries(formData.entries()) as z.infer<typeof profileSchema> & { imageId: string };
+  const profile = Object.fromEntries(formData.entries()) as z.infer<
+    typeof profileSchema
+  > & { imageId: string };
 
   const validation = profileSchema.safeParse(profile);
   if (!validation.success) {
@@ -15,7 +17,8 @@ const updateProfileAction = async (formData: FormData) => {
     return { errMsg: simplifyError(errors)[0] };
   }
 
-  const { name, userId, image, imageId } = validation.data;
+  const { name, userId, image } = validation.data;
+  const imageId = profile.imageId;
   let user;
   try {
     let blobUrl: string | undefined;
@@ -25,15 +28,8 @@ const updateProfileAction = async (formData: FormData) => {
       const fileName = `profiles/${userId}.webp`;
 
       // Ensure imageId is a valid URL or parse its pathname
-      let imageFileName: string | undefined;
-      try {
-        const url = new URL(imageId);
-        imageFileName = url.pathname.split("/").pop(); // Get the filename from a valid URL
-      } catch {
-        // If imageId is not a valid URL, treat it as a path
-        imageFileName = imageId.split("/").pop();
-      }
-
+      // Extract the userId from the imageId URL
+      const imageFileName = new URL(imageId).pathname.split("/").pop();
       const imageUserId = imageFileName?.split("-")[0]; // Extract userId from the filename
 
       if (imageUserId === userId) {
@@ -42,7 +38,6 @@ const updateProfileAction = async (formData: FormData) => {
           access: "public",
           contentType: "image/webp",
           token: process.env.BLOB_READ_WRITE_TOKEN,
-          overwrite: true,
         });
         blobUrl = result.url;
       } else {
