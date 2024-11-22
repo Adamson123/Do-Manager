@@ -153,13 +153,13 @@ const Subtasks = ({
         </div>
       </div>
       {/* SubtaskRect */}
-
       <div
         style={{
           scrollbarColor: "rgb(var(--darkerBg)) hsl(var(--background))",
         }}
         className="flex flex-col gap-5
-        min-w-full pt-3 pb-6 md:pb-3 overflow-y-auto flex-grow relative"
+        min-w-full pt-3 pb-6 md:pb-3 overflow-y-auto
+        flex-grow relative"
       >
         {sortedSubtasks.length ? (
           sortedSubtasks.map((subtask) => {
@@ -199,8 +199,6 @@ const Subtasks = ({
 
       {createDialogOpen && (
         <CreateSubtask
-          //dialogTriggerRef={dialogTriggerRef}
-
           setDialogOpen={setCreateDialogOpen}
           dialogOpen={createDialogOpen}
           action={action}

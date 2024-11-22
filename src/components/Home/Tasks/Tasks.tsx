@@ -162,7 +162,7 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
       ) : (
         <div
           className="top-0 left-0 bottom-0 right-0 flex flex-col
-                    justify-center flex-grow items-center text-darkerBg h-full absolute"
+           justify-center flex-grow items-center text-darkerBg h-full absolute"
         >
           <BarLoader
             className="absolute bg-darkerBg"

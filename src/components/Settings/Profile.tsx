@@ -39,13 +39,13 @@ const Profile = () => {
   });
   const [loading, startTransition] = useTransition();
   const [pickedImage, setPickedImage] = useState<MediaSource | File | string>(
-    "",
+    ""
   );
   const imageRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
 
   const handleProfileUpdate = async (
-    profile: z.infer<typeof profileSchema>,
+    profile: z.infer<typeof profileSchema>
   ) => {
     if (loading) return;
     const { image, name, userId } = profile;

@@ -47,14 +47,14 @@ const TaskCard = ({
 }: TaskCardProps) => {
   const taskCardRef = useRef<HTMLDivElement>(null);
   const { taskId } = useSelector<RootState, SubtaskInitialStateTypes>(
-    (state) => state.subtask
+    (state) => state.subtask,
   );
 
   const setActiveTask = useSetActiveTask();
 
   const getPercentage = useMemo(() => {
     const completedTasks = task.subtasks?.filter(
-      (subtask) => subtask.completed
+      (subtask) => subtask.completed,
     ).length;
     const percentage = (completedTasks * 100) / task.subtasks?.length || 0;
     return Math.round(percentage);
@@ -96,12 +96,14 @@ const TaskCard = ({
       </div>
 
       {/* Title and Progress */}
-      <div className="flex flex-col gap-2 mt-4 w-full">
+      <div className="flex flex-col gap-2 mt-4 w-full ">
         <div
           ref={taskCardRef}
-          className="text-foreground text-[15px] tracking-wide font-bold"
+          className="text-foreground text-[15px] tracking-wide font-bold
+           whitespace-nowrap  overflow-hidden"
+          title={task.title}
         >
-          {task?.title}
+          {task.title}
         </div>
         <div>
           <Progress

@@ -9,11 +9,9 @@ import { RawUserTypes } from "@/types/userTypes";
 //import clientSignOut from "@/lib/signOut-action";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 const Settings = dynamic(() => import("../Settings/Settings"), { ssr: false });
 
 const UserProfile = () => {
-  const router = useRouter();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { email, name, image } = useSelector<RootState, RawUserTypes>(
     (state) => state.user.userInfo
@@ -84,7 +82,7 @@ const UserProfile = () => {
 
           <div
             onClick={async () => {
-              await signOut({ callbackUrl: "/signin" });
+              await signOut({ redirect: true, redirectTo: "/signup" });
             }}
             className="border-t 
             text-muted-foreground border-darkerBg 

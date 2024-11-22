@@ -4,7 +4,28 @@ import prisma from "../../prisma/client";
 import { profileSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 import { put } from "@vercel/blob";
+import { del } from "@vercel/blob";
 import * as z from "zod";
+
+const deleteExistingImage = async (imageId: string) => {
+  const imageUrlClass = new URL(imageId);
+  if (
+    imageUrlClass.hostname === "nwtdicgwbtncdg8c.public.blob.vercel-storage.com"
+  ) {
+    try {
+      const abortImageDelete = new AbortController();
+      const deleteTimeoutId = setTimeout(() => {
+        abortImageDelete.abort();
+      }, 13500);
+      // delete the existing image
+      await del(imageId, { abortSignal: abortImageDelete.signal });
+      clearTimeout(deleteTimeoutId);
+      console.log("Existing image deleted");
+    } catch (err) {
+      console.error("Error: Existing Image delete timeout");
+    }
+  }
+};
 
 const updateProfileAction = async (formData: FormData) => {
   const profile = Object.fromEntries(formData.entries()) as z.infer<
@@ -27,36 +48,27 @@ const updateProfileAction = async (formData: FormData) => {
       const data = await image.arrayBuffer();
       const fileName = `profiles/${userId}.webp`;
 
-      // Ensure imageId is a valid URL or parse its pathname
-      // Extract the userId from the imageId URL
-      const imageFileName = new URL(imageId).pathname.split("/").pop();
-      const imageUserId = imageFileName?.split("-")[0]; // Extract userId from the filename
-
-      if (imageUserId === userId) {
-        // Overwrite the existing image
-        const result = await put(fileName, Buffer.from(data), {
-          access: "public",
-          contentType: "image/webp",
-          token: process.env.BLOB_READ_WRITE_TOKEN,
-        });
-        blobUrl = result.url;
-      } else {
-        // Create a new image
-        const result = await put(fileName, Buffer.from(data), {
-          access: "public",
-          contentType: "image/webp",
-          token: process.env.BLOB_READ_WRITE_TOKEN,
-        });
-        blobUrl = result.url;
-      }
+      const abortImageUpload = new AbortController();
+      const uploadTimeoutId = setTimeout(() => {
+        abortImageUpload.abort();
+      }, 24000);
+      // Create a new image
+      const blobUrl = await put(fileName, Buffer.from(data), {
+        access: "public",
+        contentType: "image/webp",
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+        abortSignal: abortImageUpload.signal,
+      });
+      clearTimeout(uploadTimeoutId);
 
       user = await prisma.user.update({
         where: { id: userId },
         data: {
           name,
-          image: blobUrl,
+          image: blobUrl.url,
         },
       });
+      await deleteExistingImage(imageId);
     } else {
       // If no new image is provided, just update the name
       user = await prisma.user.update({

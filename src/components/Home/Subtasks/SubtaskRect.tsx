@@ -133,7 +133,12 @@ const SubtaskRect = ({
         {/* Checkbox and Task */}
         <div className="flex justify-between items-start gap-4">
           {/* Task */}
-          <p className="text-[15px] translate-x-7 text-wrap">{subtask.title}</p>
+          <p
+            title={subtask.title}
+            className="text-[15px] translate-x-7 break-all md-pl-1"
+          >
+            {subtask.title}
+          </p>
           {showPriority && (
             <Priority
               priority={subtask.priority}
@@ -143,7 +148,6 @@ const SubtaskRect = ({
             />
           )}
         </div>
-
         {/* Description and Date */}
         <div
           className="pl-2 border-l border-darkerBg translate-x-3 
