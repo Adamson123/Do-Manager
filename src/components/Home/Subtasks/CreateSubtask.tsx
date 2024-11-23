@@ -121,7 +121,6 @@ const CreateSubtask = ({
         subtask: z.infer<typeof createSubtaskSchema>,
     ) => {
         if (createSubtaskLoading) return;
-        console.log(subtask);
         dispatch(createSubtask(subtask)).finally(() => {
             setFulfilled(true);
         });

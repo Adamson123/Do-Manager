@@ -5,25 +5,21 @@ import deleteAccountAction from "@/actions/deleteAccountAction";
 import { signOut } from "next-auth/react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { RawTaskTypes } from "@/types/taskTypes";
+import { RawUserTypes } from "@/types/userTypes";
 
 const DeleteAccount = () => {
   const [deleteText, setDeleteText] = useState("");
   const [loading, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const tasks = useSelector<RootState, RawTaskTypes[]>(
-    (state) => state.task.tasks
-  );
-  const taskId = tasks.length ? tasks[0].id : "";
-  const userId = useSelector<RootState, string>(
-    (state) => state.user.userInfo.id
+  const { id: userId, image } = useSelector<RootState, RawUserTypes>(
+    (state) => state.user.userInfo
   );
 
   const handleDeleteAccount = () => {
     if (deleteText !== "DELETE") return setError("Input does not match");
     setError("");
     startTransition(() => {
-      deleteAccountAction(userId, taskId).then(async (response) => {
+      deleteAccountAction(userId, image as string).then(async (response) => {
         if (response?.errMsg) {
           return setError("Error deleting account");
         }
@@ -66,7 +62,9 @@ const DeleteAccount = () => {
           </Button>
         </div>
         {error && (
-          <span className="text-destructive -translate-y-1 pl-1">{error}</span>
+          <span className="text-destructive text-[14px] -translate-y-[6px]">
+            {error}
+          </span>
         )}
       </div>
     </div>

@@ -23,6 +23,7 @@ model User {
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   tasks                    Task[]
+  subtasks                 Subtask[]
   subtaskCompletionHistory SubtaskCompletionHistory[]
   accounts                 Account[]
 }
@@ -77,6 +78,8 @@ model Subtask {
   favorite    Boolean  @default(false)
   Task        Task?    @relation(fields: [taskId], references: [id])
   taskId      String?
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 model SubtaskCompletionHistory {

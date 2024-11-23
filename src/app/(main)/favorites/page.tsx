@@ -1,28 +1,25 @@
 "use client";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import SubtaskRect from "@/components/Home/Subtasks/SubtaskRect";
 import SelectPriority from "@/components/ui/SelectPriority";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/store/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import appLayoutContext from "@/context/appLayoutContext";
-import { getMultipleTasks, TaskInitialStateTypes } from "@/features/taskSlice";
 import CreateSubtask, {
   ActionType,
 } from "@/components/Home/Subtasks/CreateSubtask";
-import { File, Search, Star, StarOff } from "lucide-react";
+import { Search, StarOff } from "lucide-react";
 import BarLoader from "react-spinners/BarLoader";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
-import { RawUserTypes } from "@/types/userTypes";
 
 const Favorites = () => {
   const [priority, setPriority] = useState("");
-  const dispatch = useDispatch<AppDispatch>();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { action, setAction } = useCreateSubtask();
-  const { tasks, getMultipleTaskLoading } = useSelector<
-    RootState,
-    TaskInitialStateTypes
-  >((state) => state.task);
+  const {
+    task: { tasks, getMultipleTaskLoading },
+    user: { getUserLoading },
+  } = useSelector<RootState, RootState>((state) => state);
   const { search } = useContext(appLayoutContext);
   // Memoize sorted tasks
   const sortedSubtasks = useMemo(() => {
@@ -35,25 +32,21 @@ const Favorites = () => {
           //mapping subtasks with task priority
           .map((subtask) => {
             return { ...subtask, priority: task.priority };
-          }),
+          })
       );
-    //flattened all the returned array
-    // .flat();
-
-    console.log({ favoritesInTasks });
 
     const subtasksSortedByDate = favoritesInTasks.sort(
       (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     const tasksSortedByPriorty = subtasksSortedByDate.filter(
-      (task) => task.priority === priority,
+      (task) => task.priority === priority
     );
     const otherTasks = subtasksSortedByDate.filter(
-      (task) => task.priority !== priority,
+      (task) => task.priority !== priority
     );
     const result = [...tasksSortedByPriorty, ...otherTasks].filter((task) =>
-      task.title.toLowerCase().includes(search.toLowerCase()),
+      task.title.toLowerCase().includes(search.toLowerCase())
     );
     return result;
   }, [tasks, priority, search]);
@@ -64,7 +57,7 @@ const Favorites = () => {
       setAction(action);
       setCreateDialogOpen(true);
     },
-    [setAction, setCreateDialogOpen],
+    [setAction, setCreateDialogOpen]
   );
   return (
     //h-[calc(100%-97.5px)]
@@ -85,7 +78,7 @@ const Favorites = () => {
           setPriority={setPriority}
         />
       </div>
-      {!getMultipleTaskLoading ? (
+      {!getMultipleTaskLoading && !getUserLoading ? (
         <div
           style={{
             scrollbarColor: "rgb(var(--darkerBg)) hsl(var(--background))",

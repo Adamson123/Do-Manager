@@ -1,12 +1,5 @@
 "use client";
-import {
-  createContext,
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Navbar from "@/components/Navbar/Navbar";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";

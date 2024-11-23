@@ -26,6 +26,11 @@ export const POST = async (request: NextRequest) => {
             id: body.taskId,
           },
         },
+        User: {
+          connect: {
+            id: body.userId,
+          },
+        },
       },
     });
 

@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTask, TaskInitialStateTypes } from "@/features/taskSlice";
 import { AppDispatch, RootState } from "@/store/store";
+import useSetActiveTask from "@/hooks/useSetActiveTask";
 
 interface ConfirmDeleteProps {
   setDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -24,27 +25,31 @@ const ConfirmDelete = ({
   dialogOpen,
   taskId,
 }: ConfirmDeleteProps) => {
-  const { deleteTaskLoading } = useSelector<RootState, TaskInitialStateTypes>(
-    (state) => state.task
-  );
+  const {
+    task: { deleteTaskLoading },
+    subtask: { taskId: activeTaskId },
+  } = useSelector<RootState, RootState>((state) => state);
   const dispatch = useDispatch<AppDispatch>();
+  const setActiveTask = useSetActiveTask();
 
   const handleDeleteTask = async () => {
     if (deleteTaskLoading) return;
     // dispatch(deleteTaskSync(task.id));
-    dispatch(deleteTask(taskId)).finally(() => {
+    dispatch(deleteTask(taskId)).then(() => {
+      if (taskId === activeTaskId)
+        setActiveTask({
+          subtasks: [],
+          createdAt: new Date(),
+          description: "",
+          id: "",
+          priority: "",
+          title: "",
+          updatedAt: new Date(),
+          userId: "",
+        });
       setDialogOpen(false);
     });
   };
-
-  const getRightLabel = () => {
-    if (deleteTaskLoading) {
-      return "Deleting...";
-    } else {
-      return "Delete task";
-    }
-  };
-  const label = getRightLabel();
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -73,7 +78,7 @@ const ConfirmDelete = ({
             className="h-8"
             onClick={handleDeleteTask}
           >
-            {label}
+            {deleteTaskLoading ? "Deleting..." : "Delete task"}
           </Button>
         </div>
       </DialogContent>

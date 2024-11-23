@@ -125,8 +125,8 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
       {!getMultipleTaskLoading && !getUserLoading ? (
         <ScrollArea className="w-full flex-grow">
           <div
-            className="grid grid-cols-2 ssmd:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 
-          gap-3 min-w-full px-3 pb-16 md:pb-6"
+            className="grid grid-cols-2 ssmd:grid-cols-3 md:grid-cols-2
+             lg:grid-cols-3 gap-3 min-w-full px-3 pb-16 md:pb-6"
           >
             {sortedTasks.length > 0 ? (
               sortedTasks.map((task: RawTaskTypes) => (

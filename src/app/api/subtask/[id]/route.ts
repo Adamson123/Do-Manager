@@ -102,10 +102,7 @@ export const PATCH = async (
 
       if (completionHistoryExist) {
         let subtasksCompleted = [];
-        if (
-          completed ||
-          !completionHistoryExist.subtasksCompleted.includes(id)
-        ) {
+        if (!completionHistoryExist.subtasksCompleted.includes(id)) {
           subtasksCompleted = [...completionHistoryExist.subtasksCompleted, id];
         } else {
           subtasksCompleted = completionHistoryExist.subtasksCompleted.filter(

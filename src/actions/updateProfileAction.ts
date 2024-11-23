@@ -7,18 +7,18 @@ import { put } from "@vercel/blob";
 import { del } from "@vercel/blob";
 import * as z from "zod";
 
-const deleteExistingImage = async (imageId: string) => {
+export const deleteExistingImage = async (imageId: string) => {
   const imageUrlClass = new URL(imageId);
   if (
     imageUrlClass.hostname === "nwtdicgwbtncdg8c.public.blob.vercel-storage.com"
   ) {
     try {
-      const abortImageDelete = new AbortController();
+      const abortImageDeletion = new AbortController();
       const deleteTimeoutId = setTimeout(() => {
-        abortImageDelete.abort();
+        abortImageDeletion.abort();
       }, 13500);
       // delete the existing image
-      await del(imageId, { abortSignal: abortImageDelete.signal });
+      await del(imageId, { abortSignal: abortImageDeletion.signal });
       clearTimeout(deleteTimeoutId);
       console.log("Existing image deleted");
     } catch (err) {

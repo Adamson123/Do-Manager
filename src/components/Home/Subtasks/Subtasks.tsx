@@ -91,67 +91,69 @@ const Subtasks = ({
      min-w-full min-h-full"
     >
       {/* HEAD */}
-      <div className="flex flex-col gap-2 border-b border-darkerBg py-3">
-        {/* Title and Description */}
-        <div className="flex flex-col gap-2">
-          {/* Title */}
-          <div>
-            <h2 className="text-2xl font-bold">{taskTitle}</h2>
-          </div>
-          {/* Description */}
-          {taskDescription && (
-            <div className="flex flex-wrap gap-1">
-              <p
-                ref={descriptionRef}
-                className={`text-[14px] text-muted-foreground ${
-                  descriptionHeight > 2 && !showMore && "max-h-[45px]"
-                } overflow-hidden`}
-              >
-                {taskDescription}
-              </p>
-
-              {descriptionHeight > 2 ? (
-                <span
-                  onClick={() => setShowMore(!showMore)}
-                  className={`${
-                    !showMore ? "text-red-500" : "text-green-500"
-                  } text-[14px] cursor-pointer`}
-                >
-                  {!showMore ? "...show more" : "...show less"}
-                </span>
-              ) : (
-                ""
-              )}
+      {taskTitle && (
+        <div className="flex flex-col gap-2 border-b border-darkerBg py-3">
+          {/* Title and Description */}
+          <div className="flex flex-col gap-2">
+            {/* Title */}
+            <div>
+              <h2 className="text-2xl font-bold">{taskTitle}</h2>
             </div>
-          )}
-        </div>
-        {/* Priority, Date and Subtask Amount */}
-        <div className="flex justify-between items-end">
-          {/* Priority and Date*/}
-          <div className="flex gap-2 items-center">
-            {/* Priority */}
-            <Priority priority={taskPriority} />
-            {/* Date */}
-            <span
-              className="bg-darkerBg
+            {/* Description */}
+            {taskDescription && (
+              <div className="flex flex-wrap gap-1">
+                <p
+                  ref={descriptionRef}
+                  className={`text-[14px] text-muted-foreground ${
+                    descriptionHeight > 2 && !showMore && "max-h-[45px]"
+                  } overflow-hidden`}
+                >
+                  {taskDescription}
+                </p>
+
+                {descriptionHeight > 2 ? (
+                  <span
+                    onClick={() => setShowMore(!showMore)}
+                    className={`${
+                      !showMore ? "text-red-500" : "text-green-500"
+                    } text-[14px] cursor-pointer`}
+                  >
+                    {!showMore ? "...show more" : "...show less"}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </div>
+            )}
+          </div>
+          {/* Priority, Date and Subtask Amount */}
+          <div className="flex justify-between items-end">
+            {/* Priority and Date*/}
+            <div className="flex gap-2 items-center">
+              {/* Priority */}
+              <Priority priority={taskPriority} />
+              {/* Date */}
+              <span
+                className="bg-darkerBg
             text-black dark:text-muted-foreground 
               text-[13px] p-[6px] rounded-lg"
-            >
-              <CalendarDaysIcon
-                className="inline h-[14px] w-[14px] 
+              >
+                <CalendarDaysIcon
+                  className="inline h-[14px] w-[14px] 
               -translate-y-[2px]"
-              />{" "}
-              {format(taskCreatedAt, "PP")}
-            </span>
-          </div>
-          {/* Subtask Amount */}
-          <div>
-            <span className="text-[13px] text-muted-foreground font-bold">
-              Subtasks:{sortedSubtasks.length}
-            </span>
+                />{" "}
+                {format(taskCreatedAt, "PP")}
+              </span>
+            </div>
+            {/* Subtask Amount */}
+            <div>
+              <span className="text-[13px] text-muted-foreground font-bold">
+                Subtasks:{sortedSubtasks.length}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       {/* SubtaskRect */}
       <div
         style={{

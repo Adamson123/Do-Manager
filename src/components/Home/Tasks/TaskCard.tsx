@@ -47,14 +47,13 @@ const TaskCard = ({
 }: TaskCardProps) => {
   const taskCardRef = useRef<HTMLDivElement>(null);
   const { taskId } = useSelector<RootState, SubtaskInitialStateTypes>(
-    (state) => state.subtask,
+    (state) => state.subtask
   );
-
   const setActiveTask = useSetActiveTask();
 
   const getPercentage = useMemo(() => {
     const completedTasks = task.subtasks?.filter(
-      (subtask) => subtask.completed,
+      (subtask) => subtask.completed
     ).length;
     const percentage = (completedTasks * 100) / task.subtasks?.length || 0;
     return Math.round(percentage);
