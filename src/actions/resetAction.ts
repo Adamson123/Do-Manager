@@ -47,12 +47,14 @@ const resetAction = async (value: { email: string }) => {
       },
     });
 
-    sendPasswordResetLink(
+    await sendPasswordResetLink(
       newResetPasswordToken.email,
       newResetPasswordToken.token
     );
 
-    return { successMsg: "Reset email sent" };
+    return {
+      successMsg: `Reset email sent. \n Note: if you can't see it in inbox check spam.`,
+    };
   } catch (err) {
     const error = err as Error;
     console.log(error.message, "error post -action /reset");
