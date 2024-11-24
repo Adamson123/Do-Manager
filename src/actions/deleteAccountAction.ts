@@ -18,7 +18,7 @@ const deleteAccountAction = async (userId: string, image: string) => {
     ]);
   } catch (err) {
     const error = err as Error;
-    console.error(error.message);
+    console.log(error.message, "error delete -action /user");
     return { errMsg: "Error deleting account" };
   }
 };

@@ -43,7 +43,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         if (responseErr?.errMsg) {
           return toast({
             title: responseErr.errMsg,
-            description: "Operation completed with an error",
+            description: "Please try signing in again",
             variant: "destructive",
           });
         }

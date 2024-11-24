@@ -57,7 +57,8 @@ const updateProfileAction = async (formData: FormData) => {
     }
     return user;
   } catch (err) {
-    console.error("Error updating profile:", (err as Error).message);
+    const error = err as Error
+    console.log( error.message, "error patch profile -action /user");
     return { errMsg: "Error updating profile" };
   }
 };

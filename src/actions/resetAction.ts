@@ -16,41 +16,48 @@ const resetAction = async (value: { email: string }) => {
   }
 
   const { email } = validation.data;
-  const existingUser = await getUserByEmail(email);
 
-  if (!existingUser) return { errMsg: "Email not found" };
+  try {
+    const existingUser = await getUserByEmail(email);
 
-  //1. Have We already sent a token to the user?
-  const existingUserToken = await getPasswordResetTokenByEmail(email);
+    if (!existingUser) return { errMsg: "Email not found" };
 
-  //2. If yes
-  if (existingUserToken) {
-    //3. Delete the existing token
-    await prisma.passwordResetToken.delete({
-      where: {
-        id: existingUserToken.id,
+    //1. Have We already sent a token to the user?
+    const existingUserToken = await getPasswordResetTokenByEmail(email);
+
+    //2. If yes
+    if (existingUserToken) {
+      //3. Delete the existing token
+      await prisma.passwordResetToken.delete({
+        where: {
+          id: existingUserToken.id,
+        },
+      });
+    }
+
+    const token = uuidv4();
+    const expires = new Date(new Date().getTime() + 3600 * 60 * 60);
+
+    //4. Then a create a new one
+    const newResetPasswordToken = await prisma.passwordResetToken.create({
+      data: {
+        email,
+        token,
+        expires,
       },
     });
+
+    sendPasswordResetLink(
+      newResetPasswordToken.email,
+      newResetPasswordToken.token
+    );
+
+    return { successMsg: "Reset email sent" };
+  } catch (err) {
+    const error = err as Error;
+    console.log(error.message, "error post -action /reset");
+    return { errMsg: "Error sending reset link" };
   }
-
-  const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 3600 * 60 * 60);
-
-  //4. Then a create a new one
-  const newResetPasswordToken = await prisma.passwordResetToken.create({
-    data: {
-      email,
-      token,
-      expires,
-    },
-  });
-
-  sendPasswordResetLink(
-    newResetPasswordToken.email,
-    newResetPasswordToken.token
-  );
-
-  return { successMsg: "Reset email sent" };
 };
 
 export default resetAction;
