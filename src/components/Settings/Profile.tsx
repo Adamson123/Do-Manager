@@ -74,18 +74,16 @@ const Profile = () => {
           if (imageRef.current) imageRef.current.value = "";
           form.resetField("image", { defaultValue: "" });
           setPickedImage("");
-
-          // Revalidate("/");
         }
       });
     });
   };
 
-  const userImgPath = imageId?.startsWith("https://")
-    ? imageId
-    : `/images/${imageId}.webp`;
+  // const userImgPath = imageId?.startsWith("https://")
+  //   ? imageId
+  //   : `/images/${imageId}.webp`;
 
-  const userImg = imageId ? userImgPath : "/images/defaultImg.webp";
+  const userImg = imageId ? imageId : "/images/defaultImg.webp";
 
   const cancel = pickedImage || name !== form.getValues().name;
 

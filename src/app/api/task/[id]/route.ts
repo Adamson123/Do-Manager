@@ -48,12 +48,12 @@ export const DELETE = async (
         { status: 404 }
       );
 
-    //delete the task's subtasks
-    await prisma.subtask.deleteMany({
-      where: {
-        taskId: id,
-      },
-    });
+    //TODO:
+    // await prisma.subtask.deleteMany({
+    //   where: {
+    //     taskId: id,
+    //   },
+    // });
 
     //delete the task itself
     await prisma.task.delete({

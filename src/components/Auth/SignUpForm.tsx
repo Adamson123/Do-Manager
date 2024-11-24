@@ -78,7 +78,7 @@ const SignUpForm = () => {
                   <FormControl>
                     <Input
                       className="border-darkerBg"
-                      placeholder="username"
+                      placeholder="Alan wall"
                       {...field}
                     />
                   </FormControl>
@@ -95,7 +95,7 @@ const SignUpForm = () => {
                   <FormControl>
                     <Input
                       className="border-darkerBg"
-                      placeholder="email"
+                      placeholder="alanwall66@gmail.com"
                       {...field}
                       type="email"
                     />
@@ -114,7 +114,7 @@ const SignUpForm = () => {
                     <div className="relative">
                       <Input
                         className="border-darkerBg"
-                        placeholder="password"
+                        placeholder="•••••••••••••••"
                         {...field}
                         type={!showPassword ? "password" : "text"}
                       />

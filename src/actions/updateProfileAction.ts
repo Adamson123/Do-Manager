@@ -1,31 +1,11 @@
 "use server";
 
+import deleteExistingImage from "@/lib/deleteExistingImage";
 import prisma from "../../prisma/client";
 import { profileSchema } from "@/schemas";
 import simplifyError from "@/utils/simplifyError";
 import { put } from "@vercel/blob";
-import { del } from "@vercel/blob";
 import * as z from "zod";
-
-export const deleteExistingImage = async (imageId: string) => {
-  const imageUrlClass = new URL(imageId);
-  if (
-    imageUrlClass.hostname === "nwtdicgwbtncdg8c.public.blob.vercel-storage.com"
-  ) {
-    try {
-      const abortImageDeletion = new AbortController();
-      const deleteTimeoutId = setTimeout(() => {
-        abortImageDeletion.abort();
-      }, 13500);
-      // delete the existing image
-      await del(imageId, { abortSignal: abortImageDeletion.signal });
-      clearTimeout(deleteTimeoutId);
-      console.log("Existing image deleted");
-    } catch (err) {
-      console.error("Error: Existing Image delete timeout");
-    }
-  }
-};
 
 const updateProfileAction = async (formData: FormData) => {
   const profile = Object.fromEntries(formData.entries()) as z.infer<
@@ -42,11 +22,9 @@ const updateProfileAction = async (formData: FormData) => {
   const imageId = profile.imageId;
   let user;
   try {
-    let blobUrl: string | undefined;
-
     if (image && typeof image !== "string") {
       const data = await image.arrayBuffer();
-      const fileName = `profiles/${userId}.webp`;
+      const fileName = `profiles/${userId}`;
 
       const abortImageUpload = new AbortController();
       const uploadTimeoutId = setTimeout(() => {
@@ -68,6 +46,7 @@ const updateProfileAction = async (formData: FormData) => {
           image: blobUrl.url,
         },
       });
+    
       await deleteExistingImage(imageId);
     } else {
       // If no new image is provided, just update the name

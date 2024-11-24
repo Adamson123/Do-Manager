@@ -16,10 +16,11 @@ const UserProfile = () => {
   const { email, name, image } = useSelector<RootState, RawUserTypes>(
     (state) => state.user.userInfo
   );
-  const userImgPath = image?.startsWith("https://")
-    ? image
-    : `/images/${image}.webp`;
-  const userImg = image ? userImgPath : "/images/defaultImg.webp";
+  
+  // const userImgPath = image?.startsWith("https://")
+  //   ? image
+  //   : `/images/${image}.webp`;
+  const userImg = image ? image : "/images/defaultImg.webp";
 
   return (
     <Popover>

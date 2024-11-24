@@ -35,7 +35,6 @@ const updatePasswordAction = async (
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    //TODO: Don't include password
     const updatedUser = await prisma.user.update({
       where: {
         id: userId,
@@ -43,11 +42,9 @@ const updatePasswordAction = async (
       data: {
         password: hashedPassword,
       },
-      
     });
     updatedUser.password = "";
     return { updatedUser, hasPassword: true };
-  
   } catch (err) {
     const error = err as Error;
     console.log(error.message, "error patch password -action /user");

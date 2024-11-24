@@ -8,10 +8,10 @@ import { AuthError } from "next-auth";
 
 const signInAction = async (user: UserTypes) => {
   const validation = signInSchema.safeParse(user);
-  //check if validation is successful
+  //check if validation is successfull
   if (!validation.success) {
     const errors = validation.error.format();
-    return simplifyError(errors)[0];
+    return { errMsg: simplifyError(errors)[0] };
   }
 
   const { email, password } = validation.data;

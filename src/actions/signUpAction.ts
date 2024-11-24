@@ -14,7 +14,6 @@ const signUpAction = async (user: UserTypes) => {
   //check if validation is successful
   if (!validation.success) {
     const errors = validation.error.format();
-    return { errMsg: simplifyError(errors)[0] };
   }
 
   const { name, email, password } = validation.data;
@@ -41,13 +40,11 @@ const signUpAction = async (user: UserTypes) => {
   } catch (err) {
     const error = err as Error;
     console.log(error.message, "error post -action /signup");
-    if(err instanceof AuthError){
+    if (err instanceof AuthError) {
       return { errMsg: "Something went wrong" };
     }
-    throw err
+    throw err;
   }
 };
 
 export default signUpAction;
-
-

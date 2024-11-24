@@ -26,6 +26,8 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
+  //if user is trying to access protected route and they are not signed in
+  //redirect them
   if (!isLoggedIn && !isPublicRoute)
     return NextResponse.redirect(new URL("/signin", nextUrl));
 

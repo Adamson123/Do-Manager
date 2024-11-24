@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 
 const ThemeProvider = dynamic(
   () => import("next-themes").then((mod) => mod.ThemeProvider),
-  { ssr: false },
+  { ssr: false }
 );
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider attribute="class">
           <ReduxProvider>{children}</ReduxProvider>
           <Toaster />
         </ThemeProvider>
