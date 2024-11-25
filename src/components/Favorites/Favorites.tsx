@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useContext, useMemo, useState } from "react";
-import SubtaskRect from "@/components/Home/Subtasks/SubtaskRect";
+import SubtaskCard from "@/components/Home/Subtasks/SubtaskCard";
 import SelectPriority from "@/components/ui/SelectPriority";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -11,15 +11,19 @@ import CreateSubtask, {
 import { Search, StarOff } from "lucide-react";
 import BarLoader from "react-spinners/BarLoader";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
+import { TaskInitialStateTypes } from "@/features/taskSlice";
 
 const Favorites = () => {
   const [priority, setPriority] = useState("");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { action, setAction } = useCreateSubtask();
-  const {
-    task: { tasks, getMultipleTaskLoading },
-    user: { getUserLoading },
-  } = useSelector<RootState, RootState>((state) => state);
+  const getUserLoading = useSelector<RootState, boolean>(
+    (state) => state.user.getUserLoading
+  );
+  const { tasks, getMultipleTaskLoading } = useSelector<
+    RootState,
+    TaskInitialStateTypes
+  >((state) => state.task);
   const { search } = useContext(appLayoutContext);
   // Memoize sorted tasks
   const sortedSubtasks = useMemo(() => {
@@ -89,7 +93,7 @@ const Favorites = () => {
           {sortedSubtasks.length ? (
             sortedSubtasks.map((subtask) => {
               return (
-                <SubtaskRect
+                <SubtaskCard
                   key={subtask.id}
                   showPriority={true}
                   subtask={subtask}

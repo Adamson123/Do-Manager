@@ -1,6 +1,6 @@
 "use client";
 import { CalendarDaysIcon, File, Plus } from "lucide-react";
-import SubtaskRect from "./SubtaskRect";
+import SubtaskCard from "./SubtaskCard";
 import {
   Dispatch,
   SetStateAction,
@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import useCreateSubtask from "@/hooks/useCreateSubtask";
 import dynamic from "next/dynamic";
 import { ActionType } from "./CreateSubtask";
+import GenerateSubtask from "./GenerateSubtask";
 const CreateSubtask = dynamic(() => import("./CreateSubtask"), { ssr: false });
 interface SubtasksProps {
   setCreateDialogOpen: Dispatch<SetStateAction<boolean>>;
@@ -154,7 +155,7 @@ const Subtasks = ({
           </div>
         </div>
       )}
-      {/* SubtaskRect */}
+      {/* SubtaskCard */}
       <div
         style={{
           scrollbarColor: "rgb(var(--darkerBg)) hsl(var(--background))",
@@ -166,7 +167,7 @@ const Subtasks = ({
         {sortedSubtasks.length ? (
           sortedSubtasks.map((subtask) => {
             return (
-              <SubtaskRect
+              <SubtaskCard
                 key={subtask?.id}
                 subtask={subtask}
                 triggerEditSubtask={triggerEditSubtask}
@@ -187,14 +188,22 @@ const Subtasks = ({
         {/* Add subtask */}
         {taskTitle && (
           <div
-            onClick={() => {
-              triggerCreateSubtask(setCreateDialogOpen);
-            }}
-            className="text-primary text-[17px] py-4 border-t
+            className="text-primary text-[15px] py-4 border-t
             border-b border-darkerBg cursor-pointer font-bold
-            hover:opacity-[0.8] transition-all"
+            flex justify-between items-center"
           >
-            Add subtask <Plus className="h-5 w-5 inline -translate-y-[2px]" />
+            {/* Manually add subtask */}
+            <div
+              onClick={() => {
+                triggerCreateSubtask(setCreateDialogOpen);
+              }}
+              className="hover:opacity-[0.8] transition-all"
+            >
+              Add subtask
+              <Plus className="h-5 w-5 inline -translate-y-[2px]" />
+            </div>
+            {/* Generate subtask with ai */}
+            <GenerateSubtask />
           </div>
         )}
       </div>

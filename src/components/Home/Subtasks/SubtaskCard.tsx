@@ -29,17 +29,17 @@ import { ActionType } from "./CreateSubtask";
 import getDayDifferenceWithToday from "@/utils/getDayDifferenceWithToday";
 import { RawUserTypes } from "@/types/userTypes";
 
-interface SubtaskRectProps {
+interface SubtaskCardProps {
   showPriority?: boolean;
   subtask: RawSubtaskTypes;
   triggerEditSubtask: (action: ActionType) => void;
 }
 
-const SubtaskRect = ({
+const SubtaskCard = ({
   showPriority,
   subtask,
   triggerEditSubtask,
-}: SubtaskRectProps) => {
+}: SubtaskCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { deleteSubtaskLoading } = useSelector<
     RootState,
@@ -115,8 +115,6 @@ const SubtaskRect = ({
       exec: "edit",
     });
   };
-
-  console.log("subtask rendered");
 
   return (
     <div className="relative">
@@ -244,7 +242,7 @@ const SubtaskRect = ({
   );
 };
 
-export default memo(SubtaskRect, (prevProps, nextProps) => {
+export default memo(SubtaskCard, (prevProps, nextProps) => {
   return (
     JSON.stringify(prevProps.subtask) === JSON.stringify(nextProps.subtask) &&
     prevProps.showPriority === nextProps.showPriority &&

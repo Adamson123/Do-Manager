@@ -25,13 +25,15 @@ const ConfirmDelete = ({
   dialogOpen,
   taskId,
 }: ConfirmDeleteProps) => {
-  const {
-    task: { deleteTaskLoading },
-    subtask: { taskId: activeTaskId },
-  } = useSelector<RootState, RootState>((state) => state);
+  const deleteTaskLoading = useSelector<RootState, boolean>(
+    (state) => state.task.deleteTaskLoading
+  );
+  const activeTaskId = useSelector<RootState, string>(
+    (state) => state.subtask.taskId
+  );
+
   const dispatch = useDispatch<AppDispatch>();
   const setActiveTask = useSetActiveTask();
-
   const handleDeleteTask = async () => {
     if (deleteTaskLoading) return;
     // dispatch(deleteTaskSync(task.id));

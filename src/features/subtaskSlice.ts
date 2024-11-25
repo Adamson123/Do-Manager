@@ -76,7 +76,7 @@ export const editSubtask = createAsyncThunk(
   ) => {
     try {
       const response = await subtaskServices.editSubtask(subtask, id);
-      console.log(response);
+
       dispatch(
         updateSubstask({
           taskId: response.subtask.taskId,

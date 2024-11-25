@@ -25,7 +25,7 @@ export const createTask = createAsyncThunk(
     try {
       const response = await taskServices.createTask(task);
       toast({
-        title: "Task create successfully",
+        title: "Task created",
         description: "Operation completed sucessfully",
       });
       return response;
@@ -227,17 +227,37 @@ const taskSlice = createSlice({
         return task.id !== action.payload;
       });
     },
+    /**
+     * Add a single or array of subtasks to the task with matching id
+     * @param state
+     * @param action
+     */
     addSubstask: (
       state,
-      action: PayloadAction<{ subtask: RawSubtaskTypes; id: string }>
+      action: PayloadAction<{
+        subtask: RawSubtaskTypes | RawSubtaskTypes[];
+        id: string;
+        //action2: string | undefined;
+      }>
     ) => {
-      state.tasks = state.tasks.map((task) => {
-        const subtasks = task.subtasks?.length
-          ? [...task.subtasks, action.payload.subtask]
-          : [action.payload.subtask];
-        //
-        return task.id === action.payload.id ? { ...task, subtasks } : task;
-      });
+      const { id: taskId } = action.payload;
+
+      if ((action.payload.subtask as RawSubtaskTypes[]).length) {
+        const subtasks = action.payload.subtask as RawSubtaskTypes[];
+        state.tasks = state.tasks.map((task) => {
+          //Apply to task with matching id
+          return task.id === taskId ? { ...task, subtasks } : task;
+        });
+      } else {
+        const subtask = action.payload.subtask as RawSubtaskTypes;
+        state.tasks = state.tasks.map((task) => {
+          const subtasks = task.subtasks?.length
+            ? [...task.subtasks, subtask]
+            : [subtask];
+          //Apply to task with matching id
+          return task.id === taskId ? { ...task, subtasks } : task;
+        });
+      }
     },
     updateSubstask: (
       state,
@@ -250,9 +270,11 @@ const taskSlice = createSlice({
         if (task.id === action.payload.taskId) {
           const { subtask: updatedSubtask } = action.payload;
           //mapping updatedSubtask to subtask with the matching id
+
           const updatedTask = task.subtasks.map((subtask) =>
             subtask.id === updatedSubtask.id ? updatedSubtask : subtask
           );
+
           return { ...task, subtasks: updatedTask };
         } else {
           return task;

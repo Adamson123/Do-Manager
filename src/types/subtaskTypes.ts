@@ -2,8 +2,8 @@ export interface RawSubtaskTypes {
   id: string;
   title: string;
   description?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   taskId: string;
   completed: boolean;
   //dateCompleted: string;

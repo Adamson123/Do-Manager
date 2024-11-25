@@ -48,7 +48,8 @@ export default function Layout({ children }: { children: ReactNode }) {
           });
         }
         const parsedUser = JSON.parse(response as string);
-        dispatch(updateUser(parsedUser as RawUserTypes));
+        dispatch(updateUser(parsedUser));
+        //dispatch(updateUser(parsedUser as RawUserTypes));
       }
       dispatch(updateGetUserLoading(false));
     })();
@@ -59,7 +60,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <appLayoutContext.Provider value={value}>
         <section
           className={clsx(
-            currentPath === "/" && "md:w-[60%]",
+            currentPath === "/" && "bmd:w-[60%]",
             "z-[10000] min-h-[101.5px]"
           )}
         >

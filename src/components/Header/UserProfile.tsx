@@ -16,7 +16,7 @@ const UserProfile = () => {
   const { email, name, image } = useSelector<RootState, RawUserTypes>(
     (state) => state.user.userInfo
   );
-  
+
   // const userImgPath = image?.startsWith("https://")
   //   ? image
   //   : `/images/${image}.webp`;
@@ -36,6 +36,7 @@ const UserProfile = () => {
               alt="Profile image"
               className="object-cover rounded-full"
               fill
+              sizes="25vw"
             />
           </span>
           {/* Name */}
@@ -56,6 +57,7 @@ const UserProfile = () => {
             alt="Profile image"
             className="object-cover rounded-full"
             fill
+            sizes="60vw"
           />
         </div>
         {/* Username , Email and Settings, Log out */}

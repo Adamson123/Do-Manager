@@ -63,6 +63,7 @@ const config: Config = {
       screens: {
         smd: "550px",
         ssmd: "700px",
+        bmd: "900px",
       },
       fontFamily: {
         logoFont: "rgb(var(--logoFont))",

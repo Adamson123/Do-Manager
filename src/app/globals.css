@@ -41,6 +41,15 @@ body div {
 .timeInput:focus + div {
   opacity: 0;
 }
+.wandNote span {
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.wandNote:hover span {
+  opacity: 1;
+}
 
 @layer utilities {
   .text-balance {

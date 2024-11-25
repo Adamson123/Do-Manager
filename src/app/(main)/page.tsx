@@ -39,7 +39,9 @@ export default function Home() {
   // Handle screen resizing
   useEffect(() => {
     const updateShowDraw = debounce(() => {
-      setShowDraw(window.innerWidth < 768);
+      //show draw only when the window width is less 900
+      //!768 before
+      setShowDraw(window.innerWidth < 900);
     }, 200);
     updateShowDraw();
 
@@ -51,11 +53,12 @@ export default function Home() {
   }, []);
 
   return (
+    //md:flex-row
     <main
-      className="flex md:flex-row min-w-full
+      className="flex min-w-full
       max-h-screen min-h-screen h-screen"
     >
-      <section className="w-full md:min-w-[60%] md:pr-[40%]">
+      <section className="w-full bmd:min-w-[60%] bmd:pr-[40%]">
         <Tasks setOpenDrawer={setOpenDrawer} />
       </section>
 
@@ -63,8 +66,8 @@ export default function Home() {
       {(!showDraw || dialogOpen) && (
         <aside
           className="hidden
-          md:flex border-l border-darkerBg min-h-screen
-          fixed right-0 top-0 bottom-0 md:w-[40%]"
+          bmd:flex border-l border-darkerBg min-h-screen
+          fixed right-0 top-0 bottom-0 bmd:w-[40%]"
         >
           <SubTasks
             setCreateDialogOpen={setDialogOpen}
@@ -88,6 +91,7 @@ export default function Home() {
           <DrawerContent
             className="h-[calc(100vh-15%)] min-h-[calc(100vh-15%)]
             max-h-[calc(100vh-15%)]"
+            aria-describedby={"subtasks on mobile device"}
           >
             <DialogTitle />
             <SubTasks

@@ -137,7 +137,8 @@ const Profile = () => {
                     alt="Profile image"
                     className="object-cover rounded border border-darkerBg"
                     fill
-                    quality={100}
+                    sizes="80vw"
+                    quality={80}
                   />
                 </div>
 

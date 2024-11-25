@@ -70,18 +70,18 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
     const tasksSortedByDate = tasks?.length
       ? [...tasks].sort(
           (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         )
       : [];
 
     const tasksSortedByPriority = tasksSortedByDate.filter(
-      (task) => task.priority === priority,
+      (task) => task.priority === priority
     );
     const otherTasks = tasksSortedByDate.filter(
-      (task) => task.priority !== priority,
+      (task) => task.priority !== priority
     );
     const result = [...tasksSortedByPriority, ...otherTasks].filter((task) =>
-      task.title.toLowerCase().includes(search.toLowerCase()),
+      task.title.toLowerCase().includes(search.toLowerCase())
     );
     return result;
   }, [tasks, priority, search]);
@@ -89,7 +89,7 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
   useEffect(() => {
     if (sortedTasks.length) {
       setActiveTask(
-        sortedTasks.find((task) => task.id === currentTaskId) || sortedTasks[0],
+        sortedTasks.find((task) => task.id === currentTaskId) || sortedTasks[0]
       );
     }
   }, [sortedTasks, currentTaskId, setActiveTask]);
@@ -100,7 +100,7 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
       setAction(action);
       setCreateDialogOpen(true);
     },
-    [setAction, setCreateDialogOpen],
+    [setAction, setCreateDialogOpen]
   );
 
   return (
@@ -125,8 +125,8 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
       {!getMultipleTaskLoading && !getUserLoading ? (
         <ScrollArea className="w-full flex-grow">
           <div
-            className="grid grid-cols-2 ssmd:grid-cols-3 md:grid-cols-2
-             lg:grid-cols-3 gap-3 min-w-full px-3 pb-16 md:pb-6"
+            className="grid grid-cols-2 ssmd:grid-cols-3 bmd:grid-cols-2
+             lg:grid-cols-3 gap-3 min-w-full px-3 pb-16 bmd:pb-6"
           >
             {sortedTasks.length > 0 ? (
               sortedTasks.map((task: RawTaskTypes) => (

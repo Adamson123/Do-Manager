@@ -60,7 +60,7 @@ model PasswordResetToken {
 model Task {
   id          String    @id @default(cuid())
   title       String    @db.VarChar(255)
-  description String    @db.Text
+  description String?   @db.Text
   priority    Priority  @default(HIGH)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -78,7 +78,7 @@ enum Priority {
 model Subtask {
   id          String   @id @default(cuid())
   title       String   @db.VarChar(255)
-  description String   @db.Text
+  description String?  @db.Text
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   dueDate     DateTime @default(now())

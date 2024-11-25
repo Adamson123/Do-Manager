@@ -43,9 +43,6 @@ const SignUpForm = () => {
   });
 
   const handleSignUp = async (user: z.infer<typeof signUpSchema>) => {
-    // const res = await userServices.signup(user);
-    // console.log(res);
-
     if (loading) return;
     setError("");
     startTransition(() => {
