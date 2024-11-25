@@ -74,7 +74,7 @@ const GenerateSubtask = () => {
           className="bottom-1 right-2 absolute text-[11px]
          text-white w-32 py-2 pr-[2px] pl-2 rounded"
         >
-          This wand is still finding the perfect spell, but you might be
+          Still finding the perfect spell for this wand, but you might be
           lucky🙂.
         </span>
       </div>
