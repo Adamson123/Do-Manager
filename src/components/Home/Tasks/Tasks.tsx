@@ -81,7 +81,7 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
       (task) => task.priority !== priority
     );
     const result = [...tasksSortedByPriority, ...otherTasks].filter((task) =>
-      task.title.toLowerCase().trim(" ").includes(search.toLowerCase())
+      task.title.toLowerCase().includes(search.toLowerCase().trim(" "))
     );
     return result;
   }, [tasks, priority, search]);
