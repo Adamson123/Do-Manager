@@ -235,7 +235,7 @@ const CreateSubtask = ({
                           setOpenDatePicker(!openDatePicker);
                         }}
                         className="text-secondary-foreground border 
-                                              border-darkerBg bg-transparent hover:bg-darkerBg h-[37px]"
+                        border-darkerBg bg-transparent hover:bg-darkerBg h-[37px]"
                       >
                         {field.value
                           ? format(field.value, "EEE, MMM d, h aaa")
