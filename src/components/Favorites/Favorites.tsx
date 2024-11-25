@@ -50,7 +50,7 @@ const Favorites = () => {
       (task) => task.priority !== priority
     );
     const result = [...tasksSortedByPriorty, ...otherTasks].filter((task) =>
-      task.title.toLowerCase().includes(search.toLowerCase())
+      task.title.toLowerCase().trim(" ").includes(search.toLowerCase())
     );
     return result;
   }, [tasks, priority, search]);
