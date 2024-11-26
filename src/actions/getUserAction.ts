@@ -8,13 +8,20 @@ const getUserAction = async (userId: string) => {
     const todayAiQuota = await getTodayAiQuota(userId);
     console.log(todayAiQuota)
     if (!todayAiQuota?.id) {
+      //Is there any existing quota
+      const existingQuota = await prisma.findUnique({
+        where:{
+          userId
+        }
+      })     
+      if(existingQuota?.id){
       //delete existing quota
       await prisma.dailyAiQuota.delete({
         where: {
           userId, 
         },
       });
-
+      }
       const day = dateISOString(new Date());
       //create a new quota
       const dailyAiQuota = await prisma.dailyAiQuota.create({
