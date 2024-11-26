@@ -6,7 +6,8 @@ import dateISOString from "@/utils/dateISOString";
 const getUserAction = async (userId: string) => {
   try {
     const todayAiQuota = await getTodayAiQuota(userId);
-    if (!todayAiQuota.id) {
+    console.log(todayAiQuota)
+    if (!todayAiQuota?.id) {
       //delete existing quota
       await prisma.dailyAiQuota.delete({
         where: {
