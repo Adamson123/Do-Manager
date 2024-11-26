@@ -189,7 +189,7 @@ const Subtasks = ({
         {taskTitle && (
           <div
             className="text-primary text-[15px] py-4 border-t
-            border-b border-darkerBg cursor-pointer font-bold
+            border-b border-darkerBg font-bold
             flex justify-between items-center"
           >
             {/* Manually add subtask */}

@@ -73,7 +73,7 @@ const TaskCard = ({
     if (setOpenDrawer) setOpenDrawer(true);
   }, [task, setOpenDrawer]);
 
-  console.log("task rendered");
+  // console.log("task rendered");
 
   return (
     <div

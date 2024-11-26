@@ -11,6 +11,13 @@ export interface SubtaskCompletionHistoryTypes {
   subtasksCompleted: string[];
 }
 
+export interface dailyAiQuota {
+  id: string;
+  day: string;
+  remainingChance: number;
+  userId: string | null;
+}
+
 export interface RawUserTypes {
   createdAt: string | Date;
   email: string;
@@ -21,4 +28,5 @@ export interface RawUserTypes {
   password: string | null;
   hasPassword: boolean;
   subtaskCompletionHistory: SubtaskCompletionHistoryTypes[];
+  dailyAiQuota: dailyAiQuota;
 }

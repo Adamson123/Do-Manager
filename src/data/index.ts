@@ -1,3 +1,4 @@
+import dateISOString from "@/utils/dateISOString";
 import prisma from "../../prisma/client";
 
 export const getUserByEmail = async (email: string) => {
@@ -15,6 +16,7 @@ export const getUserById = async (id: string) => {
     },
     include: {
       subtaskCompletionHistory: true,
+      dailyAiQuota: true,
     },
   });
 };
@@ -31,6 +33,16 @@ export const getPasswordResetTokenByToken = async (token: string) => {
   return await prisma.passwordResetToken.findFirst({
     where: {
       token,
+    },
+  });
+};
+
+export const getTodayAiQuota = async (userId: string) => {
+  const day = dateISOString(new Date());
+  return await prisma.dailyAiQuota.findFirst({
+    where: {
+      day,
+      userId,
     },
   });
 };

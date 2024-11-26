@@ -1,13 +1,37 @@
 "use server";
-import { getUserById } from "@/data";
+import { getTodayAiQuota , getUserById } from "@/data";
+import prisma from "../../prisma/client";
+import dateISOString from "@/utils/dateISOString";
 
-const getUserAction = async (id: string) => {
+const getUserAction = async (userId: string) => {
   try {
-    const user = await getUserById(id);
+    const todayAiQuota = await getTodayAiQuota(userId);
+    if (!todayAiQuota) {
+      //delete existing quota
+      await prisma.dailyAiQuota.delete({
+        where: {
+          userId, 
+        },
+      });
+
+      const day = dateISOString(new Date());
+      //create a new quota
+      const dailyAiQuota = await prisma.dailyAiQuota.create({
+        data: {
+          day,
+          User: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+      });
+    }
+
+    const user = await getUserById(userId);
     if (!user) {
       return { errMsg: "User does not exit" };
     }
-    //console.log(user);
     const hasPassword = Boolean(user.password);
     user.password = "";
     return JSON.stringify({ ...user, hasPassword });

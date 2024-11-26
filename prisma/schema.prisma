@@ -25,7 +25,9 @@ model User {
   tasks                    Task[]
   subtasks                 Subtask[]
   subtaskCompletionHistory SubtaskCompletionHistory[]
+  dailyAiQuota             DailyAiQuota?              @relation
   accounts                 Account[]
+  dailyAiQuotaId           String?
 }
 
 model Account {
@@ -97,4 +99,12 @@ model SubtaskCompletionHistory {
   subtasksCompleted String[]
   User              User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String?
+}
+
+model DailyAiQuota {
+  id              String @id @default(cuid())
+  day             String
+  remainingChance Int    @default(7)
+  User            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String @unique
 }

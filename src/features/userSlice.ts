@@ -11,6 +11,12 @@ const initialUserInfoState: RawUserTypes = {
   password: "",
   hasPassword: false,
   subtaskCompletionHistory: [],
+  dailyAiQuota: {
+    id: "",
+    day: "",
+    remainingChance: 0,
+    userId: "",
+  },
 };
 
 const initialState = {
