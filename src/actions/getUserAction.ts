@@ -9,7 +9,7 @@ const getUserAction = async (userId: string) => {
     console.log(todayAiQuota)
     if (!todayAiQuota?.id) {
       //Is there any existing quota
-      const existingQuota = await prisma.findUnique({
+      const existingQuota = await prisma.dailyAiQuota.findUnique({
         where:{
           userId
         }
