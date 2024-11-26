@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { RawUserTypes } from "@/types/userTypes";
-//import clientSignOut from "@/lib/signOut-action";
+
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 const Settings = dynamic(() => import("../Settings/Settings"), { ssr: false });
@@ -85,7 +85,7 @@ const UserProfile = () => {
 
           <div
             onClick={async () => {
-              await signOut({ redirect: true, redirectTo: "/signup" });
+              await signOut({ redirect: true, redirectTo: "/signin" });
             }}
             className="border-t 
             text-muted-foreground border-darkerBg 

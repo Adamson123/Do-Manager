@@ -6,19 +6,25 @@ import dateISOString from "@/utils/dateISOString";
 const getUserAction = async (userId: string) => {
   try {
     const todayAiQuota = await getTodayAiQuota(userId);
-    console.log();
 
-    if (!todayAiQuota) {
-      //delete existing quota
-      await prisma.dailyAiQuota.delete({
+    if (!todayAiQuota?.id) {
+      //Is there any existing quota
+      const existingQuota = await prisma.dailyAiQuota.findUnique({
         where: {
           userId,
         },
       });
-
+      if (existingQuota?.id) {
+        //delete existing quota
+        await prisma.dailyAiQuota.delete({
+          where: {
+            userId,
+          },
+        });
+      }
       const day = dateISOString(new Date());
       //create a new quota
-      const dailyAiQuota = await prisma.dailyAiQuota.create({
+      await prisma.dailyAiQuota.create({
         data: {
           day,
           User: {

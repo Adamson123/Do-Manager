@@ -18,9 +18,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/store/store";
-import { getMultipleTasks, TaskInitialStateTypes } from "@/features/taskSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { TaskInitialStateTypes } from "@/features/taskSlice";
 import DateRangeSelector, { DateRangeTypes } from "./DateRangeSelector";
 import { RawUserTypes } from "@/types/userTypes";
 
@@ -35,10 +35,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const CompletedSubtasksChart = () => {
-  const dispatch = useDispatch<AppDispatch>();
-
   const { tasks } = useSelector<RootState, TaskInitialStateTypes>(
-    (state) => state.task,
+    (state) => state.task
   );
 
   const {
@@ -56,7 +54,7 @@ const CompletedSubtasksChart = () => {
     let totalDays = Math.ceil(differenceInHours(today, signupDate) / 24);
 
     const limitDate = new Date(
-      new Date().setDate(signupDate.getDate() + totalDays),
+      new Date().setDate(signupDate.getDate() + totalDays)
     );
     totalDays =
       today.getDate() < limitDate.getDate() ? totalDays - 1 : totalDays;
@@ -71,7 +69,7 @@ const CompletedSubtasksChart = () => {
     }
 
     const increment = 5; // Days per range
-    const skip = 5; // Days to skip for next range
+    const skip = 6; // Days to skip for next range
     let currentStart = 0;
     const ranges: DateRangeTypes[] = [];
 
@@ -98,7 +96,9 @@ const CompletedSubtasksChart = () => {
 
   const dateRanges = generateDateRanges();
   // Initialize selected date range with the first range in the list
-  const [selectedRange, setSelectedRange] = useState(dateRanges[0]);
+  const [selectedRange, setSelectedRange] = useState(
+    dateRanges[dateRanges.length - 1]
+  );
 
   useEffect(() => {
     if (selectedRange) return;

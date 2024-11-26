@@ -40,6 +40,7 @@ const GenerateSubtask = () => {
 
         dispatch(addSubstask({ subtask: subtasks, id: subtask.taskId }));
         dispatch(updateUser({ dailyAiQuota: response.updatedAiQuota }));
+
         return toast({
           title: `Wala!!🎇`,
           description: "Subtasks generated",

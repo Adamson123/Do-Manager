@@ -20,10 +20,8 @@ import {
 import Priority from "@/components/ui/priority";
 import { RawTaskTypes } from "@/types/taskTypes";
 import { format } from "date-fns";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 import { ActionType } from "./CreateTask";
-import { SubtaskInitialStateTypes } from "@/features/subtaskSlice";
+
 import useSetActiveTask from "@/hooks/useSetActiveTask";
 
 interface TaskCardProps {
@@ -31,6 +29,7 @@ interface TaskCardProps {
   triggerEditTask: (action: ActionType) => void;
   triggerDeleteTask: (taskId: string) => void;
   setOpenDrawer?: Dispatch<SetStateAction<boolean>>;
+  taskId: string;
 }
 
 const colors: { [key: string]: string } = {
@@ -44,11 +43,9 @@ const TaskCard = ({
   triggerEditTask,
   triggerDeleteTask,
   setOpenDrawer,
+  taskId,
 }: TaskCardProps) => {
   const taskCardRef = useRef<HTMLDivElement>(null);
-  const { taskId } = useSelector<RootState, SubtaskInitialStateTypes>(
-    (state) => state.subtask
-  );
   const setActiveTask = useSetActiveTask();
 
   const getPercentage = useMemo(() => {
@@ -56,6 +53,7 @@ const TaskCard = ({
       (subtask) => subtask.completed
     ).length;
     const percentage = (completedTasks * 100) / task.subtasks?.length || 0;
+
     return Math.round(percentage);
   }, [JSON.stringify(task.subtasks)]);
 
@@ -70,10 +68,9 @@ const TaskCard = ({
 
   const handleClick = useCallback(() => {
     setActiveTask(task);
+    console.log(task);
     if (setOpenDrawer) setOpenDrawer(true);
-  }, [task, setOpenDrawer]);
-
-  // console.log("task rendered");
+  }, [task]);
 
   return (
     <div
@@ -179,11 +176,11 @@ const TaskCard = ({
 
 export default memo(TaskCard, (prevProps, nextProps) => {
   return (
-    JSON.stringify(prevProps.task) === JSON.stringify(nextProps.task) && //was id
-    JSON.stringify(prevProps.task.subtasks) ===
-      JSON.stringify(nextProps.task.subtasks) &&
+    JSON.stringify(prevProps.task) === JSON.stringify(nextProps.task) &&
     prevProps.triggerEditTask === nextProps.triggerEditTask &&
     prevProps.triggerDeleteTask === nextProps.triggerDeleteTask &&
-    prevProps.setOpenDrawer === nextProps.setOpenDrawer
+    prevProps.setOpenDrawer === nextProps.setOpenDrawer &&
+    nextProps.taskId !== nextProps.task.id &&
+    prevProps.taskId !== nextProps.task.id
   );
 });

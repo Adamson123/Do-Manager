@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Head from "next/head";
 import "./globals.css";
 import ReduxProvider from "@/store/provider";
 import { Toaster } from "@/components/ui/toaster";
