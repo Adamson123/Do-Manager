@@ -124,42 +124,48 @@ const Tasks = ({ setOpenDrawer }: TasksProps) => {
 
       {/* Tasks */}
       {!getMultipleTaskLoading && !getUserLoading ? (
-        //  <ScrollArea className="">
+        // <ScrollArea className="">
         <div
-          className="grid grid-cols-2 ssmd:grid-cols-3 bmd:grid-cols-2
-          lg:grid-cols-3 gap-3 min-w-full px-3 pb-16 bmd:pb-6 
-          overflow-y-auto w-full flex-grow"
+          className="w-full flex-grow overflow-y-auto"
           style={{
             scrollbarColor: "rgb(var(--darkerBg)) hsl(var(--background))",
           }}
         >
-          {sortedTasks.length > 0 ? (
-            sortedTasks.map((task: RawTaskTypes) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                triggerEditTask={triggerEditTask}
-                triggerDeleteTask={triggerDeleteTask}
-                setOpenDrawer={setOpenDrawer}
-                taskId={currentTaskId}
-              />
-            ))
-          ) : (
-            <div
-              className="top-[45%] left-[50%] translate-x-[-50%]
+          <div
+            className="grid grid-cols-2 ssmd:grid-cols-3 bmd:grid-cols-2
+          lg:grid-cols-3 gap-3 min-w-full px-3 pb-16 bmd:pb-6"
+          >
+            {sortedTasks.length > 0 ? (
+              sortedTasks.map((task: RawTaskTypes) => (
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  triggerEditTask={triggerEditTask}
+                  triggerDeleteTask={triggerDeleteTask}
+                  setOpenDrawer={setOpenDrawer}
+                  taskId={currentTaskId}
+                />
+              ))
+            ) : (
+              <div
+                className="top-[45%] left-[50%] translate-x-[-50%]
                translate-y-[-45%] absolute flex flex-col items-center
                 text-darkerBg"
-            >
-              {!search ? (
-                <FolderOpen className="h-[73px] w-[73px]" strokeWidth={"1.5"} />
-              ) : (
-                <Search className="h-[80px] w-[80px]" strokeWidth={"1.5"} />
-              )}
-              <span className="font-bold text-[15px] -translate-y-1">
-                No task was found
-              </span>
-            </div>
-          )}
+              >
+                {!search ? (
+                  <FolderOpen
+                    className="h-[73px] w-[73px]"
+                    strokeWidth={"1.5"}
+                  />
+                ) : (
+                  <Search className="h-[80px] w-[80px]" strokeWidth={"1.5"} />
+                )}
+                <span className="font-bold text-[15px] -translate-y-1">
+                  No task was found
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       ) : (
         //   </ScrollArea>
