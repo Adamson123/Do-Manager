@@ -1,16 +1,18 @@
 "use server";
-import { getTodayAiQuota , getUserById } from "@/data";
+import { getTodayAiQuota, getUserById } from "@/data";
 import prisma from "../../prisma/client";
 import dateISOString from "@/utils/dateISOString";
 
 const getUserAction = async (userId: string) => {
   try {
     const todayAiQuota = await getTodayAiQuota(userId);
+    console.log();
+
     if (!todayAiQuota) {
       //delete existing quota
       await prisma.dailyAiQuota.delete({
         where: {
-          userId, 
+          userId,
         },
       });
 
