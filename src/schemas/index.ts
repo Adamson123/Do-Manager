@@ -59,8 +59,8 @@ export const createSubtaskSchema = z.object({
 });
 
 export const signUpSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters long").trim(),
-  email: z.string().email("Please enter a valid email address").trim(),
+  name: z.string().min(2, "Name must be at least 2 characters long"),
+  email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
@@ -70,12 +70,12 @@ export const signUpSchema = z.object({
 });
 
 export const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address").trim(),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string({ message: "Please enter your password" }),
 });
 
 export const resetSchema = z.object({
-  email: z.string().email("Please enter a valid email address").trim(),
+  email: z.string().email("Please enter a valid email address"),
 });
 
 export const newPasswordSchema = z.object({
@@ -88,7 +88,7 @@ export const newPasswordSchema = z.object({
 });
 
 export const profileSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters long").trim(),
+  name: z.string().min(2, "Name must be at least 2 characters long"),
   image: z
     .union([z.instanceof(File), z.string(), z.instanceof(Blob)])
     .optional()
