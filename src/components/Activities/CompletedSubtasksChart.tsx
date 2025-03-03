@@ -45,6 +45,7 @@ const CompletedSubtasksChart = () => {
     subtaskCompletionHistory,
   } = useSelector<RootState, RawUserTypes>((state) => state.user.userInfo);
 
+  console.log(subtaskCompletionHistory)
   // Generate ranges of start and limit dates based on the user's signup date
   const generateDateRanges = useCallback(() => {
     if (!createdAt) return [];
