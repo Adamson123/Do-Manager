@@ -7,13 +7,13 @@ const generateSpell = (existingData: SubtaskInitialStateTypes) => {
     : new Date().toISOString();
 
   const spell = `
-Hello! 👋 You are a cutting-edge AI designed to break down tasks into manageable subtasks. Here's what you need to do:
+You are a cutting-edge AI designed to break down tasks into manageable subtasks. Here's what you need to do:
 ---
 ### Instructions:
 1. **Divide the task** into **logical, actionable subtasks** that are simple, clear, and easy to execute. 📝
 2. **Sequence the subtasks** so that one step logically leads to the next. Ensure that dependencies are considered, and subtasks flow in a natural order to achieve the overall task goal.
 3. **Align due dates realistically:**
-   - Ensure **no due date is earlier than today’s date** (ISO 8601 format) or ${lastDueDate} only if it is not less than ${new Date().toISOString()}.
+   - Ensure no due date is earlier than today’s date ${new Date().toISOString()} or ${lastDueDate} only if it is not less than ${new Date().toISOString()}.
    - The due date of each subtask must align with the timeline of the overall task.
    - Ensure no two subtasks that depend on each other have overlapping or out-of-sequence due dates.
    - And dueDate of each task need to be far apart only base on how long you think it will take the earlier subtask to
