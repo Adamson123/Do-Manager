@@ -127,7 +127,7 @@ const CompletedSubtasksChart = () => {
         subtaskCompletionHistory.find((subtask) => subtask.day === date)
           ?.subtasksCompleted.length || 0,
     }));
-  }, [tasks, selectedRange, userId]);
+  }, [tasks, selectedRange, userId, subtaskCompletionHistory]);
   console.log(completedSubtasksData)
 
   return (
