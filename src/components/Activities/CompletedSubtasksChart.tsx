@@ -128,6 +128,7 @@ const CompletedSubtasksChart = () => {
           ?.subtasksCompleted.length || 0,
     }));
   }, [tasks, selectedRange, userId]);
+  console.log(completedSubtasksData)
 
   return (
     <Card className="border-none w-full bg-secondary rounded flex-grow">
