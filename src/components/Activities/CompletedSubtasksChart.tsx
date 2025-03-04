@@ -119,7 +119,7 @@ const CompletedSubtasksChart = () => {
       date.setDate(start.getDate() + i);
       return date.toISOString().split("T")[0];
     });
-
+  console.log("now now", subtaskCompletionHistory)
     // Count completed subtasks for each date in the range
     return dateList.map((date) => ({
       date,
