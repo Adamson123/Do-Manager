@@ -108,26 +108,30 @@ const CompletedSubtasksChart = () => {
 
   // Generate data points for completed subtasks within the selected date range
   const completedSubtasksData = useMemo(() => {
-    if (!userId || !selectedRange) return;
-    const start = new Date(selectedRange.start);
-    const end = new Date(selectedRange.limit);
-    const totalDays = differenceInDays(end, start);
+  if (!userId || !selectedRange || !subtaskCompletionHistory) return [];
+  
+  const start = new Date(selectedRange.start);
+  const end = new Date(selectedRange.limit);
+  const totalDays = differenceInDays(end, start);
 
-    // Generate list of dates within the selected range
-    const dateList = Array.from({ length: totalDays + 1 }, (_, i) => {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
-      return date.toISOString().split("T")[0];
-    });
-  console.log("now now", subtaskCompletionHistory)
-    // Count completed subtasks for each date in the range
-    return dateList.map((date) => ({
+  // Generate list of dates within the selected range
+  const dateList = Array.from({ length: totalDays + 1 }, (_, i) => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i);
+    return date.toISOString().split("T")[0]; // Ensure uniform YYYY-MM-DD format
+  });
+
+  return dateList.map((date) => {
+    const matchedSubtask = subtaskCompletionHistory.find(
+      (subtask) => subtask.day.trim() === date.trim() // Ensuring exact string match
+    );
+
+    return {
       date,
-      Completed:
-        subtaskCompletionHistory.find((subtask) => subtask.day === date)
-          ?.subtasksCompleted.length ?? 0,
-    }));
-  }, [tasks, selectedRange, userId, subtaskCompletionHistory]);
+      Completed: matchedSubtask ? matchedSubtask.subtasksCompleted.length : 0,
+    };
+  });
+}, [tasks, selectedRange, userId, subtaskCompletionHistory]);
   console.log(subtaskCompletionHistory,completedSubtasksData,selectedRange)
 
   return (
